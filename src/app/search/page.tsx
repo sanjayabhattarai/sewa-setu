@@ -1,114 +1,116 @@
-import { Navbar } from "@/components/navbar";
-import { MapPin, Star, Phone } from "lucide-react";
-import Link from "next/link";
+"use client"; // <--- 1. Convert to Client Component
 
-// Mock Data: This acts like our database for now
-const HOSPITALS = [
-  {
-    id: 1,
-    name: "Norvic International Hospital",
-    location: "Thapathali, Kathmandu",
-    rating: 4.8,
-    price: "Rs. 4,500",
-    package: "Whole Body Checkup (Basic)",
-    image: "https://images.unsplash.com/photo-1587351021759-3e566b9af9ef?auto=format&fit=crop&q=80&w=400",
-  },
-  {
-    id: 2,
-    name: "Grande International Hospital",
-    location: "Tokha, Kathmandu",
-    rating: 4.9,
-    price: "Rs. 12,000",
-    package: "Comprehensive Senior Care",
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400",
-  },
-  {
-    id: 3,
-    name: "HAMS Hospital",
-    location: "Dhumbarahi, Kathmandu",
-    rating: 4.7,
-    price: "Rs. 8,500",
-    package: "Executive Health Package",
-    image: "https://images.unsplash.com/photo-1516574187841-693018950317?auto=format&fit=crop&q=80&w=400",
-  }
-];
+import { useState } from "react";
+import { Navbar } from "@/components/navbar";
+import { HospitalCard } from "@/components/hospital-card";
+import { hospitals, cities } from "@/data/hospital";
+import { Input } from "@/components/ui/input";
+import { Search, MapPin } from "lucide-react";
 
 export default function SearchPage() {
+  // 2. Add State to remember what user types/selects
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState("All Cities");
+
+  // 3. The Filtering Logic
+  const filteredHospitals = hospitals.filter((hospital) => {
+    // Check if name matches search text
+    const matchesSearch = hospital.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    // Check if city matches selection (or if "All Cities" is selected)
+    const matchesCity = selectedCity === "All Cities" || hospital.city === selectedCity;
+
+    return matchesSearch && matchesCity;
+  });
+
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-slate-50">
       <Navbar />
       
-      {/* Search Header */}
-      <div className="bg-white border-b border-gray-200 py-8">
+      {/* Header & Search Section */}
+      <div className="bg-white pt-24 pb-8 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Find a Hospital</h1>
-          <p className="mt-2 text-gray-600">Compare prices and packages in Kathmandu</p>
+          <h1 className="text-3xl font-bold text-slate-900 text-center mb-6">
+            Find the Best Care
+          </h1>
           
-          {/* Simple Search Bar */}
-          <div className="mt-6 flex gap-2 max-w-xl">
-            <input 
-              type="text" 
-              placeholder="Search by hospital name..." 
-              className="flex-1 rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-            />
-            <button className="rounded-md bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700">
-              Search
-            </button>
+          {/* Search Controls Container */}
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4">
+            
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+              <Input 
+                placeholder="Search by hospital name..." 
+                className="pl-10 h-12 text-base rounded-xl border-slate-200 bg-slate-50 focus:bg-white transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* City Dropdown (Custom styled select) */}
+            <div className="relative sm:w-48">
+              <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
+              <select 
+                className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-8 text-sm outline-none focus:border-blue-600 focus:bg-white transition-all cursor-pointer"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                aria-label="Filter hospitals by city"
+              >
+                <option value="All Cities">All Cities</option>
+                {cities.map((city) => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+              {/* Custom Arrow for dropdown */}
+              <div className="absolute right-3 top-4 pointer-events-none">
+                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
-      {/* Hospital List */}
+      {/* Results Grid */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {HOSPITALS.map((hospital) => (
-            <div key={hospital.id} className="group relative overflow-hidden rounded-lg bg-white shadow-sm transition-all hover:shadow-md border border-gray-100">
-              
-              {/* Image Section */}
-              <div className="h-48 w-full bg-gray-200 relative">
-                {/* We use a standard img tag here for simplicity in the prototype */}
-                <img 
-                  src={hospital.image} 
-                  alt={hospital.name}
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
-                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                  {hospital.rating}
-                </div>
-              </div>
+        
+        {/* Show count of results */}
+        <p className="text-slate-500 mb-6 font-medium">
+          Showing {filteredHospitals.length} hospitals
+          {selectedCity !== "All Cities" && ` in ${selectedCity}`}
+        </p>
 
-              {/* Content Section */}
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">
-                  {hospital.name}
-                </h3>
-                
-                <div className="mt-2 flex items-center text-sm text-gray-500">
-                  <MapPin className="mr-1.5 h-4 w-4 text-gray-400" />
-                  {hospital.location}
-                </div>
-
-                <div className="mt-4 rounded-md bg-blue-50 p-3">
-                  <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">
-                    {hospital.package}
-                  </p>
-                  <p className="mt-1 text-lg font-bold text-gray-900">
-                    {hospital.price}
-                  </p>
-                </div>
-
-                <div className="mt-6">
-                    <Link href={`/hospital/${hospital.id}`} className="block w-full">
-                  <button className="w-full rounded-md bg-blue-600 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
-                    View Details
-                  </button>
-                  </Link>
-                </div>
-              </div>
+        {filteredHospitals.length > 0 ? (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredHospitals.map((hospital, index) => (
+              <HospitalCard 
+                key={hospital.id} 
+                hospital={hospital} 
+                index={index} 
+              />
+            ))}
+          </div>
+        ) : (
+          /* Empty State (If no results found) */
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+            <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="h-8 w-8 text-slate-400" />
             </div>
-          ))}
-        </div>
+            <h3 className="text-lg font-medium text-slate-900">No hospitals found</h3>
+            <p className="text-slate-500">Try adjusting your search or filter.</p>
+            <button 
+              onClick={() => {setSearchQuery(""); setSelectedCity("All Cities")}}
+              className="mt-4 text-blue-600 font-medium hover:underline"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );
