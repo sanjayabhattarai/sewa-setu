@@ -92,7 +92,7 @@ export default async function HospitalDetails({ params }: PageProps) {
 
             <div className="space-y-4">
               {hospital.packages.map((pkg, index) => (
-                <PackageAccordion key={index} pkg={pkg} index={index} />
+                <PackageAccordion key={index} pkg={pkg} index={index} hospitalName={hospital.name}/>
               ))}
             </div>
 
