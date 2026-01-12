@@ -4,27 +4,34 @@ import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-const getStripe = () => {
-  if (!process.env.STRIPE_SECRET_KEY) return null;
-  return new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2025-12-15.clover",
-  });
-};
-
 export async function POST(req: Request) {
   try {
-    const stripe = getStripe();
-    if (!stripe) return NextResponse.json({ error: "Config error" }, { status: 500 });
+    // 1. Check for Key inside the request
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      return NextResponse.json({ error: "Configuration error" }, { status: 500 });
+    }
+
+    // 2. Initialize Stripe ONLY here
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: "2025-12-15.clover",
+    });
 
     const { sessionId } = await req.json();
+    if (!sessionId) {
+      return NextResponse.json({ error: "No session ID" }, { status: 400 });
+    }
+
+    // 3. Retrieve session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status !== "paid") {
-      return NextResponse.json({ error: "Not paid" }, { status: 400 });
+      return NextResponse.json({ error: "Payment not verified" }, { status: 400 });
     }
 
     const data = session.metadata;
 
+    // 4. Save to Database (Prisma)
     const booking = await db.booking.upsert({
       where: { stripeSessionId: session.id },
       update: {}, 
@@ -43,8 +50,9 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, booking });
+
   } catch (error: any) {
-    console.error("Verification Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Verification Error:", error.message);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
