@@ -25,7 +25,6 @@ export async function POST(req: Request) {
 
     const data = session.metadata;
 
-    // Save to Database
     const booking = await db.booking.upsert({
       where: { stripeSessionId: session.id },
       update: {}, 
@@ -35,6 +34,8 @@ export async function POST(req: Request) {
         packageName: data?.packageName || "Unknown",
         price: parseInt(data?.price || "0"),
         patientName: data?.patientName || "Guest",
+        patientAge: data?.patientAge || "N/A", 
+        patientPhone: data?.patientPhone || "N/A", 
         buyerEmail: data?.buyerEmail || "",
         status: "PAID",
         bookingDate: new Date(),
@@ -42,8 +43,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, booking });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Server Error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Verification Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

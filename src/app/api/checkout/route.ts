@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     
     // 1. Basic Validation (Safety First)
-    const { price, buyerEmail, packageName } = body;
+    const { price, buyerEmail, packageName, patientAge, patientPhone } = body;
     if (!price || price <= 0) {
        return NextResponse.json({ error: "Invalid price" }, { status: 400 });
     }
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
         hospitalName: String(body.hospitalName).substring(0, 50),
         packageName: String(body.packageName).substring(0, 50),
         patientName: String(body.patientName).substring(0, 50),
+        patientAge: String(body.patientAge), 
+        patientPhone: String(body.patientPhone),
         price: String(price),
         buyerEmail: String(buyerEmail),
       },
