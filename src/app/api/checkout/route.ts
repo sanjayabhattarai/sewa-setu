@@ -3,34 +3,34 @@ import Stripe from "stripe";
 
 export const dynamic = "force-dynamic";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-12-15.clover", 
-});
-
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    
-    // 1. Basic Validation (Safety First)
-    const { price, buyerEmail, packageName, patientAge, patientPhone } = body;
-    if (!price || price <= 0) {
-       return NextResponse.json({ error: "Invalid price" }, { status: 400 });
+    // 1. Check for the key FIRST
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+      console.error("STRIPE_SECRET_KEY is missing in environment");
+      return NextResponse.json({ error: "Configuration error" }, { status: 500 });
     }
 
+    // 2. Initialize Stripe INSIDE the function only
+    const stripe = new Stripe(key, {
+      apiVersion: "2025-12-15.clover",
+    });
+
+    const body = await req.json();
+    const { price, buyerEmail, packageName, patientAge, patientPhone, hospitalName, patientName } = body;
+
+    // 3. Simple URL helper
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
 
-    // 2. Create Session
+    // 4. Create Session
     const session = await stripe.checkout.sessions.create({
-      customer_email: buyerEmail, // Pre-fills the email on Stripe's page
+      customer_email: buyerEmail,
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
           currency: "eur",
-          product_data: { 
-            name: packageName,
-            // Add a timestamp to prevent duplicate products
-            metadata: { id: Date.now().toString() } 
-          },
+          product_data: { name: packageName },
           unit_amount: Math.round(price * 100),
         },
         quantity: 1,
@@ -38,21 +38,20 @@ export async function POST(req: Request) {
       mode: "payment",
       success_url: `${baseUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/`,
-      // IMPORTANT: Metadata is limited to 50 keys and strings only
       metadata: {
-        hospitalName: String(body.hospitalName).substring(0, 50),
-        packageName: String(body.packageName).substring(0, 50),
-        patientName: String(body.patientName).substring(0, 50),
-        patientAge: String(body.patientAge), 
-        patientPhone: String(body.patientPhone),
+        hospitalName: String(hospitalName || "").substring(0, 50),
+        packageName: String(packageName || "").substring(0, 50),
+        patientName: String(patientName || "").substring(0, 50),
+        patientAge: String(patientAge || ""),
+        patientPhone: String(patientPhone || ""),
         price: String(price),
-        buyerEmail: String(buyerEmail),
+        buyerEmail: String(buyerEmail || ""),
       },
     });
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    console.error("Stripe production error:", error.message);
-    return NextResponse.json({ error: "Checkout initialization failed" }, { status: 500 });
+    console.error("Stripe Error:", error.message);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
