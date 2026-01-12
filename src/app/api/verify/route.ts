@@ -1,39 +1,39 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 import { db } from "@/lib/db";
 
-// This tells Vercel: "Do not try to build this at compile time"
+// Force Vercel to skip static analysis
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    // 1. Check for the secret key INSIDE the function
+    // 1. LAZY LOAD STRIPE: This prevents the build error 100%
+    const StripeModule = await import("stripe");
+    const Stripe = StripeModule.default;
+
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) {
-      return NextResponse.json({ error: "Configuration error" }, { status: 500 });
+      return NextResponse.json({ error: "Config error" }, { status: 500 });
     }
 
-    // 2. Initialize Stripe ONLY when a request actually happens
+    // 2. Initialize using your specific version
     const stripe = new Stripe(stripeKey, {
-      apiVersion: "2025-12-15.clover",
+      apiVersion: "2025-12-15.clover" as any, 
     });
 
     const { sessionId } = await req.json();
-
     if (!sessionId) {
       return NextResponse.json({ error: "No session ID" }, { status: 400 });
     }
 
-    // 3. Talk to Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status !== "paid") {
-      return NextResponse.json({ error: "Payment not verified" }, { status: 400 });
+      return NextResponse.json({ error: "Not paid" }, { status: 400 });
     }
 
     const data = session.metadata;
 
-    // 4. Save to Database
+    // 3. Save to Database
     const booking = await db.booking.upsert({
       where: { stripeSessionId: session.id },
       update: {}, 
