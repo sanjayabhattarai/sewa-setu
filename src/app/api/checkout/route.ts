@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const validatedPrice = selectedPackage.price;
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2025-12-15.clover" as any,
+      apiVersion: "2024-12-15" as any,
     });
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
