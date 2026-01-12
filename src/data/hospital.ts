@@ -1,4 +1,5 @@
 export interface Package {
+  id: string;
   name: string;
   price: number;
   discount?: string; 
@@ -34,11 +35,13 @@ export const hospitals: Hospital[] = [
     tags: ["Instant Booking", "Teaching Hospital"],
     packages: [
       { 
+        id: "manipal-basic",
         name: "Basic Health Screening", 
         price: 35, 
         features: ["General Checkup", "Blood Pressure", "Sugar Test"] 
       },
       { 
+        id: "manipal-senior",
         name: "Senior Citizen Plan", 
         price: 55, 
         discount: "Save 15% vs Cash",
@@ -62,7 +65,7 @@ export const hospitals: Hospital[] = [
     image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800",
     tags: ["Corporate Partner", "VIP Services"],
     packages: [
-      { name: "Whole Body Checkup", price: 30, features: ["CBC", "Sugar", "Thyroid"] },
+      { id: "norvic-whole-body", name: "Whole Body Checkup", price: 30, features: ["CBC", "Sugar", "Thyroid"] },
     ],
   },
   // ... other hospitals

@@ -1,15 +1,20 @@
 // src/lib/packages.ts
 
 export const MEDICAL_PACKAGES = {
-  "norvic-full-body": {
-    name: "Norvic Full Body Checkup",
-    price: 150, // Price in EUR/NPR (whatever your currency is)
-    hospital: "Norvic International Hospital"
+  "manipal-basic": {
+    name: "Basic Health Screening",
+    price: 35,
+    hospital: "Manipal Teaching Hospital"
   },
-  "kmc-basic-cardio": {
-    name: "KMC Basic Cardio",
-    price: 80,
-    hospital: "KMC Hospital"
+  "manipal-senior": {
+    name: "Senior Citizen Plan",
+    price: 55,
+    hospital: "Manipal Teaching Hospital"
+  },
+  "norvic-whole-body": {
+    name: "Whole Body Checkup",
+    price: 30,
+    hospital: "Norvic International Hospital"
   }
 };
 

@@ -73,6 +73,7 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
         onClose={() => setShowModal(false)} 
         hospitalName={hospitalName}
         selectedPackage={pkg}
+        packageId={pkg.id}
       />
     </>
   );

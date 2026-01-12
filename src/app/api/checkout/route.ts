@@ -5,11 +5,19 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
+    // Check for required environment variable
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error("Missing STRIPE_SECRET_KEY environment variable");
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
     const StripeModule = await import("stripe");
     const Stripe = StripeModule.default;
 
     const body = await req.json();
     const { packageId, buyerEmail, patientName, patientAge, patientPhone, bookingDate } = body;
+
+    console.log("Checkout request:", { packageId, buyerEmail, patientName });
 
     // 1. SERVER-SIDE LOOKUP (The Security Part)
     const selectedPackage = MEDICAL_PACKAGES[packageId as PackageId];
@@ -21,9 +29,7 @@ export async function POST(req: Request) {
     // We use the price from OUR file, NOT from the user's request
     const validatedPrice = selectedPackage.price;
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-12-15" as any,
-    });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
 
@@ -55,6 +61,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Checkout error:", error);
+    return NextResponse.json({ error: error.message || "Unknown error" }, { status: 500 });
   }
 }

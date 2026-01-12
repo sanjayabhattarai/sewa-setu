@@ -11,9 +11,10 @@ interface BookingModalProps {
   onClose: () => void;
   hospitalName: string;
   selectedPackage: Package;
+  packageId?: string;
 }
 
-export function BookingModal({ isOpen, onClose, hospitalName, selectedPackage }: BookingModalProps) {
+export function BookingModal({ isOpen, onClose, hospitalName, selectedPackage, packageId }: BookingModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     patientName: "",
@@ -37,13 +38,12 @@ export function BookingModal({ isOpen, onClose, hospitalName, selectedPackage }:
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          hospitalName,
-          packageName: selectedPackage.name,
-          price: selectedPackage.price,
+          packageId,
           patientName: formData.patientName,
           patientAge: formData.patientAge,
           patientPhone: formData.patientPhone,
           buyerEmail: formData.buyerEmail,
+          bookingDate: new Date().toISOString(),
         }),
       });
 
