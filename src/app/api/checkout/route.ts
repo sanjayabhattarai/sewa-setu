@@ -1,37 +1,40 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { MEDICAL_PACKAGES, PackageId } from "@/lib/packages";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    // 1. Check for the key FIRST
-    const key = process.env.STRIPE_SECRET_KEY;
-    if (!key) {
-      console.error("STRIPE_SECRET_KEY is missing in environment");
-      return NextResponse.json({ error: "Configuration error" }, { status: 500 });
-    }
-
-    // 2. Initialize Stripe INSIDE the function only
-    const stripe = new Stripe(key, {
-      apiVersion: "2025-12-15.clover",
-    });
+    const StripeModule = await import("stripe");
+    const Stripe = StripeModule.default;
 
     const body = await req.json();
-    const { price, buyerEmail, packageName, patientAge, patientPhone, hospitalName, patientName } = body;
+    const { packageId, buyerEmail, patientName, patientAge, patientPhone, bookingDate } = body;
 
-    // 3. Simple URL helper
+    // 1. SERVER-SIDE LOOKUP (The Security Part)
+    const selectedPackage = MEDICAL_PACKAGES[packageId as PackageId];
+
+    if (!selectedPackage) {
+      return NextResponse.json({ error: "Package not found" }, { status: 404 });
+    }
+
+    // We use the price from OUR file, NOT from the user's request
+    const validatedPrice = selectedPackage.price;
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: "2025-12-15.clover" as any,
+    });
+
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
 
-    // 4. Create Session
     const session = await stripe.checkout.sessions.create({
       customer_email: buyerEmail,
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
           currency: "eur",
-          product_data: { name: packageName },
-          unit_amount: Math.round(price * 100),
+          product_data: { name: selectedPackage.name },
+          unit_amount: Math.round(validatedPrice * 100), // Secure price
         },
         quantity: 1,
       }],
@@ -39,19 +42,19 @@ export async function POST(req: Request) {
       success_url: `${baseUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/`,
       metadata: {
-        hospitalName: String(hospitalName || "").substring(0, 50),
-        packageName: String(packageName || "").substring(0, 50),
-        patientName: String(patientName || "").substring(0, 50),
-        patientAge: String(patientAge || ""),
-        patientPhone: String(patientPhone || ""),
-        price: String(price),
-        buyerEmail: String(buyerEmail || ""),
+        hospitalName: selectedPackage.hospital,
+        packageName: selectedPackage.name,
+        patientName,
+        patientAge: String(patientAge),
+        patientPhone: String(patientPhone),
+        bookingDate: String(bookingDate || new Date().toISOString()),
+        price: String(validatedPrice),
+        buyerEmail,
       },
     });
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    console.error("Stripe Error:", error.message);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

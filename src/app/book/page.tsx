@@ -1,80 +1,105 @@
+'use client'
+
+import { useState } from "react";
 import { Navbar } from "@/components/navbar";
-import { Calendar, User, Phone } from "lucide-react";
-import Link from "next/link"; // <--- 1. Import Link
+import { Calendar, User, Phone, Loader2 } from "lucide-react";
 
 export default function BookingPage() {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    age: "",
+  });
+
+  // Get package ID from URL (e.g., /book?package=norvic-full-body)
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const packageId = searchParams.get('package') || 'norvic-full-body';
+
+  const handleConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          packageId,
+          patientName: formData.name,
+          patientPhone: formData.phone,
+          patientAge: formData.age,
+          bookingDate: formData.date,
+          buyerEmail: formData.email,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url; // This takes them to Stripe!
+      } else {
+        alert("Failed to start checkout: " + data.error);
+      }
+    } catch (err) {
+      console.error("Payment error", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
-      
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl px-4 py-12">
         <div className="rounded-xl bg-white p-8 shadow-sm border border-gray-100">
-          <h1 className="text-2xl font-bold text-gray-900">Book Appointment</h1>
-          <p className="mt-2 text-gray-600">Enter your parent&apos;s details to confirm the slot.</p>
-
-          <form className="mt-8 space-y-6">
+          <h1 className="text-2xl font-bold">Book Appointment</h1>
+          
+          <form onSubmit={handleConfirm} className="mt-8 space-y-6">
             {/* Patient Name */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Patient Name (Parent)
-              </label>
-              <div className="relative mt-2">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="name"
-                  type="text"
-                  className="block w-full rounded-md border border-gray-300 py-3 pl-10 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Full Name"
-                />
-              </div>
-            </div>
+            <input
+              required
+              placeholder="Full Name"
+              className="w-full border p-3 rounded-md"
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+            />
 
-            {/* Phone Number */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Contact Number (Nepal)
-              </label>
-              <div className="relative mt-2">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Phone className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="phone"
-                  type="tel"
-                  className="block w-full rounded-md border border-gray-300 py-3 pl-10 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  placeholder="98XXXXXXXX"
-                />
-              </div>
-            </div>
+            {/* Patient Age (New field for your DB) */}
+            <input
+              required
+              type="number"
+              placeholder="Patient Age"
+              className="w-full border p-3 rounded-md"
+              onChange={(e) => setFormData({...formData, age: e.target.value})}
+            />
 
-            {/* Date Selection */}
-            <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                Preferred Date
-              </label>
-              <div className="relative mt-2">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="date"
-                  type="date"
-                  className="block w-full rounded-md border border-gray-300 py-3 pl-10 text-gray-900 focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-            </div>
+            {/* Email */}
+            <input
+              required
+              type="email"
+              placeholder="Email Address"
+              className="w-full border p-3 rounded-md"
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+            />
 
-            {/* 2. Wrapped the button in Link to Success Page */}
-            <Link href="/book/success" className="block w-full">
-              <button
-                type="button"
-                className="mt-8 w-full rounded-md bg-blue-600 py-4 text-lg font-semibold text-white shadow-sm hover:bg-blue-700"
-              >
-                Confirm Booking
-              </button>
-            </Link>
+            {/* Patient Phone */}
+            <input
+              required
+              placeholder="98XXXXXXXX"
+              className="w-full border p-3 rounded-md"
+              onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            />
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-md bg-blue-600 py-4 font-semibold text-white hover:bg-blue-700 flex items-center justify-center"
+            >
+              {loading ? <Loader2 className="animate-spin mr-2" /> : null}
+              {loading ? "Initializing Secure Payment..." : "Confirm & Pay Now"}
+            </button>
           </form>
         </div>
       </div>
