@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Star, ArrowRight } from "lucide-react";
 import { Hospital } from "@/data/hospital";
@@ -13,11 +14,43 @@ interface HospitalCardProps {
 }
 
 export function HospitalCard({ hospital, index }: HospitalCardProps) {
+  const [formattedPrice, setFormattedPrice] = useState<string>("...");
+
+  useEffect(() => {
+    const minPrice = Math.min(...hospital.packages.map((p) => p.price));
+    
+    const detectAndFormat = async () => {
+      try {
+        // 1. Fetch physical country from your server-side API
+        const res = await fetch('/api/location');
+        const { country } = await res.json();
+        
+        // 2. Map Country to Currency
+        let currency = "EUR";
+        if (country === "NP") currency = "NPR";
+        if (country === "AU") currency = "AUD";
+        if (country === "US") currency = "USD";
+
+        // 3. Professional Formatting using Intl
+        // Use 'en-US' or 'en-GB' for formatting style regardless of country code
+        const formatter = new Intl.NumberFormat('en-US', {
+          style: "currency",
+          currency: currency,
+          maximumFractionDigits: 0, 
+        });
+
+        setFormattedPrice(formatter.format(minPrice));
+      } catch (err) {
+        setFormattedPrice(`€${minPrice}`); // Simple fallback
+      }
+    };
+
+    detectAndFormat();
+  }, [hospital.packages]);
+
   const location = hospital.area 
     ? `${hospital.area}, ${hospital.city}` 
     : hospital.city;
-
-  const minPrice = Math.min(...hospital.packages.map(p => p.price));
 
   return (
     <motion.div
@@ -27,6 +60,7 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
       transition={{ duration: 0.4, delay: index * 0.1 }}
       className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100"
     >
+      {/* Hospital Image Section */}
       <div className="relative h-48 overflow-hidden">
         <img
           src={hospital.image}
@@ -47,6 +81,7 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
         </div>
       </div>
 
+      {/* Hospital Details Section */}
       <div className="p-5">
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="font-semibold text-lg text-slate-900 line-clamp-1">
@@ -67,9 +102,10 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
           {hospital.specialty}
         </p>
 
+        {/* Localized Price and Action Button */}
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
           <span className="text-sm text-slate-500">
-            From <span className="text-blue-600 font-bold text-lg">Rs. {minPrice}</span>
+            From <span className="text-blue-600 font-bold text-lg">{formattedPrice}</span>
           </span>
           
           <Link href={`/hospital/${hospital.id}`}>

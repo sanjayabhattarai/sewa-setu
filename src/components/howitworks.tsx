@@ -9,12 +9,12 @@ const steps = [
   {
     icon: CalendarCheck,
     title: "2. Book & Pay",
-    desc: "Choose a checkup package and pay securely online from abroad.",
+    desc: "Choose a checkup package and pay securely online from miles away.",
   },
   {
     icon: FileHeart,
     title: "3. Receive Report",
-    desc: "Parents visit the hospital. You get the digital report instantly.",
+    desc: "Loves one visit the hospital. You get the digital report instantly.",
   },
 ];
 
