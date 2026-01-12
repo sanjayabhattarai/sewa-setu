@@ -19,5 +19,5 @@ model Booking {
   price         Int
   bookingDate   DateTime
   status        String   @default("PENDING")
-  stripeSessionId String?
+  stripeSessionId String?  @unique
 }

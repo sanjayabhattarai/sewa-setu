@@ -3,21 +3,30 @@ import { HeroSection } from "@/components/herosection";
 import { HowItWorks } from "@/components/howitworks";
 import { Footer } from "@/components/footer";
 import { HospitalCard } from "@/components/hospital-card";
-import { hospitals } from "@/data/hospital"; // Import our data
+import { hospitals } from "@/data/hospital";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { RecentBooking } from "@/components/recent-booking";
+import { FloatingAI } from "@/components/floating-ai";
 
 export default function Home() {
-  // Take only the first 3 hospitals for the homepage preview
   const featuredHospitals = hospitals.slice(0, 3);
 
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      
-      {/* 1. Hero Section (Already built) */}
-      <HeroSection />
+      <FloatingAI />
 
+      {/* --- SPACER FOR FIXED NAVBAR --- */}
+      {/* Since Navbar is usually h-16 (64px) or h-20 (80px), we add pt-20 here */}
+      <div className="pt-20"> 
+        <RecentBooking />
+      </div>
+
+    
+      {/* 1. Hero Section */}
+      <HeroSection />
+    
       {/* 2. How It Works Section */}
       <HowItWorks />
 
