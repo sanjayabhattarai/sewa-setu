@@ -2,27 +2,29 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/lib/db";
 
+// This tells Vercel: "Do not try to build this at compile time"
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    // 1. Check for Key inside the request
+    // 1. Check for the secret key INSIDE the function
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) {
       return NextResponse.json({ error: "Configuration error" }, { status: 500 });
     }
 
-    // 2. Initialize Stripe ONLY here
+    // 2. Initialize Stripe ONLY when a request actually happens
     const stripe = new Stripe(stripeKey, {
       apiVersion: "2025-12-15.clover",
     });
 
     const { sessionId } = await req.json();
+
     if (!sessionId) {
       return NextResponse.json({ error: "No session ID" }, { status: 400 });
     }
 
-    // 3. Retrieve session
+    // 3. Talk to Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status !== "paid") {
@@ -31,7 +33,7 @@ export async function POST(req: Request) {
 
     const data = session.metadata;
 
-    // 4. Save to Database (Prisma)
+    // 4. Save to Database
     const booking = await db.booking.upsert({
       where: { stripeSessionId: session.id },
       update: {}, 
