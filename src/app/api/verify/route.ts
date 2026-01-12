@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 
 // Force Vercel to skip static analysis
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    // 1. LAZY LOAD STRIPE: This prevents the build error 100%
+    // 1. LAZY LOAD DB: Prevents build errors
+    const { db } = await import("@/lib/db");
+    
+    // 2. LAZY LOAD STRIPE: This prevents the build error 100%
     const StripeModule = await import("stripe");
     const Stripe = StripeModule.default;
 
