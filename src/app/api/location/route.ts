@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { geolocation } from '@vercel/functions';
 
 export function GET(request: Request) {
-  const geo = geolocation(request);
+  const country = request.headers.get('x-vercel-ip-country') || 'FI';
   return NextResponse.json({
-    country: geo.country || 'FI', // Defaults to Finland if not found
+    country: country,
   });
 }
