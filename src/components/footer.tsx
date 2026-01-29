@@ -34,7 +34,7 @@ export function Footer() {
 
           {/* Legal / Company */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Company</h3>
+            <h3 className="text-white font-semibold mb-4">This is ivon shah</h3>
             <ul className="space-y-3 text-sm">
               <li><Link href="#" className="hover:text-blue-400 transition-colors">About Us</Link></li>
               <li><Link href="#" className="hover:text-blue-400 transition-colors">Contact Support</Link></li>
