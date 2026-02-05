@@ -19,6 +19,68 @@ export async function POST(req: Request) {
 
     console.log("Checkout request:", { packageId, buyerEmail, patientName });
 
+    // INPUT VALIDATION (Security Layer)
+    
+    // Validate email
+    if (!buyerEmail || typeof buyerEmail !== 'string' || !buyerEmail.includes('@') || buyerEmail.length > 254) {
+      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(buyerEmail)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    }
+
+    // Validate patient name
+    if (!patientName || typeof patientName !== 'string') {
+      return NextResponse.json({ error: "Patient name is required" }, { status: 400 });
+    }
+    const trimmedName = patientName.trim();
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
+      return NextResponse.json({ error: "Name must be between 2-100 characters" }, { status: 400 });
+    }
+    // Only allow letters, spaces, hyphens, and apostrophes
+    if (!/^[a-zA-Z\s\-']+$/.test(trimmedName)) {
+      return NextResponse.json({ error: "Name contains invalid characters" }, { status: 400 });
+    }
+
+    // Validate phone number
+    if (!patientPhone || typeof patientPhone !== 'string') {
+      return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
+    }
+    const cleanPhone = patientPhone.replace(/[\s\-()]/g, '');
+    // Nepal phone numbers are typically 10 digits starting with 9
+    if (!/^\d{10}$/.test(cleanPhone)) {
+      return NextResponse.json({ error: "Phone number must be 10 digits" }, { status: 400 });
+    }
+
+    // Validate age
+    if (patientAge === undefined || patientAge === null) {
+      return NextResponse.json({ error: "Patient age is required" }, { status: 400 });
+    }
+    const age = Number(patientAge);
+    if (isNaN(age) || age < 0 || age > 150 || !Number.isInteger(age)) {
+      return NextResponse.json({ error: "Age must be a valid number between 0-150" }, { status: 400 });
+    }
+
+    // Validate booking date
+    if (bookingDate) {
+      const date = new Date(bookingDate);
+      if (isNaN(date.getTime())) {
+        return NextResponse.json({ error: "Invalid booking date" }, { status: 400 });
+      }
+      // Ensure date is not in the past (allow same day)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (date < today) {
+        return NextResponse.json({ error: "Booking date cannot be in the past" }, { status: 400 });
+      }
+    }
+
+    // Validate package ID exists
+    if (!packageId || typeof packageId !== 'string') {
+      return NextResponse.json({ error: "Package ID is required" }, { status: 400 });
+    }
+
     // 1. SERVER-SIDE LOOKUP (The Security Part)
     const selectedPackage = MEDICAL_PACKAGES[packageId as PackageId];
 
