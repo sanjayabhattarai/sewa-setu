@@ -312,7 +312,39 @@ model AvailabilitySlot {
   @@index([dayOfWeek, mode])
 }
 
+/* =========================
+   MEDIA (DONE PROPERLY)
+========================= */
 
+model DoctorMedia {
+  id        String   @id @default(cuid())
+  doctorId  String
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doctorId])
+}
+
+model HospitalMedia {
+  id        String   @id @default(cuid())
+  hospitalId String
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+
+  hospital  Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hospitalId])
+}
 
 model Booking {
   id            String   @id @default(cuid())
