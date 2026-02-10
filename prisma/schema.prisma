@@ -129,6 +129,40 @@ model Tag {
   updatedAt DateTime @updatedAt
 }
 
+/* =========================
+   PROVIDERS: HOSPITALS
+========================= */
+
+model Hospital {
+  id                 String       @id @default(cuid())
+  name               String
+  type               HospitalType
+  locationId         String
+
+  phone              String?
+  email              String?
+  website            String?
+  openingHours       String?
+  emergencyAvailable Boolean      @default(false)
+  servicesSummary    String?
+  verified           Boolean      @default(false)
+
+  location           Location     @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  doctors            DoctorHospital[]
+  tags               HospitalTag[]
+  services           HospitalService[]
+  media              HospitalMedia[]
+  bookings           Booking[]
+  availabilitySlots  AvailabilitySlot[] // optional: if you attach slots to hospital too
+
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@index([locationId])
+  @@index([name])
+}
+
 model Booking {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
