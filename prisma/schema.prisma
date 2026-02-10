@@ -201,6 +201,151 @@ model Doctor {
   @@index([feeMin, feeMax])
 }
 
+/* =========================
+   RELATIONS (M:N)
+========================= */
+
+model DoctorSpecialty {
+  doctorId    String
+  specialtyId String
+  isPrimary   Boolean @default(false)
+
+  doctor      Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, specialtyId])
+  @@index([specialtyId])
+}
+
+model DoctorHospital {
+  doctorId      String
+  hospitalId    String
+  positionTitle String?
+  isPrimary     Boolean @default(false)
+
+  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital      Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, hospitalId])
+  @@index([hospitalId])
+}
+
+model DoctorTag {
+  doctorId String
+  tagId    String
+
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, tagId])
+  @@index([tagId])
+}
+
+model HospitalTag {
+  hospitalId String
+  tagId      String
+
+  hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([hospitalId, tagId])
+  @@index([tagId])
+}
+
+/* =========================
+   SERVICES & AVAILABILITY
+========================= */
+
+model DoctorService {
+  id              String   @id @default(cuid())
+  doctorId        String
+  title           String
+  price           Int
+  currency        String
+  durationMinutes Int
+  isActive        Boolean  @default(true)
+
+  doctor          Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([doctorId])
+}
+
+model HospitalService {
+  id          String   @id @default(cuid())
+  hospitalId  String
+  title       String
+  price       Int
+  currency    String
+  description String?
+  isActive    Boolean  @default(true)
+
+  hospital    Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([hospitalId])
+}
+
+model AvailabilitySlot {
+  id                  String           @id @default(cuid())
+  doctorId            String
+  hospitalId          String?
+  mode                ConsultationMode
+  dayOfWeek           Int              // 0-6
+  startTime           String           // "10:00"
+  endTime             String           // "13:00"
+  slotDurationMinutes Int
+  isActive            Boolean          @default(true)
+
+  doctor              Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital            Hospital?        @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@index([doctorId])
+  @@index([hospitalId])
+  @@index([dayOfWeek, mode])
+}
+
+/* =========================
+   MEDIA (DONE PROPERLY)
+========================= */
+
+model DoctorMedia {
+  id        String   @id @default(cuid())
+  doctorId  String
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doctorId])
+}
+
+model HospitalMedia {
+  id        String   @id @default(cuid())
+  hospitalId String
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+
+  hospital  Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hospitalId])
+}
+
 model Booking {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
