@@ -252,6 +252,67 @@ model HospitalTag {
   @@index([tagId])
 }
 
+/* =========================
+   SERVICES & AVAILABILITY
+========================= */
+
+model DoctorService {
+  id              String   @id @default(cuid())
+  doctorId        String
+  title           String
+  price           Int
+  currency        String
+  durationMinutes Int
+  isActive        Boolean  @default(true)
+
+  doctor          Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([doctorId])
+}
+
+model HospitalService {
+  id          String   @id @default(cuid())
+  hospitalId  String
+  title       String
+  price       Int
+  currency    String
+  description String?
+  isActive    Boolean  @default(true)
+
+  hospital    Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([hospitalId])
+}
+
+model AvailabilitySlot {
+  id                  String           @id @default(cuid())
+  doctorId            String
+  hospitalId          String?
+  mode                ConsultationMode
+  dayOfWeek           Int              // 0-6
+  startTime           String           // "10:00"
+  endTime             String           // "13:00"
+  slotDurationMinutes Int
+  isActive            Boolean          @default(true)
+
+  doctor              Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital            Hospital?        @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@index([doctorId])
+  @@index([hospitalId])
+  @@index([dayOfWeek, mode])
+}
+
+
 
 model Booking {
   id            String   @id @default(cuid())
