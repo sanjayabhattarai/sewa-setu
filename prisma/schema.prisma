@@ -201,6 +201,58 @@ model Doctor {
   @@index([feeMin, feeMax])
 }
 
+/* =========================
+   RELATIONS (M:N)
+========================= */
+
+model DoctorSpecialty {
+  doctorId    String
+  specialtyId String
+  isPrimary   Boolean @default(false)
+
+  doctor      Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, specialtyId])
+  @@index([specialtyId])
+}
+
+model DoctorHospital {
+  doctorId      String
+  hospitalId    String
+  positionTitle String?
+  isPrimary     Boolean @default(false)
+
+  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital      Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, hospitalId])
+  @@index([hospitalId])
+}
+
+model DoctorTag {
+  doctorId String
+  tagId    String
+
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([doctorId, tagId])
+  @@index([tagId])
+}
+
+model HospitalTag {
+  hospitalId String
+  tagId      String
+
+  hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([hospitalId, tagId])
+  @@index([tagId])
+}
+
+
 model Booking {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
