@@ -78,6 +78,57 @@ model Patient {
   @@index([locationId])
 }
 
+/* =========================
+   LOCATION & CLASSIFICATION
+========================= */
+
+model Location {
+  id          String   @id @default(cuid())
+  country     String
+  province    String?
+  district    String
+  city        String
+  area        String?
+  addressLine String?
+  postalCode  String?
+  lat         Float?
+  lng         Float?
+
+  hospitals   Hospital[]
+  patients    Patient[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([country, district, city])
+}
+
+model Specialty {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  keywords    String?  // optional string, or keep keywords for AI mapping
+
+  doctors     DoctorSpecialty[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+
+  doctors   DoctorTag[]
+  hospitals HospitalTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Booking {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
