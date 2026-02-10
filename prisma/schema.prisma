@@ -7,9 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/* =========================
-   ENUMS
-========================= */
+/**
+ * =========================
+ * ENUMS
+ * =========================
+ */
 
 enum UserRole {
   USER
@@ -35,20 +37,22 @@ enum BookingStatus {
   COMPLETED
 }
 
-/* =========================
-   ACCOUNTS & PATIENTS
-========================= */
+/**
+ * =========================
+ * ACCOUNTS & PATIENTS
+ * =========================
+ */
 
 model User {
-  id        String   @id @default(cuid())
-  fullName  String
-  email     String   @unique
-  phone     String?
-  country   String
-  role      UserRole @default(USER)
+  id       String   @id @default(cuid())
+  fullName String
+  email    String   @unique
+  phone    String?
+  country  String
+  role     UserRole @default(USER)
 
-  patients  Patient[]
-  bookings  Booking[]
+  patients Patient[]
+  bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -57,7 +61,7 @@ model User {
 }
 
 model Patient {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      String
   fullName    String
   gender      String?
@@ -65,25 +69,27 @@ model Patient {
   phone       String?
   notes       String?
 
-  locationId  String?
-  location    Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bookings    Booking[]
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookings Booking[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([locationId])
 }
 
-/* =========================
-   LOCATION & CLASSIFICATION
-========================= */
+/**
+ * =========================
+ * LOCATION & CLASSIFICATION
+ * =========================
+ */
 
 model Location {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   country     String
   province    String?
   district    String
@@ -94,33 +100,33 @@ model Location {
   lat         Float?
   lng         Float?
 
-  hospitals   Hospital[]
-  patients    Patient[]
+  hospitals Hospital[]
+  patients  Patient[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([country, district, city])
 }
 
 model Specialty {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  slug        String   @unique
+  slug        String  @unique
   description String?
-  keywords    String?  // optional string, or keep keywords for AI mapping
+  keywords    String? // optional string, or keep keywords for AI mapping
 
-  doctors     DoctorSpecialty[]
+  doctors DoctorSpecialty[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([name])
 }
 
 model Tag {
-  id        String   @id @default(cuid())
-  name      String   @unique
+  id   String @id @default(cuid())
+  name String @unique
 
   doctors   DoctorTag[]
   hospitals HospitalTag[]
@@ -129,89 +135,95 @@ model Tag {
   updatedAt DateTime @updatedAt
 }
 
-/* =========================
-   PROVIDERS: HOSPITALS
-========================= */
+/**
+ * =========================
+ * PROVIDERS: HOSPITALS
+ * =========================
+ */
 
 model Hospital {
-  id                 String       @id @default(cuid())
-  name               String
-  type               HospitalType
-  locationId         String
+  id         String       @id @default(cuid())
+  name       String
+  type       HospitalType
+  locationId String
 
   phone              String?
   email              String?
   website            String?
   openingHours       String?
-  emergencyAvailable Boolean      @default(false)
+  emergencyAvailable Boolean @default(false)
   servicesSummary    String?
-  verified           Boolean      @default(false)
+  verified           Boolean @default(false)
 
-  location           Location     @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
-  doctors            DoctorHospital[]
-  tags               HospitalTag[]
-  services           HospitalService[]
-  media              HospitalMedia[]
-  bookings           Booking[]
-  availabilitySlots  AvailabilitySlot[] // optional: if you attach slots to hospital too
+  doctors           DoctorHospital[]
+  tags              HospitalTag[]
+  services          HospitalService[]
+  media             HospitalMedia[]
+  bookings          Booking[]
+  availabilitySlots AvailabilitySlot[] // optional: if you attach slots to hospital too
 
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([locationId])
   @@index([name])
 }
 
-/* =========================
-   PROVIDERS: DOCTORS
-========================= */
+/**
+ * =========================
+ * PROVIDERS: DOCTORS
+ * =========================
+ */
 
 model Doctor {
-  id                String   @id @default(cuid())
-  fullName          String
-  gender            String?
-  experienceYears   Int
-  education         String?
-  bio               String?
+  id              String  @id @default(cuid())
+  fullName        String
+  gender          String?
+  experienceYears Int
+  education       String?
+  bio             String?
 
   // Store as JSON arrays: ["English", "Nepali"] and ["ONLINE","PHYSICAL"]
   languages         Json
   consultationModes Json
 
-  licenseNumber     String?
-  feeMin            Int
-  feeMax            Int
-  currency          String
-  verified          Boolean  @default(false)
+  licenseNumber String?
+  feeMin        Int
+  feeMax        Int
+  currency      String
+  verified      Boolean @default(false)
 
-  hospitals         DoctorHospital[]
-  specialties       DoctorSpecialty[]
-  tags              DoctorTag[]
-  services          DoctorService[]
-  availability      AvailabilitySlot[]
-  media             DoctorMedia[]
-  bookings          Booking[]
+  hospitals    DoctorHospital[]
+  specialties  DoctorSpecialty[]
+  tags         DoctorTag[]
+  services     DoctorService[]
+  availability AvailabilitySlot[]
+  media        DoctorMedia[]
+  bookings     Booking[]
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([fullName])
   @@index([verified])
   @@index([feeMin, feeMax])
 }
 
-/* =========================
-   RELATIONS (M:N)
-========================= */
+/**
+ * =========================
+ * RELATIONS (M:N)
+ * =========================
+ */
 
 model DoctorSpecialty {
   doctorId    String
   specialtyId String
   isPrimary   Boolean @default(false)
 
-  doctor      Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
 
   @@id([doctorId, specialtyId])
   @@index([specialtyId])
@@ -223,8 +235,8 @@ model DoctorHospital {
   positionTitle String?
   isPrimary     Boolean @default(false)
 
-  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  hospital      Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  doctor   Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
   @@id([doctorId, hospitalId])
   @@index([hospitalId])
@@ -234,8 +246,8 @@ model DoctorTag {
   doctorId String
   tagId    String
 
-  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([doctorId, tagId])
   @@index([tagId])
@@ -245,47 +257,53 @@ model HospitalTag {
   hospitalId String
   tagId      String
 
-  hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
-  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([hospitalId, tagId])
   @@index([tagId])
 }
 
-/* =========================
-   SERVICES & AVAILABILITY
-========================= */
+/**
+ * =========================
+ * SERVICES & AVAILABILITY
+ * =========================
+ */
 
 model DoctorService {
-  id              String   @id @default(cuid())
+  id              String  @id @default(cuid())
   doctorId        String
   title           String
   price           Int
   currency        String
   durationMinutes Int
-  isActive        Boolean  @default(true)
+  isActive        Boolean @default(true)
 
-  doctor          Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([doctorId])
 }
 
 model HospitalService {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   hospitalId  String
   title       String
   price       Int
   currency    String
   description String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
-  hospital    Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([hospitalId])
 }
@@ -295,35 +313,37 @@ model AvailabilitySlot {
   doctorId            String
   hospitalId          String?
   mode                ConsultationMode
-  dayOfWeek           Int              // 0-6
-  startTime           String           // "10:00"
-  endTime             String           // "13:00"
+  dayOfWeek           Int // 0-6
+  startTime           String // "10:00"
+  endTime             String // "13:00"
   slotDurationMinutes Int
   isActive            Boolean          @default(true)
 
-  doctor              Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  hospital            Hospital?        @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+  doctor   Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
 
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([doctorId])
   @@index([hospitalId])
   @@index([dayOfWeek, mode])
 }
 
-/* =========================
-   MEDIA (DONE PROPERLY)
-========================= */
+/**
+ * =========================
+ * MEDIA (DONE PROPERLY)
+ * =========================
+ */
 
 model DoctorMedia {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   doctorId  String
   url       String
   altText   String?
-  isPrimary Boolean  @default(false)
+  isPrimary Boolean @default(false)
 
-  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -332,13 +352,13 @@ model DoctorMedia {
 }
 
 model HospitalMedia {
-  id        String   @id @default(cuid())
+  id         String  @id @default(cuid())
   hospitalId String
-  url       String
-  altText   String?
-  isPrimary Boolean  @default(false)
+  url        String
+  altText    String?
+  isPrimary  Boolean @default(false)
 
-  hospital  Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -347,16 +367,56 @@ model HospitalMedia {
 }
 
 model Booking {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  patientName   String
-  patientAge    String
-  patientPhone  String
-  buyerEmail    String
-  hospitalName  String
-  packageName   String
-  price         Int
-  bookingDate   DateTime
-  status        String   @default("PENDING")
-  stripeSessionId String?  @unique
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Who created/paid the booking (account holder)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Who the appointment is for (patient profile)
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Where and with whom
+  hospitalId String
+  hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Restrict)
+
+  doctorId String?
+  doctor   Doctor? @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+
+  // What service/package was booked (optional)
+  doctorServiceId String?
+  doctorService   DoctorService? @relation(fields: [doctorServiceId], references: [id], onDelete: SetNull)
+
+  hospitalServiceId String?
+  hospitalService   HospitalService? @relation(fields: [hospitalServiceId], references: [id], onDelete: SetNull)
+
+  // Appointment details
+  mode        ConsultationMode
+  scheduledAt DateTime
+  notes       String?
+
+  // Cross-border contact in Nepal (optional but useful)
+  localContactName  String?
+  localContactPhone String?
+
+  // Keeps history correct even if doctor/hospital names change later
+  snapshotHospitalName String?
+  snapshotDoctorName   String?
+  snapshotServiceName  String?
+  snapshotPrice        Int?
+  snapshotCurrency     String?
+
+  // Payment hooks
+  stripeSessionId String? @unique
+
+  status BookingStatus @default(DRAFT)
+
+  @@index([userId])
+  @@index([patientId])
+  @@index([hospitalId])
+  @@index([doctorId])
+  @@index([status, scheduledAt])
 }
