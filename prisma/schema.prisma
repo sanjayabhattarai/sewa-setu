@@ -7,6 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/* =========================
+   ENUMS
+========================= */
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum HospitalType {
+  HOSPITAL
+  CLINIC
+  LAB
+}
+
+enum ConsultationMode {
+  ONLINE
+  PHYSICAL
+}
+
+enum BookingStatus {
+  DRAFT
+  REQUESTED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
 model Booking {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
