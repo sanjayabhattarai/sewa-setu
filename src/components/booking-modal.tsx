@@ -4,13 +4,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { User, Phone, Mail, CreditCard, X } from "lucide-react";
-import { Package } from "@/data/hospital";
+import type { UiPackage } from "@/types/package";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   hospitalName: string;
-  selectedPackage: Package;
+  selectedPackage: UiPackage;
   packageId?: string;
 }
 

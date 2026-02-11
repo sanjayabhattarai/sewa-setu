@@ -2,24 +2,23 @@
 
 import { useState } from "react";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { Package } from "@/data/hospital";
-import { BookingModal } from "@/components/booking-modal"; // <--- Import the modal
+import type { UiPackage } from "@/types/package";
+import { BookingModal } from "@/components/booking-modal";
 
 interface PackageAccordionProps {
-  pkg: Package;
+  pkg: UiPackage;
   index: number;
-  hospitalName: string; // <--- We need to know which hospital this is for
+  hospitalName: string;
 }
 
 export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionProps) {
-  const [isOpen, setIsOpen] = useState(index === 1); // Default 2nd one open
-  const [showModal, setShowModal] = useState(false); // <--- State for Modal
+  const [isOpen, setIsOpen] = useState(index === 1);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
       <div className="border border-slate-100 rounded-2xl bg-white overflow-hidden shadow-sm transition-all duration-300 mb-4">
-        {/* Header */}
-        <button 
+        <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-full flex items-center justify-between p-6 text-left"
         >
@@ -39,14 +38,17 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
               </div>
             </div>
           </div>
-          {isOpen ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {isOpen ? (
+            <ChevronUp className="h-5 w-5 text-slate-400" />
+          ) : (
+            <ChevronDown className="h-5 w-5 text-slate-400" />
+          )}
         </button>
 
-        {/* Expanded Content */}
         {isOpen && (
           <div className="px-6 pb-6 pt-0 animate-in slide-in-from-top-2">
             <div className="h-px w-full bg-slate-50 mb-4" />
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
               {pkg.features.map((feature, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-slate-600">
@@ -56,9 +58,8 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
               ))}
             </div>
 
-            {/* Book Button */}
-            <button 
-              onClick={() => setShowModal(true)} // <--- Open Modal on Click
+            <button
+              onClick={() => setShowModal(true)}
               className="w-full sm:w-auto rounded-lg bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 transition-colors shadow-md shadow-blue-100"
             >
               Book Now - €{pkg.price}
@@ -67,10 +68,9 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
         )}
       </div>
 
-      {/* The Modal Component (Hidden unless showModal is true) */}
-      <BookingModal 
-        isOpen={showModal} 
-        onClose={() => setShowModal(false)} 
+      <BookingModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
         hospitalName={hospitalName}
         selectedPackage={pkg}
         packageId={pkg.id}
