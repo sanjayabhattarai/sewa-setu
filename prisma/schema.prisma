@@ -143,6 +143,7 @@ model Tag {
 
 model Hospital {
   id         String       @id @default(cuid())
+  slug String @unique
   name       String
   type       HospitalType
   locationId String
