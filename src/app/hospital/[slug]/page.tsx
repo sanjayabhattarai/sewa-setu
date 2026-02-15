@@ -1,34 +1,13 @@
-import { ArrowLeft, MapPin, Star, Stethoscope } from "lucide-react";
+// src/app/hospital/[slug]/page.tsx
+
+import { ArrowLeft, MapPin, Star } from "lucide-react";
 import Link from "next/link";
-import { PackageAccordion } from "@/components/package-accordion";
-import type { UiPackage } from "@/types/package";
+import type { ApiHospitalDetails } from "@/types/hospital";
+import { HospitalTabs } from "./HospitalTabs";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
-
-type ApiHospitalDetails = {
-  id: string;
-  slug: string;
-  name: string;
-  type: "HOSPITAL" | "CLINIC" | "LAB";
-  city: string;
-  district: string;
-  area: string | null;
-  image: string | null;
-  rating: number;
-  reviewCount: number;
-  specialty: string;
-  tags: string[];
-  services: {
-    id: string;
-    name: string;
-    price: number;
-    currency: string;
-    description: string;
-    features: string[];
-  }[];
-};
 
 export default async function HospitalDetails({ params }: PageProps) {
   const { slug } = await params;
@@ -45,17 +24,19 @@ export default async function HospitalDetails({ params }: PageProps) {
 
   const hospital = (await res.json()) as ApiHospitalDetails;
 
-  const packages: UiPackage[] = hospital.services.map((s) => ({
+  // Map DB services -> UI packages (used by PackageAccordion)
+  const packages = hospital.services.map((s) => ({
     id: s.id,
     name: s.name,
     price: s.price,
-    discount: undefined,
+    discount: undefined as string | undefined,
     features: s.features?.length ? s.features : s.description ? [s.description] : [],
   }));
 
   return (
     <main className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
+        {/* Back Button */}
         <Link
           href="/search"
           className="inline-flex items-center text-sm text-slate-500 hover:text-slate-800 mb-6 transition-colors"
@@ -64,7 +45,9 @@ export default async function HospitalDetails({ params }: PageProps) {
           Back to hospitals
         </Link>
 
+        {/* Main Card Container */}
         <div className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+          {/* Hero */}
           <div className="relative h-64 sm:h-80 w-full">
             <img
               src={hospital.image ?? "https://picsum.photos/seed/hospital-fallback/1200/800"}
@@ -74,8 +57,9 @@ export default async function HospitalDetails({ params }: PageProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
             <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 text-white">
+              {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-3">
-                {hospital.tags?.map((tag, i) => (
+                {hospital.tags?.slice(0, 6).map((tag, i) => (
                   <span
                     key={tag}
                     className={`px-3 py-1 rounded-full text-xs font-bold ${
@@ -85,6 +69,9 @@ export default async function HospitalDetails({ params }: PageProps) {
                     {tag}
                   </span>
                 ))}
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur">
+                  Map will be added soon
+                </span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl font-bold mb-2 tracking-tight">
@@ -94,7 +81,7 @@ export default async function HospitalDetails({ params }: PageProps) {
               <div className="flex items-center gap-4 text-sm sm:text-base font-medium text-slate-200">
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
-                  {hospital.city}
+                  {hospital.location.city}
                 </div>
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 text-orange-400 fill-orange-400" />
@@ -107,26 +94,9 @@ export default async function HospitalDetails({ params }: PageProps) {
             </div>
           </div>
 
+          {/* Body */}
           <div className="p-6 sm:p-8">
-            <div className="flex items-center gap-2 text-slate-700 mb-8 font-medium">
-              <Stethoscope className="h-5 w-5 text-blue-500" />
-              <span>Specialty: {hospital.specialty}</span>
-            </div>
-
-            <h2 className="text-xl font-bold text-slate-900 mb-6">
-              Available Health Packages
-            </h2>
-
-            <div className="space-y-4">
-              {packages.map((pkg, index) => (
-                <PackageAccordion
-                  key={pkg.id}
-                  pkg={pkg}
-                  index={index}
-                  hospitalName={hospital.name}
-                />
-              ))}
-            </div>
+            <HospitalTabs hospital={hospital} packages={packages} />
           </div>
         </div>
       </div>
