@@ -320,11 +320,14 @@ export function HospitalTabs({ hospital, packages }: Props) {
               <h2 className="text-lg font-bold text-slate-900">Contact</h2>
 
               <div className="mt-4 grid gap-3">
-                <div className="flex items-center gap-2 text-slate-700">
+                <a 
+                  href={hospital.phone ? `tel:${hospital.phone}` : "javascript:void(0)"}
+                  className={`flex items-center gap-2 text-slate-700 ${hospital.phone ? "hover:text-blue-600 transition-colors" : ""}`}
+                >
                   <Phone className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Phone:</span>
-                  <span className="text-slate-600">{hospital.phone || "Will be added soon"}</span>
-                </div>
+                  <span className={hospital.phone ? "text-blue-600 font-semibold underline" : "text-slate-600"}>{hospital.phone || "Will be added soon"}</span>
+                </a>
 
                 <div className="flex items-center gap-2 text-slate-700">
                   <Mail className="h-4 w-4 text-slate-400" />

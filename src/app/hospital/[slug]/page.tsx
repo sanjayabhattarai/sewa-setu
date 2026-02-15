@@ -1,9 +1,10 @@
 // src/app/hospital/[slug]/page.tsx
 
-import { ArrowLeft, MapPin, Star, Building2, Stethoscope, Beaker, Phone, Share2 } from "lucide-react";
+import { ArrowLeft, MapPin, Star, Building2, Stethoscope, Beaker } from "lucide-react";
 import Link from "next/link";
 import type { ApiHospitalDetails } from "@/types/hospital";
 import { HospitalTabs } from "./HospitalTabs";
+import { HospitalCTA } from "./hospital-cta";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -101,8 +102,11 @@ export default async function HospitalDetails({ params }: PageProps) {
             </div>
           </div>
 
+          {/* Quick Contact CTA */}
+          {hospital.phone && <HospitalCTA hospital={hospital} hospitalPhone={hospital.phone} />}
+
           {/* Body */}
-          <div className="p-6 sm:p-8">
+          <div className="p-6 sm:p-8" id="services-section">
             <HospitalTabs hospital={hospital} packages={packages} />
           </div>
         </div>
