@@ -188,7 +188,7 @@ export function HospitalTabs({ hospital, packages }: Props) {
 
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {hospital.doctors.slice(0, 2).map((d) => (
-                <DoctorCard key={d.id} doctor={d} />
+                <DoctorCard key={d.id} doctor={d} slots={hospital.availability} />
                 ))}
               </div>
             </div>
@@ -292,6 +292,7 @@ export function HospitalTabs({ hospital, packages }: Props) {
                         <DoctorCard
                           key={d.id}
                           doctor={d}
+                          slots={hospital.availability}
                         />
                       ))}
                     </div>

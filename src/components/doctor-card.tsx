@@ -1,15 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AvailabilityModal } from "@/components/availability-modal";
 import { CheckCircle2, Video, Hospital as HospitalIcon } from "lucide-react";
-import type { ApiDoctor } from "@/types/hospital";
+import type { ApiDoctor, ApiAvailabilitySlot } from "@/types/hospital";
 
 type Props = {
   doctor: ApiDoctor;
+  slots?: ApiAvailabilitySlot[];
 };
 
-export function DoctorCard({ doctor }: Props) {
+export function DoctorCard({ doctor, slots = [] }: Props) {
+  const [showAvailability, setShowAvailability] = useState(false);
+
+  // Filter slots for this doctor
+  const doctorSlots = slots.filter((s) => s.doctorId === doctor.id);
   const primary =
     doctor.specialties.find((s) => s.isPrimary) ?? doctor.specialties[0];
 
@@ -79,14 +86,24 @@ export function DoctorCard({ doctor }: Props) {
           )}
 
           <div className="mt-4 flex items-center justify-end gap-2">
-            <a href="#availability">
-              <Button size="sm" variant="outline" className="rounded-full">
-                Check Availability
-              </Button>
-            </a>
+            <Button 
+              onClick={() => setShowAvailability(true)} 
+              size="sm" 
+              variant="outline" 
+              className="rounded-full"
+            >
+              Check Availability
+            </Button>
           </div>
         </div>
       </div>
+
+      <AvailabilityModal
+        doctor={doctor}
+        slots={doctorSlots}
+        isOpen={showAvailability}
+        onClose={() => setShowAvailability(false)}
+      />
     </div>
   );
 }
