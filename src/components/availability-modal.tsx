@@ -16,6 +16,9 @@ type Props = {
 };
 
 export function AvailabilityModal({ doctor, slots, isOpen, onClose }: Props) {
+  const [selectedSlot, setSelectedSlot] = useState<ApiAvailabilitySlot | null>(null);
+  const [showBooking, setShowBooking] = useState(false);
+
   if (!isOpen) return null;
 
   // Get all unique time slots across all days
@@ -31,6 +34,22 @@ export function AvailabilityModal({ doctor, slots, isOpen, onClose }: Props) {
     const arr = byDay.get(s.dayOfWeek) ?? [];
     arr.push(s);
     byDay.set(s.dayOfWeek, arr);
+  }
+
+  // If a slot is selected and booking is confirmed, show booking form
+  if (showBooking && selectedSlot) {
+    return (
+      <DoctorBookingForm
+        doctor={doctor}
+        slot={selectedSlot}
+        onClose={() => {
+          setShowBooking(false);
+          setSelectedSlot(null);
+          onClose();
+        }}
+        onBack={() => setShowBooking(false)}
+      />
+    );
   }
 
   return (
@@ -114,13 +133,19 @@ export function AvailabilityModal({ doctor, slots, isOpen, onClose }: Props) {
                         >
                           {slotsAtTime.map((slot) => {
                             const isOnline = slot.mode === "ONLINE";
+                            const isSelected = selectedSlot?.id === slot.id;
                             return (
-                              <div
+                              <button
                                 key={slot.id}
-                                className={`rounded-lg border-2 p-2 text-xs space-y-0.5 cursor-pointer hover:shadow-md transition-shadow ${
-                                  isOnline
-                                    ? "border-blue-200 bg-blue-50 hover:bg-blue-100"
-                                    : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
+                                onClick={() => setSelectedSlot(slot)}
+                                className={`rounded-lg border-2 p-2 text-xs space-y-0.5 cursor-pointer hover:shadow-md transition-all w-full text-left ${
+                                  isSelected
+                                    ? isOnline
+                                      ? "border-blue-500 bg-blue-100 ring-2 ring-blue-300"
+                                      : "border-emerald-500 bg-emerald-100 ring-2 ring-emerald-300"
+                                    : isOnline
+                                      ? "border-blue-200 bg-blue-50 hover:bg-blue-100"
+                                      : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
                                 }`}
                               >
                                 <Badge
@@ -138,7 +163,7 @@ export function AvailabilityModal({ doctor, slots, isOpen, onClose }: Props) {
                                 <div className={`text-xs ${isOnline ? "text-blue-700" : "text-emerald-700"}`}>
                                   {slot.slotDurationMinutes}m
                                 </div>
-                              </div>
+                              </button>
                             );
                           })}
                         </div>
@@ -156,10 +181,192 @@ export function AvailabilityModal({ doctor, slots, isOpen, onClose }: Props) {
           <Button onClick={onClose} size="sm" variant="outline" className="rounded-full">
             Close
           </Button>
-          <Button size="sm" className="rounded-full">
+          <Button 
+            onClick={() => setShowBooking(true)} 
+            size="sm" 
+            className="rounded-full"
+            disabled={!selectedSlot}
+          >
             Book Appointment
           </Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function DoctorBookingForm({
+  doctor,
+  slot,
+  onClose,
+  onBack,
+}: {
+  doctor: ApiDoctor;
+  slot: ApiAvailabilitySlot;
+  onClose: () => void;
+  onBack: () => void;
+}) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    patientName: "",
+    patientAge: "",
+    patientPhone: "",
+    buyerEmail: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Call checkout API adapted for doctor booking
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          doctorId: doctor.id,
+          patientName: formData.patientName,
+          patientAge: formData.patientAge,
+          patientPhone: formData.patientPhone,
+          buyerEmail: formData.buyerEmail,
+          consultationMode: slot.mode,
+          slotTime: `${slot.startTime}-${slot.endTime}`,
+          bookingDate: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Booking failed to initialize.");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+      setIsLoading(false);
+    }
+  };
+
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayName = DAYS[slot.dayOfWeek];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Confirm Booking</h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Consultation with {doctor.fullName}
+            </p>
+          </div>
+          <button onClick={onClose} className="rounded-full p-2 hover:bg-slate-100 transition-colors">
+            <X className="h-5 w-5 text-slate-500" />
+          </button>
+        </div>
+
+        {/* Booking Summary */}
+        <div className="mb-6 rounded-xl bg-blue-50 p-4 border border-blue-100 space-y-2">
+          <div className="flex justify-between items-start">
+            <span className="text-slate-700 font-medium">Doctor</span>
+            <span className="text-slate-900 font-semibold">{doctor.fullName}</span>
+          </div>
+          <div className="flex justify-between items-start">
+            <span className="text-slate-700 font-medium">Mode</span>
+            <span className="text-slate-900 font-semibold">{slot.mode === "ONLINE" ? "Online" : "Physical"}</span>
+          </div>
+          <div className="flex justify-between items-start">
+            <span className="text-slate-700 font-medium">Time</span>
+            <span className="text-slate-900 font-semibold">{dayName}, {slot.startTime}–{slot.endTime}</span>
+          </div>
+          <div className="h-px bg-blue-200 my-2" />
+          <div className="flex justify-between items-center">
+            <span className="text-blue-700 font-medium">Total to pay</span>
+            <span className="text-2xl font-bold text-blue-700">${doctor.feeMin}</span>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Patient Name</label>
+            <input 
+              name="patientName" 
+              required 
+              placeholder="Full Name" 
+              className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+              onChange={handleInputChange} 
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Age</label>
+              <input 
+                name="patientAge" 
+                required 
+                type="number" 
+                placeholder="30" 
+                className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Phone</label>
+              <input 
+                name="patientPhone" 
+                required 
+                placeholder="98XXXXXXXX" 
+                className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Your Email (For Receipt)</label>
+            <input 
+              name="buyerEmail" 
+              required 
+              type="email" 
+              placeholder="you@example.com" 
+              className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="flex gap-3 mt-6">
+            <Button 
+              type="button"
+              onClick={onBack}
+              size="sm" 
+              variant="outline" 
+              className="flex-1 rounded-lg"
+            >
+              Back
+            </Button>
+            <Button 
+              type="submit" 
+              className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+              disabled={isLoading}
+            >
+              {isLoading ? "Processing..." : "Pay Securely"}
+            </Button>
+          </div>
+          
+          <p className="text-xs text-center text-slate-400">
+            Payments are processed securely by Stripe.
+          </p>
+        </form>
       </div>
     </div>
   );
