@@ -137,7 +137,6 @@ sewa-setu/
 ## 🌿 Branch Workflow
 
 - `main` - Production branch
-- `sanjaya` - Development branch for Sanjaya
 - Create feature branches from `main` for new features
 
 ## 🤝 Contributing
