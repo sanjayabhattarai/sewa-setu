@@ -1,36 +1,198 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sewa Setu
 
-## Getting Started
+A Next.js-based healthcare booking platform that allows users to search for hospitals, book appointments, and manage medical services.
 
-First, run the development server:
+## 🚀 Features
+
+- Hospital search and filtering
+- AI-powered assistance for booking queries
+- Package-based medical service booking
+- Stripe payment integration
+- Location-based hospital search
+- Real-time booking management
+- Responsive design with modern UI
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed on your machine:
+
+- **Node.js** (v18 or higher) - [Download here](https://nodejs.org/)
+- **npm** or **yarn** or **pnpm** (comes with Node.js)
+- **Git** - [Download here](https://git-scm.com/)
+- A code editor (VS Code recommended)
+
+## 🛠️ Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/sanjayabhattarai/sewa-setu.git
+cd sewa-setu
+```
+
+### 2. Install Dependencies
+
+Choose one of the following package managers:
+
+```bash
+# Using npm
+npm install
+
+# OR using yarn
+yarn install
+
+# OR using pnpm
+pnpm install
+```
+
+### 3. Environment Variables Setup
+
+Create a `.env` or `.env.local` file in the root directory and add the following environment variables:
+
+```env
+# Database
+DATABASE_URL="your_database_connection_string"
+
+# Stripe (Payment Gateway)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="your_stripe_publishable_key"
+STRIPE_SECRET_KEY="your_stripe_secret_key"
+STRIPE_WEBHOOK_SECRET="your_stripe_webhook_secret"
+
+# Google AI (for AI assistant)
+GOOGLE_AI_API_KEY="your_google_ai_api_key"
+
+# Application URLs
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+```
+
+> ⚠️ **Note:** Contact the project admin to get the required API keys and credentials.
+
+### 4. Database Setup
+
+Initialize and set up the database using Prisma:
+
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Push database schema
+npx prisma db push
+
+# (Optional) Seed the database
+npx prisma db seed
+```
+
+### 5. Run the Development Server
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
+# OR
 yarn dev
-# or
+# OR
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+sewa-setu/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── api/          # API routes
+│   │   ├── book/         # Booking pages
+│   │   ├── hospital/     # Hospital detail pages
+│   │   └── search/       # Search pages
+│   ├── components/       # Reusable React components
+│   ├── data/            # Static data files
+│   └── lib/             # Utility functions and libraries
+├── prisma/              # Database schema and migrations
+├── public/              # Static assets
+└── package.json         # Project dependencies
+```
 
-## Learn More
+## 🔧 Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server at http://localhost:3000 |
+| `npm run build` | Build the application for production |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run ESLint to check code quality |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** Radix UI, Lucide Icons
+- **Database ORM:** Prisma
+- **Payment:** Stripe
+- **AI Integration:** Google Generative AI
+- **Animations:** Framer Motion
 
-## Deploy on Vercel
+## 🌿 Branch Workflow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `main` - Production branch
+- Create feature branches from `main` for new features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+1. Create a new branch for your feature: `git checkout -b feature/your-feature-name`
+2. Make your changes and commit: `git commit -m "Add your message"`
+3. Push to your branch: `git push origin feature/your-feature-name`
+4. Create a Pull Request
+
+## 📝 Environment Variables Reference
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | Database connection string | Yes |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe public key | Yes |
+| `STRIPE_SECRET_KEY` | Stripe secret key | Yes |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Yes |
+| `GOOGLE_AI_API_KEY` | Google AI API key | Yes |
+| `NEXT_PUBLIC_BASE_URL` | Application base URL | Yes |
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**1. Port 3000 already in use**
+```bash
+# Kill the process using port 3000
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+
+# macOS/Linux
+lsof -ti:3000 | xargs kill -9
+```
+
+**2. Prisma Client issues**
+```bash
+# Regenerate Prisma Client
+npx prisma generate
+```
+
+**3. Module not found errors**
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+## 📞 Support
+
+For any questions or issues, please contact the project maintainer or create an issue in the repository.
+
+## 📄 License
+
+This project is private and confidential.
+
+---
+
+**Happy Coding! 🚀**
