@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   try {
     // TODO: Add rate limiting here (e.g., @upstash/ratelimit) to prevent abuse
-    // Recommended: 5 checkout attempts per 10 minutes per IP
     
     // Check for required environment variable
     if (!process.env.STRIPE_SECRET_KEY) {
