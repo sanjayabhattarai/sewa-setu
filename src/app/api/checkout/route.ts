@@ -5,6 +5,9 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
+    // TODO: Add rate limiting here (e.g., @upstash/ratelimit) to prevent abuse
+    // Recommended: 5 checkout attempts per 10 minutes per IP
+    
     // Check for required environment variable
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error("Missing STRIPE_SECRET_KEY environment variable");
@@ -81,6 +84,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Package ID is required" }, { status: 400 });
     }
 
+    // SANITIZE INPUTS: Remove any HTML/script tags and excess whitespace
+    const sanitizedName = trimmedName.replace(/<[^>]*>/g, '').trim();
+    const sanitizedEmail = buyerEmail.toLowerCase().trim();
+    const sanitizedPhone = cleanPhone;
+
     // 1. SERVER-SIDE LOOKUP (The Security Part)
     const selectedPackage = MEDICAL_PACKAGES[packageId as PackageId];
 
@@ -95,8 +103,11 @@ export async function POST(req: Request) {
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
 
+    // SESSION EXPIRY: Prevent stale checkout sessions (Security Enhancement)
+    const expiresAt = Math.floor(Date.now() / 1000) + (30 * 60); // 30 minutes from now
+
     const session = await stripe.checkout.sessions.create({
-      customer_email: buyerEmail,
+      customer_email: sanitizedEmail,
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
@@ -107,23 +118,40 @@ export async function POST(req: Request) {
         quantity: 1,
       }],
       mode: "payment",
+      expires_at: expiresAt, // Auto-expire after 30 minutes
       success_url: `${baseUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/`,
       metadata: {
         hospitalName: selectedPackage.hospital,
         packageName: selectedPackage.name,
-        patientName,
+        patientName: sanitizedName,
         patientAge: String(patientAge),
-        patientPhone: String(patientPhone),
+        patientPhone: sanitizedPhone,
         bookingDate: String(bookingDate || new Date().toISOString()),
         price: String(validatedPrice),
-        buyerEmail,
+        buyerEmail: sanitizedEmail,
       },
     });
 
+    // SECURITY LOGGING: Track successful checkout attempts
+    console.log(`✅ Checkout session created: ${session.id} | Email: ${sanitizedEmail} | Package: ${packageId} | Price: €${validatedPrice}`);
+
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    console.error("Checkout error:", error);
-    return NextResponse.json({ error: error.message || "Unknown error" }, { status: 500 });
+    // SECURITY LOGGING: Track failed checkout attempts for monitoring
+    const errorDetails = {
+      message: error.message,
+      type: error.type || 'unknown',
+      timestamp: new Date().toISOString(),
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    };
+    console.error("❌ Checkout error:", errorDetails);
+    
+    // Don't expose internal errors to client
+    const clientMessage = error.type === 'StripeInvalidRequestError' 
+      ? 'Invalid payment request' 
+      : 'Payment processing error. Please try again.';
+    
+    return NextResponse.json({ error: clientMessage }, { status: 500 });
   }
 }
