@@ -17,8 +17,35 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
-const hospitalImage = (slug: string, i: number) =>
-  `https://picsum.photos/seed/${slug}-h${i}/1200/800`;
+const hospitalImage = (slug: string, i: number) => {
+  // Cloudinary images - permanently updated
+  const hospitalImageMap: Record<string, string> = {
+    "kathmandu-city-hospital":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355392/Kathmadnu_oyelvz.png",
+    "baglung-community-clinic":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355389/Baglung_obkxjc.png",
+    "rupandehi-diagnostic-lab":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355393/Rupandehi_yxgr4o.png",
+    "pokhara-lakeside-hospital":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355423/Pokhara_umszuj.png",
+    "bharatpur-cancer-care-center":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355383/Bharatpur_hlmkmo.png",
+    "lalitpur-women-child-clinic":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355388/Lalitpur_gmugsk.png",
+    "biratnagar-heart-neuro-hospital":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355388/Biratnagar_hwiqyb.png",
+    "nepalgunj-family-clinic":
+      "https://res.cloudinary.com/dwzw6nsyg/image/upload/v1771355421/Nepalgunj_lfv7tf.png",
+  };
+  
+  // Return primary image on first call, fallback to mapped URL
+  if (i === 1) {
+    return hospitalImageMap[slug] || `https://picsum.photos/seed/${slug}-h${i}/1200/800`;
+  }
+  
+  // Gallery images use placeholder
+  return `https://picsum.photos/seed/${slug}-h${i}/1200/800`;
+};
 
 const doctorImage = (slug: string, i: number) =>
   `https://picsum.photos/seed/${slug}-d${i}/600/600`;
