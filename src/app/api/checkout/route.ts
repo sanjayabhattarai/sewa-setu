@@ -48,7 +48,6 @@ export async function POST(req: Request) {
       success_url: `${baseUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/`,
       metadata: {
-        hospitalName: selectedPackage.hospital,
         packageName: selectedPackage.name,
         patientName,
         patientAge: String(patientAge),

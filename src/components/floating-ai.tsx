@@ -1,25 +1,47 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, X, Send, MessageCircle, Stethoscope } from "lucide-react";
+import { X, Send, MessageCircle, Stethoscope, Loader2, MapPin } from "lucide-react";
 
 type Message = {
   role: "user" | "bot";
   content: string;
+  type?: "chat" | "booking_intent" | "symptoms_analyzed" | "confirmation";
+  hospitals?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    type: string;
+    location: string;
+    minPrice: number;
+    services: string[];
+  }>;
 };
+
+type BookingStep = "chat" | "symptoms" | "hospital_selection" | "confirmation";
 
 export function FloatingAI() {
   const [isOpen, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [bookingStep, setBookingStep] = useState<BookingStep>("chat");
+  const [selectedHospital, setSelectedHospital] = useState<any>(null);
+  const [problemDescription, setProblemDescription] = useState("");
+  
+  const [bookingData, setBookingData] = useState({
+    patientName: "",
+    patientAge: "",
+    patientPhone: "",
+    buyerEmail: "",
+  });
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, bookingStep]);
 
   const askAI = async () => {
     if (!prompt.trim()) return;
@@ -30,26 +52,150 @@ export function FloatingAI() {
     setIsLoading(true);
 
     try {
+      // TESTING: Use mock endpoint to avoid rate limits
+      // Change "/api/ai" to "/api/ai" when Gemini is working
       const res = await fetch("/api/ai", {
+        
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: userMsg }),
+        body: JSON.stringify({ prompt: userMsg, action: "chat" }),
       });
 
       const data = await res.json();
 
-      if (data.text) {
-        setMessages((prev) => [...prev, { role: "bot", content: data.text }]);
-      } else {
+      if (data.type === "booking_intent" && data.nextStep === "collect_symptoms") {
+        setBookingStep("symptoms");
         setMessages((prev) => [
           ...prev,
-          { role: "bot", content: "I'm sorry, I couldn't get a response. Please try again." },
+          { role: "bot", content: data.text, type: "booking_intent" },
+        ]);
+      } else {
+        setMessages((prev) => [...prev, { role: "bot", content: data.text, type: "chat" }]);
+      }
+    } catch (e) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", content: "Connection error. Please try again." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const analyzeSymptoms = async () => {
+    if (!problemDescription.trim()) return;
+
+    const userMsg = problemDescription;
+    setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
+    setIsLoading(true);
+
+    try {
+      // TESTING: Use mock endpoint
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userMsg, action: "analyze_symptoms" }),
+      });
+
+      const data = await res.json();
+      setProblemDescription("");
+
+      if (data.type === "symptoms_analyzed") {
+        setBookingStep("hospital_selection");
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            content: data.text,
+            type: "symptoms_analyzed",
+            hospitals: data.hospitals,
+          },
         ]);
       }
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "Connection error. Is the server running?" },
+        { role: "bot", content: "Failed to analyze symptoms. Please try again." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const selectHospital = (hospital: any) => {
+    setSelectedHospital(hospital);
+    setBookingStep("confirmation");
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        content: `I'd like to book at ${hospital.name}`,
+      },
+      {
+        role: "bot",
+        content: `Great! I'll help you book at ${hospital.name} in ${hospital.location}. Please provide your details to confirm the booking.`,
+        type: "confirmation",
+      },
+    ]);
+  };
+
+  const submitBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!bookingData.patientName || !bookingData.patientAge || !bookingData.patientPhone || !bookingData.buyerEmail) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // TESTING: Use mock endpoint
+      const res = await fetch("/api/ai", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hospitalId: selectedHospital.id,
+          patientName: bookingData.patientName,
+          patientAge: bookingData.patientAge,
+          patientPhone: bookingData.patientPhone,
+          buyerEmail: bookingData.buyerEmail,
+          problemDescription,
+          hospitalServiceId: null,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            content: `✓ Booking confirmed! Your appointment at ${data.booking.hospitalName} has been requested. Booking ID: ${data.booking.id}. Our team will contact you shortly at ${bookingData.patientPhone}.`,
+          },
+        ]);
+        
+        // Reset
+        setBookingStep("chat");
+        setSelectedHospital(null);
+        setProblemDescription("");
+        setBookingData({
+          patientName: "",
+          patientAge: "",
+          patientPhone: "",
+          buyerEmail: "",
+        });
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "bot", content: `Booking failed: ${data.error}` },
+        ]);
+      }
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", content: "Failed to create booking. Please try again." },
       ]);
     } finally {
       setIsLoading(false);
@@ -518,13 +664,200 @@ export function FloatingAI() {
                     <div className="ss-micro-avatar">
                       <Stethoscope size={12} color="white" strokeWidth={2} />
                     </div>
-                    <div className="ss-bubble-bot">{msg.content}</div>
+                    <div className="ss-bubble-bot">
+                      {msg.content}
+                    </div>
+                    
+                    {/* Hospital Selection */}
+                    {msg.type === "symptoms_analyzed" && msg.hospitals && (
+                      <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+                        {msg.hospitals.map((h) => (
+                          <div
+                            key={h.id}
+                            onClick={() => selectHospital(h)}
+                            style={{
+                              background: "white",
+                              border: "1px solid #d0f5ef",
+                              borderRadius: "8px",
+                              padding: "10px",
+                              cursor: "pointer",
+                              transition: "all 0.2s",
+                            }}
+                            onMouseEnter={(e) => {
+                              (e.currentTarget as HTMLElement).style.borderColor = "#0f9580";
+                              (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(15, 149, 128, 0.2)";
+                            }}
+                            onMouseLeave={(e) => {
+                              (e.currentTarget as HTMLElement).style.borderColor = "#d0f5ef";
+                              (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                            }}
+                          >
+                            <div style={{ fontSize: "13px", fontWeight: "600", color: "#1a2e2b" }}>
+                              {h.name}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "#7a9a95", display: "flex", alignItems: "center", gap: "4px", marginTop: "4px" }}>
+                              <MapPin size={12} />
+                              {h.location}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "#0f9580", marginTop: "4px", fontWeight: "500" }}>
+                              Starting from ₹{h.minPrice}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )
               )}
 
+              {/* Symptom Input */}
+              {bookingStep === "symptoms" && (
+                <div className="ss-row-bot" style={{ width: "100%" }}>
+                  <div style={{ width: "100%", background: "#f0faf8", borderRadius: "12px", padding: "10px", border: "1px solid rgba(14, 149, 128, 0.2)" }}>
+                    <textarea
+                      placeholder="Describe your health concern in detail..."
+                      value={problemDescription}
+                      onChange={(e) => setProblemDescription(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 10px",
+                        fontSize: "12px",
+                        border: "1px solid #d0f5ef",
+                        borderRadius: "6px",
+                        fontFamily: "Plus Jakarta Sans, sans-serif",
+                        outline: "none",
+                        minHeight: "60px",
+                        resize: "vertical",
+                      }}
+                    />
+                    <button
+                      onClick={analyzeSymptoms}
+                      disabled={isLoading || !problemDescription.trim()}
+                      style={{
+                        marginTop: "8px",
+                        width: "100%",
+                        padding: "8px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        background: isLoading || !problemDescription.trim() ? "#ccc" : "linear-gradient(145deg, #0d6457, #0f9580)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: isLoading || !problemDescription.trim() ? "not-allowed" : "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      {isLoading && <Loader2 size={12} className="animate-spin" />}
+                      Find Hospitals & Services
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Booking Confirmation Form */}
+              {bookingStep === "confirmation" && selectedHospital && (
+                <div className="ss-row-bot" style={{ width: "100%" }}>
+                  <div style={{ width: "100%", background: "#f0faf8", borderRadius: "12px", padding: "12px", border: "1px solid rgba(14, 149, 128, 0.2)" }}>
+                    <h4 style={{ fontSize: "12px", fontWeight: "600", color: "#0f3d38", marginBottom: "10px" }}>
+                      Booking at {selectedHospital.name}
+                    </h4>
+                    <form onSubmit={submitBooking} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <input
+                        type="text"
+                        placeholder="Full Name"
+                        value={bookingData.patientName}
+                        onChange={(e) => setBookingData({ ...bookingData, patientName: e.target.value })}
+                        style={{
+                          padding: "8px 10px",
+                          fontSize: "12px",
+                          border: "1px solid #d0f5ef",
+                          borderRadius: "6px",
+                          fontFamily: "Plus Jakarta Sans, sans-serif",
+                          outline: "none",
+                          boxSizing: "border-box",
+                        }}
+                        required
+                      />
+                      <input
+                        type="number"
+                        placeholder="Age"
+                        value={bookingData.patientAge}
+                        onChange={(e) => setBookingData({ ...bookingData, patientAge: e.target.value })}
+                        style={{
+                          padding: "8px 10px",
+                          fontSize: "12px",
+                          border: "1px solid #d0f5ef",
+                          borderRadius: "6px",
+                          fontFamily: "Plus Jakarta Sans, sans-serif",
+                          outline: "none",
+                          boxSizing: "border-box",
+                        }}
+                        required
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Phone"
+                        value={bookingData.patientPhone}
+                        onChange={(e) => setBookingData({ ...bookingData, patientPhone: e.target.value })}
+                        style={{
+                          padding: "8px 10px",
+                          fontSize: "12px",
+                          border: "1px solid #d0f5ef",
+                          borderRadius: "6px",
+                          fontFamily: "Plus Jakarta Sans, sans-serif",
+                          outline: "none",
+                          boxSizing: "border-box",
+                        }}
+                        required
+                      />
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        value={bookingData.buyerEmail}
+                        onChange={(e) => setBookingData({ ...bookingData, buyerEmail: e.target.value })}
+                        style={{
+                          padding: "8px 10px",
+                          fontSize: "12px",
+                          border: "1px solid #d0f5ef",
+                          borderRadius: "6px",
+                          fontFamily: "Plus Jakarta Sans, sans-serif",
+                          outline: "none",
+                          boxSizing: "border-box",
+                        }}
+                        required
+                      />
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        style={{
+                          padding: "10px",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                          background: isLoading ? "#ccc" : "linear-gradient(145deg, #0d6457, #0f9580)",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "6px",
+                          cursor: isLoading ? "not-allowed" : "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "6px",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {isLoading && <Loader2 size={12} className="animate-spin" />}
+                        Confirm Booking
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              )}
+
               {/* Typing indicator */}
-              {isLoading && (
+              {isLoading && bookingStep !== "confirmation" && (
                 <div className="ss-row-bot">
                   <div className="ss-micro-avatar">
                     <Stethoscope size={12} color="white" strokeWidth={2} />
@@ -540,16 +873,26 @@ export function FloatingAI() {
 
             {/* Input */}
             <div className="ss-input-wrap">
-              <input
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && askAI()}
-                placeholder="Type your concern..."
-                className="ss-input-field"
-              />
-              <button className="ss-send" onClick={askAI} disabled={isLoading} title="Send">
-                <Send size={16} />
-              </button>
+              {bookingStep === "chat" ? (
+                <>
+                  <input
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && askAI()}
+                    placeholder="Type your concern..."
+                    className="ss-input-field"
+                  />
+                  <button className="ss-send" onClick={askAI} disabled={isLoading} title="Send">
+                    <Send size={16} />
+                  </button>
+                </>
+              ) : (
+                <div style={{ fontSize: "12px", color: "#7a9a95", textAlign: "center", width: "100%", padding: "8px" }}>
+                  {bookingStep === "symptoms" && "Describe your symptoms above ↑"}
+                  {bookingStep === "hospital_selection" && "Select a hospital above ↑"}
+                  {bookingStep === "confirmation" && "Fill in your details above ↑"}
+                </div>
+              )}
             </div>
           </div>
         )}
