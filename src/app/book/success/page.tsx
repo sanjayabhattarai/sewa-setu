@@ -109,7 +109,7 @@ function SuccessContent() {
         {/* Status Badge */}
         <div className="bg-green-50 border border-green-100 rounded-lg p-4 flex justify-between items-center">
           <span className="text-green-800 font-bold text-sm">PAYMENT SUCCESSFUL</span>
-          <span className="text-slate-900 font-bold">€{bookingData?.price}</span>
+          <span className="text-slate-900 font-bold">₨ {bookingData?.price}</span>
         </div>
         
         <div className="mt-6 text-center text-xs text-slate-400 print:block hidden">

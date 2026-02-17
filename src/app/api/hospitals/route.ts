@@ -52,7 +52,7 @@ export async function GET(req: Request) {
     area: h.location.area,
     image: h.media[0]?.url || null,
     fromPrice: h.services[0]?.price ?? null,
-    currency: h.services[0]?.currency ?? "EUR",
+    currency: h.services[0]?.currency ?? "NPR",
   }));
 
   return NextResponse.json({ hospitals: payload });

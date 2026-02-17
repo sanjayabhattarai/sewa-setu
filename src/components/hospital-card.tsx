@@ -27,7 +27,7 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
 
       const formatter = new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: hospital.currency || "EUR",
+        currency: hospital.currency || "NPR",
         maximumFractionDigits: 0,
       });
 

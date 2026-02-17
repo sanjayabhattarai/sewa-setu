@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
-          currency: "eur",
+          currency: "npr",
           product_data: { name: selectedPackage.name },
           unit_amount: Math.round(validatedPrice * 100), // Secure price
         },
