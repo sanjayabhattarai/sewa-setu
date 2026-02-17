@@ -29,7 +29,7 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
             <div>
               <h3 className="font-semibold text-slate-900">{pkg.name}</h3>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-xl font-bold text-blue-500">€{pkg.price}</span>
+                <span className="text-xl font-bold text-blue-500">₨ {pkg.price}</span>
                 {pkg.discount && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
                     {pkg.discount}
@@ -62,7 +62,7 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
               onClick={() => setShowModal(true)}
               className="w-full sm:w-auto rounded-lg bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 transition-colors shadow-md shadow-blue-100"
             >
-              Book Now - €{pkg.price}
+              Book Now - ₨ {pkg.price}
             </button>
           </div>
         )}

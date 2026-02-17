@@ -85,7 +85,7 @@ export function BookingModal({ isOpen, onClose, hospitalName, selectedPackage, p
         {/* Summary Card */}
         <div className="mb-6 rounded-xl bg-blue-50 p-4 border border-blue-100 flex justify-between items-center">
           <span className="text-blue-700 font-medium">Total to pay</span>
-          <span className="text-2xl font-bold text-blue-700">€{selectedPackage.price}</span>
+          <span className="text-2xl font-bold text-blue-700">₨ {selectedPackage.price}</span>
         </div>
 
         {/* Form */}

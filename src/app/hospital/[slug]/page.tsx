@@ -55,7 +55,7 @@ export default async function HospitalDetails({ params }: PageProps) {
               alt={hospital.name}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
             <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 text-white">
               {/* Type Badge */}
@@ -82,7 +82,7 @@ export default async function HospitalDetails({ params }: PageProps) {
                 ))}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 tracking-tight text-white drop-shadow-lg" style={{ textShadow: '0 4px 6px rgba(0, 0, 0, 0.7)' }}>
                 {hospital.name}
               </h1>
 
