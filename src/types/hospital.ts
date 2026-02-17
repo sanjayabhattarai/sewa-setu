@@ -12,6 +12,7 @@ export type ApiHospital = {
   image: string | null;
   fromPrice: number | null;
   currency: string;
+  emergencyAvailable?: boolean;
 };
 
 export type ApiDoctor = {
