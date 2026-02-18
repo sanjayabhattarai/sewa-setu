@@ -3,6 +3,9 @@ import { MEDICAL_PACKAGES, PackageId } from "@/lib/packages";
 
 export const dynamic = "force-dynamic";
 
+// Supported payment currency
+const SUPPORTED_CURRENCY = "eur" as const;
+
 export async function POST(req: Request) {
   try {
     // TODO: Add rate limiting here (e.g., @upstash/ratelimit) to prevent abuse
@@ -110,7 +113,7 @@ export async function POST(req: Request) {
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
-          currency: "eur",
+          currency: SUPPORTED_CURRENCY,
           product_data: { name: selectedPackage.name },
           unit_amount: Math.round(validatedPrice * 100), // Secure price
         },
