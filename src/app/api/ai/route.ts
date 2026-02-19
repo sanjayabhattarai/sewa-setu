@@ -8,12 +8,14 @@ import { db } from "@/lib/db";
 ----------------------------------------------------- */
 const API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
 
-if (!API_KEY) {
-  console.error("[AI API] ❌ GOOGLE_GENERATIVE_AI_API_KEY is missing");
-}
+// Initialize the new GoogleGenAI client only if API_KEY exists
+let ai: InstanceType<typeof GoogleGenAI> | null = null;
 
-// Initialize the new GoogleGenAI client
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+if (API_KEY) {
+  ai = new GoogleGenAI({ apiKey: API_KEY });
+} else {
+  console.warn("[AI API] ⚠️ GOOGLE_GENERATIVE_AI_API_KEY is missing - AI features will be unavailable");
+}
 
 /* -----------------------------------------------------
    Helpers
@@ -96,6 +98,13 @@ export async function POST(req: Request) {
 
     /* ---------------- Symptom Analysis ---------------- */
     if (action === "analyze_symptoms") {
+      if (!ai) {
+        return NextResponse.json(
+          { error: "AI service is not available. Please try again later." },
+          { status: 503 }
+        );
+      }
+
       const analysisPrompt = `
 You are a medical assistant for Sewa-Setu, a hospital booking platform in Nepal.
 
@@ -176,6 +185,13 @@ what type of consultation or checkup may be needed.
     }
 
     /* ---------------- Regular Chat ---------------- */
+    if (!ai) {
+      return NextResponse.json(
+        { error: "AI service is not available. Please try again later." },
+        { status: 503 }
+      );
+    }
+
     console.log("[AI API] Calling Gemini for chat...");
     
     const chatResult = await ai.models.generateContent({
@@ -226,6 +242,16 @@ Rules:
     }
 
     /* -------- Safe fallback (no retry storm) -------- */
+    if (!ai) {
+      return NextResponse.json(
+        {
+          text: "⚠️ AI service temporarily unavailable. Please try again later.",
+          type: "error",
+        },
+        { status: 503 }
+      );
+    }
+
     try {
       console.log("[AI API] Trying fallback model...");
       const res = await ai.models.generateContent({
