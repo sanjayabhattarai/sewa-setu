@@ -1,5 +1,4 @@
 // src/app/api/hospitals/[slug]/route.ts
-
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
@@ -28,7 +27,7 @@ export async function GET(
     include: {
       location: true,
       media: { orderBy: { isPrimary: "desc" } },
-      services: { where: { isActive: true }, orderBy: { price: "asc" } },
+      packages: { where: { isActive: true }, orderBy: [{ price: "asc" }] },
       tags: { include: { tag: true } },
 
       doctors: {
@@ -36,9 +35,7 @@ export async function GET(
           doctor: {
             include: {
               media: { orderBy: { isPrimary: "desc" } },
-              specialties: {
-                include: { specialty: true },
-              },
+              specialties: { include: { specialty: true } },
               availability: {
                 where: { isActive: true },
                 orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
@@ -54,7 +51,6 @@ export async function GET(
     return NextResponse.json({ error: "Hospital not found" }, { status: 404 });
   }
 
-  // Flatten doctors from DoctorHospital join
   const doctors = hospital.doctors.map((dh) => {
     const d = dh.doctor;
 
@@ -65,30 +61,27 @@ export async function GET(
       isPrimary: ds.isPrimary,
     }));
 
-    const image =
-      d.media.find((m) => m.isPrimary)?.url ?? d.media[0]?.url ?? null;
+    const image = d.media.find((m) => m.isPrimary)?.url ?? d.media[0]?.url ?? null;
 
     return {
       id: d.id,
       fullName: d.fullName,
       gender: d.gender ?? null,
-      experienceYears: d.experienceYears,
+      experienceYears: d.experienceYears ?? 0,
       education: d.education ?? null,
       bio: d.bio ?? null,
       languages: safeStringArray(d.languages),
       consultationModes: safeModeArray(d.consultationModes),
       licenseNumber: d.licenseNumber ?? null,
-      feeMin: d.feeMin,
-      feeMax: d.feeMax,
-      currency: d.currency,
+      feeMin: d.feeMin ?? 0,
+      feeMax: d.feeMax ?? 0,
+      currency: d.currency ?? "NPR",
       verified: d.verified,
       image,
       specialties,
     };
   });
 
-  // Availability: keep only slots relevant to this hospital (hospitalId matches OR null)
-  // (online slots may have hospitalId null, depending on how you seed)
   const availability = hospital.doctors
     .flatMap((dh) => dh.doctor.availability)
     .filter((s) => s.isActive)
@@ -104,6 +97,17 @@ export async function GET(
       slotDurationMinutes: s.slotDurationMinutes,
       isActive: s.isActive,
     }));
+
+  // IMPORTANT: we keep "services" key so UI doesn't break,
+  // but these are mapped from HospitalPackage.
+  const services = hospital.packages.map((p) => ({
+    id: p.id,
+    name: p.title,
+    price: p.price ?? 0,
+    currency: p.currency ?? "NPR",
+    description: p.description ?? "",
+    features: p.description ? [p.description] : [],
+  }));
 
   const payload = {
     id: hospital.id,
@@ -132,28 +136,19 @@ export async function GET(
       lng: hospital.location.lng ?? null,
     },
 
-    image:
-      hospital.media.find((m) => m.isPrimary)?.url ?? hospital.media[0]?.url ?? null,
+    image: hospital.media.find((m) => m.isPrimary)?.url ?? hospital.media[0]?.url ?? null,
     media: hospital.media.map((m) => ({
       url: m.url,
       altText: m.altText ?? null,
       isPrimary: m.isPrimary,
     })),
 
-    rating: 4.8, // TODO later
-    reviewCount: 120, // TODO later
+    rating: 4.8,
+    reviewCount: 120,
 
     tags: hospital.tags.map((t) => t.tag.name),
 
-    services: hospital.services.map((s) => ({
-      id: s.id,
-      name: s.title,
-      price: s.price,
-      currency: s.currency,
-      description: s.description ?? "",
-      features: s.description ? [s.description] : [],
-    })),
-
+    services,
     doctors,
     availability,
   };
