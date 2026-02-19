@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AvailabilityModal } from "@/components/availability-modal";
@@ -10,15 +10,35 @@ import type { ApiDoctor, ApiAvailabilitySlot } from "@/types/hospital";
 type Props = {
   doctor: ApiDoctor;
   slots?: ApiAvailabilitySlot[];
+  onBook: () => void;
 };
 
-export function DoctorCard({ doctor, slots = [] }: Props) {
+export function DoctorCard({ doctor, slots = [], onBook }: Props) {
   const [showAvailability, setShowAvailability] = useState(false);
 
-  // Filter slots for this doctor
-  const doctorSlots = slots.filter((s) => s.doctorId === doctor.id);
+  // ✅ Filter slots for this doctor (and only active)
+  const doctorSlots = useMemo(
+    () => slots.filter((s) => s.doctorId === doctor.id && s.isActive),
+    [slots, doctor.id]
+  );
+
   const primary =
     doctor.specialties.find((s) => s.isPrimary) ?? doctor.specialties[0];
+
+  // ✅ Safe experience text (prevents "null yrs exp")
+  const expText =
+    doctor.experienceYears != null ? `${doctor.experienceYears} yrs exp` : "Exp: —";
+
+  // ✅ Safe specialty text
+  const specialtyText = primary?.name ?? "Doctor";
+
+  // ✅ Safe fee text
+  const feeText =
+    doctor.feeMin != null
+      ? `${doctor.currency ?? ""} ${doctor.feeMin}${
+          doctor.feeMax != null ? `–${doctor.feeMax}` : ""
+        }`
+      : "—";
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
@@ -44,15 +64,13 @@ export function DoctorCard({ doctor, slots = [] }: Props) {
               </div>
 
               <p className="text-sm text-slate-500 mt-0.5">
-                {primary ? primary.name : "Doctor"} • {doctor.experienceYears} yrs exp
+                {specialtyText} • {expText}
               </p>
             </div>
 
             <div className="text-right shrink-0">
               <p className="text-sm text-slate-500">Fee</p>
-              <p className="font-semibold text-slate-900">
-                {doctor.currency} {doctor.feeMin}–{doctor.feeMax}
-              </p>
+              <p className="font-semibold text-slate-900">{feeText}</p>
             </div>
           </div>
 
@@ -80,17 +98,17 @@ export function DoctorCard({ doctor, slots = [] }: Props) {
           </div>
 
           {doctor.bio && (
-            <p className="text-sm text-slate-600 mt-3 line-clamp-2">
-              {doctor.bio}
-            </p>
+            <p className="text-sm text-slate-600 mt-3 line-clamp-2">{doctor.bio}</p>
           )}
 
           <div className="mt-4 flex items-center justify-end gap-2">
-            <Button 
-              onClick={() => setShowAvailability(true)} 
-              size="sm" 
-              variant="outline" 
+            <Button
+              onClick={() => setShowAvailability(true)}
+              size="sm"
+              variant="outline"
               className="rounded-full"
+              disabled={doctorSlots.length === 0}
+              title={doctorSlots.length === 0 ? "No availability available" : "Check Availability"}
             >
               Check Availability
             </Button>
@@ -103,6 +121,10 @@ export function DoctorCard({ doctor, slots = [] }: Props) {
         slots={doctorSlots}
         isOpen={showAvailability}
         onClose={() => setShowAvailability(false)}
+        onBook={ () => {
+          setShowAvailability(false);
+          onBook();
+        }}
       />
     </div>
   );

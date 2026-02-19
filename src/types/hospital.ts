@@ -19,15 +19,15 @@ export type ApiDoctor = {
   id: string;
   fullName: string;
   gender?: string | null;
-  experienceYears: number;
+  experienceYears: number | null;
   education?: string | null;
   bio?: string | null;
   languages: string[];
   consultationModes: ("ONLINE" | "PHYSICAL")[];
   licenseNumber?: string | null;
-  feeMin: number;
-  feeMax: number;
-  currency: string;
+  feeMin: number | null;
+  feeMax: number | null;
+  currency: string | null;
   verified: boolean;
   image: string | null;
 
@@ -49,52 +49,4 @@ export type ApiAvailabilitySlot = {
   endTime: string;   // "13:00"
   slotDurationMinutes: number;
   isActive: boolean;
-};
-
-export type ApiHospitalDetails = {
-  id: string;
-  slug: string;
-  name: string;
-  type: "HOSPITAL" | "CLINIC" | "LAB";
-
-  verified: boolean;
-  emergencyAvailable: boolean;
-  openingHours: string | null;
-
-  phone: string | null;
-  email: string | null;
-  website: string | null;
-
-  servicesSummary: string | null;
-
-  location: {
-    country: string;
-    district: string;
-    city: string;
-    area: string | null;
-    addressLine: string | null;
-    postalCode: string | null;
-    lat: number | null;
-    lng: number | null;
-  };
-
-  image: string | null;
-  media: { url: string; altText: string | null; isPrimary: boolean }[];
-
-  rating: number;
-  reviewCount: number;
-
-  tags: string[];
-
-  services: {
-    id: string;
-    name: string;
-    price: number;
-    currency: string;
-    description: string;
-    features: string[];
-  }[];
-
-  doctors: ApiDoctor[];
-  availability: ApiAvailabilitySlot[];
 };

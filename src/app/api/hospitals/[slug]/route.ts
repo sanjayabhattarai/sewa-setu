@@ -27,9 +27,32 @@ export async function GET(
     include: {
       location: true,
       media: { orderBy: { isPrimary: "desc" } },
+
+      // Packages (DB)
       packages: { where: { isActive: true }, orderBy: [{ price: "asc" }] },
+
+      // Departments (DB) + DepartmentDoctor join
+      departments: {
+        where: { isActive: true },
+        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        include: {
+          doctors: {
+            where: { isActive: true },
+            orderBy: [{ sortOrder: "asc" }],
+            select: {
+              id: true,
+              doctorId: true,
+              designation: true,
+              education: true,
+              sortOrder: true,
+            },
+          },
+        },
+      },
+
       tags: { include: { tag: true } },
 
+      // Doctors (via DoctorHospital join)
       doctors: {
         include: {
           doctor: {
@@ -51,6 +74,7 @@ export async function GET(
     return NextResponse.json({ error: "Hospital not found" }, { status: 404 });
   }
 
+  // Flatten doctors
   const doctors = hospital.doctors.map((dh) => {
     const d = dh.doctor;
 
@@ -61,27 +85,29 @@ export async function GET(
       isPrimary: ds.isPrimary,
     }));
 
-    const image = d.media.find((m) => m.isPrimary)?.url ?? d.media[0]?.url ?? null;
+    const image =
+      d.media.find((m) => m.isPrimary)?.url ?? d.media[0]?.url ?? null;
 
     return {
       id: d.id,
       fullName: d.fullName,
       gender: d.gender ?? null,
-      experienceYears: d.experienceYears ?? 0,
+      experienceYears: d.experienceYears ?? null,
       education: d.education ?? null,
       bio: d.bio ?? null,
       languages: safeStringArray(d.languages),
       consultationModes: safeModeArray(d.consultationModes),
       licenseNumber: d.licenseNumber ?? null,
-      feeMin: d.feeMin ?? 0,
-      feeMax: d.feeMax ?? 0,
-      currency: d.currency ?? "NPR",
+      feeMin: d.feeMin ?? null,
+      feeMax: d.feeMax ?? null,
+      currency: d.currency ?? null,
       verified: d.verified,
       image,
       specialties,
     };
   });
 
+  // Availability
   const availability = hospital.doctors
     .flatMap((dh) => dh.doctor.availability)
     .filter((s) => s.isActive)
@@ -98,8 +124,7 @@ export async function GET(
       isActive: s.isActive,
     }));
 
-  // IMPORTANT: we keep "services" key so UI doesn't break,
-  // but these are mapped from HospitalPackage.
+  // Keep "services" key so existing UI remains OK (mapped from packages)
   const services = hospital.packages.map((p) => ({
     id: p.id,
     name: p.title,
@@ -107,6 +132,21 @@ export async function GET(
     currency: p.currency ?? "NPR",
     description: p.description ?? "",
     features: p.description ? [p.description] : [],
+  }));
+
+  // Departments payload: only what UI needs right now
+  const departments = hospital.departments.map((d) => ({
+    id: d.id,
+    name: d.name,
+    slug: d.slug,
+    overview: d.overview ?? null,
+    doctorCount: d.doctors.length,
+    doctors: d.doctors.map((x) => ({
+      doctorId: x.doctorId,
+      designation: x.designation ?? null,
+      education: x.education ?? null,
+      sortOrder: x.sortOrder,
+    })),
   }));
 
   const payload = {
@@ -136,7 +176,8 @@ export async function GET(
       lng: hospital.location.lng ?? null,
     },
 
-    image: hospital.media.find((m) => m.isPrimary)?.url ?? hospital.media[0]?.url ?? null,
+    image:
+      hospital.media.find((m) => m.isPrimary)?.url ?? hospital.media[0]?.url ?? null,
     media: hospital.media.map((m) => ({
       url: m.url,
       altText: m.altText ?? null,
@@ -148,7 +189,12 @@ export async function GET(
 
     tags: hospital.tags.map((t) => t.tag.name),
 
+    // legacy key
     services,
+
+    // new keys (DB aligned)
+    departments,
+
     doctors,
     availability,
   };
