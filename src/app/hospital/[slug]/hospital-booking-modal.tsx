@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { ApiHospitalDetails, ApiAvailabilitySlot, ApiDoctor } from "@/types/hospital";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useMemo, useState } from "react";
+import type { ApiAvailabilitySlot, ApiDoctor } from "@/types/hospital";
+import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { Button } from "@/components/ui/button";
 import { X, ChevronRight, ChevronLeft } from "lucide-react";
 
@@ -14,9 +14,10 @@ type Props = {
   hospital: ApiHospitalDetails;
   isOpen: boolean;
   onClose: () => void;
+  preselectedDoctor?: ApiDoctor | null;
 };
 
-export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
+export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoctor }: Props) {
   const [step, setStep] = useState<Step>("details");
   const [formData, setFormData] = useState({
     patientName: "",
@@ -24,25 +25,48 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
     patientPhone: "",
     buyerEmail: "",
   });
+
   const [selectedDoctor, setSelectedDoctor] = useState<ApiDoctor | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<ApiAvailabilitySlot | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // ✅ Clean reset helper (used by close + modal unmount)
+  const resetAll = () => {
+    setStep("details");
+    setFormData({
+      patientName: "",
+      patientAge: "",
+      patientPhone: "",
+      buyerEmail: "",
+    });
+    setSelectedDoctor(null);
+    setSelectedSlot(null);
+    setIsLoading(false);
+  };
+
   // Reset state when modal closes
   useEffect(() => {
-    if (!isOpen) {
-      setStep("details");
-      setFormData({
-        patientName: "",
-        patientAge: "",
-        patientPhone: "",
-        buyerEmail: "",
-      });
-      setSelectedDoctor(null);
-      setSelectedSlot(null);
-      setIsLoading(false);
-    }
+    if (!isOpen) resetAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // ✅ If doctor changes, slot must reset
+  useEffect(() => {
+    setSelectedSlot(null);
+  }, [selectedDoctor?.id]);
+
+  // ✅ Preselect doctor if provided
+  useEffect(() => {
+    if (isOpen && preselectedDoctor) {
+      setSelectedDoctor(preselectedDoctor);
+      setStep("availability");
+    }
+  }, [isOpen, preselectedDoctor]);
+
+  const closeModal = () => {
+    resetAll();
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -52,7 +76,13 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
   };
 
   const handleNextStep = () => {
-    if (step === "details" && formData.patientName && formData.patientAge && formData.patientPhone && formData.buyerEmail) {
+    if (
+      step === "details" &&
+      formData.patientName &&
+      formData.patientAge &&
+      formData.patientPhone &&
+      formData.buyerEmail
+    ) {
       setStep("doctor");
     } else if (step === "doctor" && selectedDoctor) {
       setStep("availability");
@@ -76,8 +106,10 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
           patientPhone: formData.patientPhone,
           buyerEmail: formData.buyerEmail,
           consultationMode: selectedSlot?.mode,
+          slotId: selectedSlot?.id, // ✅ add this (very useful later)
           slotTime: `${selectedSlot?.startTime}-${selectedSlot?.endTime}`,
           bookingDate: new Date().toISOString(),
+          hospitalId: hospital.id, // ✅ add this too
         }),
       });
 
@@ -96,22 +128,48 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
     }
   };
 
-  const doctorSlots = selectedDoctor
-    ? hospital.availability.filter((s) => s.doctorId === selectedDoctor.id)
-    : [];
+  // ✅ Only show slots that belong to this hospital (or global) + active
+  const doctorSlots = useMemo(() => {
+    if (!selectedDoctor) return [];
+    return hospital.availability
+      .filter((s) => s.isActive)
+      .filter((s) => s.doctorId === selectedDoctor.id)
+      .filter((s) => s.hospitalId === hospital.id || s.hospitalId == null)
+      .sort((a, b) => {
+        if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }, [hospital.availability, hospital.id, selectedDoctor]);
 
-  const byDay = new Map<number, ApiAvailabilitySlot[]>();
-  for (const s of doctorSlots) {
-    const arr = byDay.get(s.dayOfWeek) ?? [];
-    arr.push(s);
-    byDay.set(s.dayOfWeek, arr);
-  }
+  const byDay = useMemo(() => {
+    const map = new Map<number, ApiAvailabilitySlot[]>();
+    for (const s of doctorSlots) {
+      const arr = map.get(s.dayOfWeek) ?? [];
+      arr.push(s);
+      map.set(s.dayOfWeek, arr);
+    }
+    // ensure stable sorting inside each day
+    for (const [k, v] of map.entries()) {
+      v.sort((a, b) => a.startTime.localeCompare(b.startTime));
+      map.set(k, v);
+    }
+    return map;
+  }, [doctorSlots]);
 
-  const allTimes = new Set<string>();
-  for (const s of doctorSlots) {
-    allTimes.add(s.startTime);
-  }
-  const sortedTimes = Array.from(allTimes).sort();
+  const sortedTimes = useMemo(() => {
+    const allTimes = new Set<string>();
+    for (const s of doctorSlots) allTimes.add(s.startTime);
+    return Array.from(allTimes).sort();
+  }, [doctorSlots]);
+
+  const canGoNext =
+    (step === "details" &&
+      !!formData.patientName &&
+      !!formData.patientAge &&
+      !!formData.patientPhone &&
+      !!formData.buyerEmail) ||
+    (step === "doctor" && !!selectedDoctor) ||
+    (step === "availability" && !!selectedSlot);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -122,18 +180,26 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
             <h2 className="text-xl font-bold text-slate-900">Book Appointment</h2>
             <p className="text-sm text-slate-500 mt-1">{hospital.name}</p>
           </div>
-          <button onClick={onClose} className="rounded-full p-2 hover:bg-slate-100 transition-colors">
+          <button
+            onClick={closeModal}
+            className="rounded-full p-2 hover:bg-slate-100 transition-colors"
+            aria-label="Close booking modal"
+          >
             <X className="h-5 w-5 text-slate-500" />
           </button>
         </div>
 
         {/* Step Indicator */}
         <div className="flex gap-2 mb-6">
-          {["details", "doctor", "availability", "review"].map((s, i) => (
+          {(["details", "doctor", "availability", "review"] as Step[]).map((s, i) => (
             <div
               key={s}
               className={`flex-1 h-2 rounded-full transition-colors ${
-                step === s ? "bg-blue-600" : ["details", "doctor", "availability", "review"].indexOf(step) > i ? "bg-green-500" : "bg-slate-200"
+                step === s
+                  ? "bg-blue-600"
+                  : (["details", "doctor", "availability", "review"] as Step[]).indexOf(step) > i
+                  ? "bg-green-500"
+                  : "bg-slate-200"
               }`}
             />
           ))}
@@ -207,14 +273,16 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
                       : "border-slate-200 hover:border-slate-300"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-slate-900">{doctor.fullName}</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-900 truncate">{doctor.fullName}</p>
                       <p className="text-xs text-slate-600">
-                        {doctor.specialties[0]?.name} • {doctor.experienceYears} yrs exp
+                        {doctor.specialties[0]?.name ?? "Doctor"} • {(doctor.experienceYears ?? 0)} yrs exp
                       </p>
                     </div>
-                    <p className="font-semibold text-slate-900">${doctor.feeMin}</p>
+                    <p className="font-semibold text-slate-900 shrink-0">
+                      {doctor.feeMin != null ? `${doctor.currency ?? ""} ${doctor.feeMin}` : "—"}
+                    </p>
                   </div>
                 </button>
               ))}
@@ -226,16 +294,20 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
         {step === "availability" && selectedDoctor && (
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-900">Select Time Slot</h3>
+
             {doctorSlots.length === 0 ? (
               <p className="text-slate-600">No available slots for this doctor.</p>
             ) : (
               <div className="overflow-x-auto">
                 <div className="min-w-max">
                   {/* Day Headers */}
-                  <div className="grid gap-1 mb-4" style={{ gridTemplateColumns: "100px repeat(7, 1fr)" }}>
+                  <div
+                    className="grid gap-1 mb-4"
+                    style={{ gridTemplateColumns: "100px repeat(7, 1fr)" }}
+                  >
                     <div className="px-3 py-2 text-xs font-semibold text-slate-600">Time</div>
                     {Array.from({ length: 7 }).map((_, i) => {
-                      const dayHasSlots = byDay.get(i) && byDay.get(i)!.length > 0;
+                      const dayHasSlots = (byDay.get(i)?.length ?? 0) > 0;
                       return (
                         <div
                           key={i}
@@ -251,14 +323,24 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
 
                   {/* Slots */}
                   {sortedTimes.map((time) => (
-                    <div key={time} className="grid gap-1 mb-2" style={{ gridTemplateColumns: "100px repeat(7, 1fr)" }}>
+                    <div
+                      key={time}
+                      className="grid gap-1 mb-2"
+                      style={{ gridTemplateColumns: "100px repeat(7, 1fr)" }}
+                    >
                       <div className="px-3 py-2 text-xs font-mono text-slate-600">{time}</div>
+
                       {Array.from({ length: 7 }).map((_, dayOfWeek) => {
-                        const slotsAtTime = (byDay.get(dayOfWeek) ?? []).filter((s) => s.startTime === time);
+                        const slotsAtTime = (byDay.get(dayOfWeek) ?? []).filter(
+                          (s) => s.startTime === time
+                        );
 
                         if (slotsAtTime.length === 0) {
                           return (
-                            <div key={`${dayOfWeek}-${time}`} className="px-2 py-2 bg-slate-50 rounded-lg" />
+                            <div
+                              key={`${dayOfWeek}-${time}`}
+                              className="px-2 py-2 bg-slate-50 rounded-lg"
+                            />
                           );
                         }
 
@@ -274,11 +356,13 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
                                       ? "border-blue-500 bg-blue-100"
                                       : "border-emerald-500 bg-emerald-100"
                                     : slot.mode === "ONLINE"
-                                      ? "border-blue-200 bg-blue-50 hover:bg-blue-100"
-                                      : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
+                                    ? "border-blue-200 bg-blue-50 hover:bg-blue-100"
+                                    : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
                                 }`}
                               >
-                                <div className="font-semibold">{slot.startTime}–{slot.endTime}</div>
+                                <div className="font-semibold">
+                                  {slot.startTime}–{slot.endTime}
+                                </div>
                                 <div className="text-xs opacity-75">{slot.mode}</div>
                               </button>
                             ))}
@@ -307,12 +391,18 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-700">Time:</span>
-                <span className="font-semibold text-slate-900">{DAYS[selectedSlot.dayOfWeek]}, {selectedSlot.startTime}–{selectedSlot.endTime}</span>
+                <span className="font-semibold text-slate-900">
+                  {DAYS[selectedSlot.dayOfWeek]}, {selectedSlot.startTime}–{selectedSlot.endTime}
+                </span>
               </div>
               <div className="h-px bg-blue-200 my-2" />
               <div className="flex justify-between">
                 <span className="text-blue-700 font-medium">Total to pay:</span>
-                <span className="text-2xl font-bold text-blue-700">${selectedDoctor.feeMin}</span>
+                <span className="text-2xl font-bold text-blue-700">
+                  {selectedDoctor.feeMin != null
+                    ? `${selectedDoctor.currency ?? ""} ${selectedDoctor.feeMin}`
+                    : "—"}
+                </span>
               </div>
             </div>
 
@@ -352,24 +442,15 @@ export function HospitalBookingModal({ hospital, isOpen, onClose }: Props) {
                 Back
               </Button>
             )}
-            {(step === "details" || step === "doctor" || step === "availability") && (
-              <Button
-                onClick={handleNextStep}
-                disabled={
-                  (step === "details" &&
-                    (!formData.patientName ||
-                      !formData.patientAge ||
-                      !formData.patientPhone ||
-                      !formData.buyerEmail)) ||
-                  (step === "doctor" && !selectedDoctor) ||
-                  (step === "availability" && !selectedSlot)
-                }
-                className="flex-1 rounded-lg"
-              >
-                Next
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </Button>
-            )}
+
+            <Button
+              onClick={handleNextStep}
+              disabled={!canGoNext}
+              className="flex-1 rounded-lg"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
           </div>
         )}
       </div>
