@@ -1,0 +1,1467 @@
+[
+  {
+    "department": "Anesthesiology",
+    "department_url": "https://www.grandehospital.com/en/departments/anesthesiology",
+    "description": "A team of dedicated Anesthesiologists working in unison with surgeons provide anesthesia to patients with different surgical needs. With more than a decade of experience in their fields, they provide anesthesia to patients from different departments ranging from General Surgeries to Specialized Surgeries including Transplant Surgeries. With state of the art equipment under their disposal, they provide care with utmost dedication and compassion. Prioritizing patient safety thus ensuring best outcomes.",
+    "doctors": [
+      {
+        "name": "Dr. Archan Adhikari",
+        "department": "Anesthesiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/anesthesiology/dr-archan-adhikari",
+        "designation": "Chief Consultant Anaesthesiologist",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 3393",
+        "specialty": "Anesthesiology"
+      },
+      {
+        "name": "Dr. Avinash Gurung",
+        "department": "Anesthesiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/anesthesiology/dr-avinash-gurung",
+        "designation": "Consultant Anesthesiologist",
+        "education": "M.B.B.S. M.D. (Anesthesiology and Critical Care Medicine) Council Number: 6986",
+        "specialty": "Anesthesiology"
+      },
+      {
+        "name": "Dr. Sujata Niroula",
+        "department": "Anesthesiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/anesthesiology/dr-sujata-niroula",
+        "designation": "Consultant Anesthesiologist",
+        "education": "M.B.B.S. M.D. (Anesthesiology and Critical Care Medicine) Fellowship in Liver Transplant and GI Anesthesia Council Number: 6906",
+        "specialty": "Anesthesiology"
+      },
+      {
+        "name": "Dr. Binaya Lamichhane",
+        "department": "Anesthesiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/anesthesiology/dr-binaya-lamichhane",
+        "designation": "Consultant Anesthesiologist",
+        "education": "M.B.B.S. M.D. (Anesthesiology & Critical Care in Medicine) Council Number: 5751",
+        "specialty": "Anesthesiology"
+      }
+    ]
+  },
+  {
+    "department": "Cardiac Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/cardiac-surgery",
+    "description": "At Grande international hospital division of cardiac surgery, our aim is to reduce the impact of cardiovascular diseases through advanced therapies for patient care. Our team of cardiac surgeon with a cumulative experience of hundreds of surgeries. We perform Coronary artery bypass surgery (CABG), Mitral Valve Replacement (MVR), Aortic Valve Replacement (AVR), Atrial Septal Defect (ASD), Ventricular Septal Defect(VSD) & many more which are related to Adult Cardiac disease( Surgical).",
+    "doctors": [
+      {
+        "name": "Dr. Navin Chandra Gautam",
+        "department": "Cardiac Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiac-surgery/dr-navin-chandra-gautam",
+        "designation": "Consultant Cardiac Surgeon",
+        "education": "M.B.B.S. M.D. M.S. (Cardiovascular and Thoracic Surgery) Council Number: 2600",
+        "specialty": "Cardiac Surgery"
+      },
+      {
+        "name": "Dr. Nivesh Rajbhandari",
+        "department": "Cardiac Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiac-surgery/dr-nivesh-rajbhandari",
+        "designation": "Consultant Cardiovascular & Thoracic Surgeon",
+        "education": "M.B.B.S. M.S. (Cardiovascular & Thoracic Surgery) Council Number: 5252",
+        "specialty": "Cardiac Surgery"
+      },
+      {
+        "name": "Dr. Nishes Basnet",
+        "department": "Cardiac Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiac-surgery/dr-nishes-basnet",
+        "designation": "Consultant Cardiovascular & Thoracic Surgeon",
+        "education": "M.B.B.S. M.S. (Cardiovascular & Thoracic Surgery) Council Number: 10849",
+        "specialty": "Cardiac Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Cardiology and Interventional Cardiology",
+    "department_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology",
+    "description": "Cardiology as a team takes care of heart diseases and hypertension and has also performed hundreds of interventions when needed, for example – angiographies, angioplasties, pacemaker placement, etc. The department has its own set of sophisticated modern Echocardiography machine and TMT machine. Also with the best in-class CathLab, our team of experts know how to keep the heart healthy and moving.",
+    "doctors": [
+      {
+        "name": "Dr. Milan Prakash Shrestha",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-milan-prakash-shrestha",
+        "designation": "Consultant Cardiologist",
+        "education": "M.B.B.S M.D. (Cardiology) Council Number: 3140",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Dr. Naresh Maharjan",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-naresh-maharjan-78",
+        "designation": "Consultant Cardiologist",
+        "education": "M.B.B.S. M.D. (Cardiology) Council Number: 17241",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Prof. Dr. Chandra Mani Adhikari",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/prof-dr-chandra-mani-adhikari",
+        "designation": "Consultant Interventional Cardiologist",
+        "education": "M.B.B.S. M.D. (Cardiology) Fellowship in Interventional Cardiology Council Number: 2897",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Dr. Bhawani Manandhar",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-bhawani-manandhar",
+        "designation": "Consultant Cardiologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) D.M. (Cardiology) Council Number: 5047",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Asst. Prof. Dr. Surya Devkota",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/asst-prof-dr-surya-devkota",
+        "designation": "Consultant Interventional Cardiologist",
+        "education": "M.B.B.S M.D. (Internal Medicine) D.M. (Cardiology) Fellowship in Interventional Cardiology Council Number: 6440",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Dr. Sujan Shrestha",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-sujan-shrestha",
+        "designation": "Registrar Cardiologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 10295",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Dr. Bijay Khadka",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-bijay-khadka",
+        "designation": "",
+        "education": "",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Dr. Om Prakash Adhikari",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-om-prakash-adhikari",
+        "designation": "",
+        "education": "",
+        "specialty": "Cardiology and Interventional Cardiology"
+      },
+      {
+        "name": "Dr. Shuva Jung Bahadur Rana",
+        "department": "Cardiology and Interventional Cardiology",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiology-and-interventional-cardiology/dr-shuva-jung-bahadur-rana-22",
+        "designation": "Registrar Cardiologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 10978",
+        "specialty": "Cardiology and Interventional Cardiology"
+      }
+    ]
+  },
+  {
+    "department": "Cardiothoracic and Vascular Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/cardiothoracic-and-vascular-surgery",
+    "description": "A very specialized team of surgeons who take care of surgical interventions for heart and major blood vessels. With a modular OT available 24 x 7, our surgeons are ready for surgery of the heart, thorax and the blood vessels when needed without delay.",
+    "doctors": [
+      {
+        "name": "Dr. Prakash Sayami",
+        "department": "Cardiothoracic and Vascular Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiothoracic-and-vascular-surgery/dr-prakash-sayami",
+        "designation": "Consultant Thoracic, Breast & Thyroid Surgeon",
+        "education": "M.B.B.S. PhD (Medicine) F.C.T.S. (Chest, Thyroid and Breast Surgery) Council Number: 390",
+        "specialty": "Cardiothoracic and Vascular Surgery"
+      },
+      {
+        "name": "Prof. Dr. Uttam Krishna Shrestha",
+        "department": "Cardiothoracic and Vascular Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiothoracic-and-vascular-surgery/prof-dr-uttam-krishna-shrestha",
+        "designation": "Consultant Vascular & Endovascular Surgeon",
+        "education": "M.B.B.S. M.S. ( General Surgery) Fellowship in Cardiothoracic Surgery Fellowship in Vascular and Endovascular Surgery Council Number: 1528",
+        "specialty": "Cardiothoracic and Vascular Surgery"
+      },
+      {
+        "name": "Dr. Ranjan Sapkota",
+        "department": "Cardiothoracic and Vascular Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/cardiothoracic-and-vascular-surgery/dr-ranjan-sapkota",
+        "designation": "Consultant Thoracic, Breast & Thyroid Surgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) MCh (Cardiothoracic and Vascular Surgery) Fellowship in VATS & Advanced Bronchoscopy Council Number: 4752",
+        "specialty": "Cardiothoracic and Vascular Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Child, Adolescent and Adult Psychiatry",
+    "department_url": "https://www.grandehospital.com/en/departments/child-adolescent-and-adult-psychiatry",
+    "description": "Children and adolescents constitute almost a third (2·2 billion individuals) of the world’s population and almost 90% live in low and middle-income countries (LAMIC), where they form up to 50% of the population. Mental health problems affect 10–20% of children and adolescents worldwide. Half of the mental disorders are estimated to have onset by the age of 14 years. Early identification and treatment of these disorders can improve the outcome and prognosis of psychiatric illnesses. There is a huge burden of child and adolescent mental health (CAMH) in Nepal which has a population of around 29 million and 40–50% of the population comprises of children and adolescents. Services provided for child and adolescent mental health problems include the following: – Assessment, diagnosis and interventions/treatment of Neurodevelopmental Disorders such as Autism Spectrum Disorder, Attention Deficit Hyperactivity Disorder (ADHD), Specific Learning Disorders, Intellectual Disability, Communication Disorders, Tic Disorders etc. – Assessment of family, parenting styles with inputs for parenting and management of temper tantrums. – Assessment, diagnosis and treatment of; * Depressive Disorders, Anxiety Disorders, Obsessive Compulsive Disorders, School refusal * Trauma and Stress related disorders (Adjustment Disorders, Dissociative Disorders, Post traumatic Stress Disorder) * Somatic symptom and related disorders * Feeding and Eating Disorders (Pica, Anorexia Nervosa, Bulimia Nervosa, Binge Eating Disorder) * Elimination Disorders (Enuresis, Encopresis) * Gender Dysphoria * Substance Related and Addictive Disorders * Disruptive, Impulse Control and Conduct Disorders (ODD, Conduct Disorder) * Severe mental illnesses (Schizophrenia, Bipolar Disorder)",
+    "doctors": [
+      {
+        "name": "Dr. Utkarsh Karki",
+        "department": "Child, Adolescent and Adult Psychiatry",
+        "profile_url": "https://www.grandehospital.com/en/departments/child-adolescent-and-adult-psychiatry/dr-utkarsh-karki",
+        "designation": "Consultant Child, Adolescent and Adult Psychiatrist",
+        "education": "M.B.B.S. M.D. (Psychiatry) D.M. (Child and Adolescent Psychiatry) Council Number: 8815",
+        "specialty": "Child, Adolescent and Adult Psychiatry"
+      }
+    ]
+  },
+  {
+    "department": "Critical Care Medicine",
+    "department_url": "https://www.grandehospital.com/en/departments/critical-care-medicine",
+    "description": "The Intensive Care Unit (ICU) at Grande International Hospital (GIH) is a state-of-the-art facility committed to delivering world-class critical care. Designed to manage a wide spectrum of life-threatening conditions, the ICU is staffed by a dedicated team of critical care specialists, supported by multidisciplinary consultants, one-to-one nursing care, and a team of allied health professionals. Our core objectives are: · Excellence in patient care · Evidence-based clinical practice · Patient safety · Patient comfort and dignity GIH was one of the pioneering institutions in Nepal to adopt the closed ICU model, ensuring that all patients are managed under the direct supervision of intensive care specialists. It was also the first hospital in the country to introduce individual cubicle-style ICU rooms, a design that significantly reduces the risk of cross-infection while enhancing patient privacy. In addition to the adult ICU, GIH is equipped with specialized neonatal and pediatric ICUs, each staffed by experts in their respective fields. The hospital currently houses a total of 45 ICU beds — 30 adult and 15 paediatric/neonatal — making it one of the most comprehensive critical care facilities in the region.",
+    "doctors": [
+      {
+        "name": "Dr. Shirish Raj Joshi",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-shirish-raj-joshi",
+        "designation": "Consultant Anesthesiologist & Critical Care Medicine",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 6442",
+        "specialty": "Critical Care Medicine"
+      },
+      {
+        "name": "Dr. Ankit Rimal",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-ankit-rimal",
+        "designation": "Consultant Critical Care Medicine",
+        "education": "M.B.B.S. M.D. (Anesthesiology) DM (Critical Care Medicine) Council Number: 16555",
+        "specialty": "Critical Care Medicine"
+      },
+      {
+        "name": "Dr. Amit Rana Magar",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-amit-rana-magar",
+        "designation": "Associate Consultant Anesthesiologist and Critical Care Medicine",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 7142",
+        "specialty": "Critical Care Medicine"
+      },
+      {
+        "name": "Dr. Sagun Ram Vaidya",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-sagun-ram-vaidya",
+        "designation": "Senior Registrar Anesthesiologist & Critical Care Medicine",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 14402",
+        "specialty": "Critical Care Medicine"
+      },
+      {
+        "name": "Dr. Rajswee Rana",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-rajswee-rana",
+        "designation": "Registrar Anesthesiologist and Critical Care Medicine",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 26993",
+        "specialty": "Critical Care Medicine"
+      },
+      {
+        "name": "Dr. Deepika Joshi",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-deepika-joshi",
+        "designation": "NBMS Sub Specialty Resident-Critical Care",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 15952",
+        "specialty": "Critical Care Medicine"
+      },
+      {
+        "name": "Dr. Anup Bagale",
+        "department": "Critical Care Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/critical-care-medicine/dr-anup-bagale",
+        "designation": "NBMS Sub Specialty Resident-Critical Care",
+        "education": "M.B.B.S. M.D. (Anesthesiology) Council Number: 17667",
+        "specialty": "Critical Care Medicine"
+      }
+    ]
+  },
+  {
+    "department": "Dentistry and Dental Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery",
+    "description": "Diseases of the Oral Cavity (Mouth and Teeth) is taken care by the Department of Dentistry and Dental Surgery. Be it carries or diseases of the gum and tongue, our specialists also take care of the malaligned teeth, do complicated surgeries of the oral cavity, surgeries for the cancers and for trauma. A beautifully designed department feels welcoming and our patients have loved the ambience.",
+    "doctors": [
+      {
+        "name": "Dr. Amit Khanal",
+        "department": "Dentistry and Dental Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery/dr-amit-khanal",
+        "designation": "HOD/Consultant Oral Maxillofacial Surgeon",
+        "education": "B.D.S. PhD (Oral & Maxillofacial Surgery) Council Number: 3124",
+        "specialty": "Dentistry and Dental Surgery"
+      },
+      {
+        "name": "Dr. Bandana Shah (Thapa)",
+        "department": "Dentistry and Dental Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery/dr-bandana-shah-thapa",
+        "designation": "Consultant Dental Surgeon",
+        "education": "M.D. (Stomatology) POS (Ortho) Council Number: 2582",
+        "specialty": "Dentistry and Dental Surgery"
+      },
+      {
+        "name": "Dr. Sheetal Shrestha",
+        "department": "Dentistry and Dental Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery/dr-sheetal-shrestha",
+        "designation": "Consultant Dental Surgeon",
+        "education": "B.D.S. F.A.G.E. Council Number: 3018",
+        "specialty": "Dentistry and Dental Surgery"
+      },
+      {
+        "name": "Dr. Madhya Bhandari",
+        "department": "Dentistry and Dental Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery/dr-madhya-bhandari",
+        "designation": "Consultant Dental Surgeon",
+        "education": "B.D.S. Advanced Diploma in Endodontics Council Number: 5128",
+        "specialty": "Dentistry and Dental Surgery"
+      },
+      {
+        "name": "Dr. Sumi Malla",
+        "department": "Dentistry and Dental Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery/dr-sumi-malla",
+        "designation": "Consultant Prosthodontic & Implantologist",
+        "education": "B.D.S. F.A.G.E. M.D.S. (Prosthodontics) Diplomate in Maxillofacial Prosthesis Council Number: 5808 OPD Day: Sunday - Friday OPD Time: 9 AM - 1 PM Silicone Prosthesis Training, India for lost digit, eye, hand, etc.",
+        "specialty": "Dentistry and Dental Surgery"
+      },
+      {
+        "name": "Dr. Alka Gupta",
+        "department": "Dentistry and Dental Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/dentistry-and-dental-surgery/dr-alka-gupta",
+        "designation": "",
+        "education": "",
+        "specialty": "Dentistry and Dental Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/department-of-digestive-general-surgery-hepatopancreaticobiliary-and-laparoscopy-surgery",
+    "description": "The Department of Digestive Disease, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery conducts diagnosis and treatment of gastrointestinal and hepato-biliary-pancreatic disorders related to the esophagus, stomach, intestines, rectum, anus, liver, gall bladder, pancreas and spleen. Hepato Pancreatico Biliary and Gastro Surgery: Be it simple diseases or complicated tumors of liver, pancreas or the biliary tract, our experienced team of surgeons would take an extra step for the best possible outcome. With the advancement of surgical equipment and with a team of well-trained surgeons, GIH has done hundreds of minimally invasive surgeries of abdomen. With this facility, there is less pain, early mobility and less chances of infections and complications.",
+    "doctors": [
+      {
+        "name": "Dr. Prabin Bikram Thapa",
+        "department": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/department-of-digestive-general-surgery-hepatopancreaticobiliary-and-laparoscopy-surgery/dr-prabin-bikram-thapa",
+        "designation": "Consultant GI & Hepato Pancreatico Biliary Surgeon",
+        "education": "M.B.B.S. M.S. ( General Surgery) Fellowship (GI & Hepato Pancreatobiliary Surgery) Council Number: 2452",
+        "specialty": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery"
+      },
+      {
+        "name": "Dr. Dhiresh Kumar Maharjan",
+        "department": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/department-of-digestive-general-surgery-hepatopancreaticobiliary-and-laparoscopy-surgery/dr-dhiresh-kumar-maharjan",
+        "designation": "Consultant General/GI & Laparoscopic Surgeon",
+        "education": "M.B.B.S. MRCS(Ed) FCPS (Fellow in Colorectal Surgery) Council Number: 3741",
+        "specialty": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery"
+      },
+      {
+        "name": "Dr. Roshan Ghimire",
+        "department": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/department-of-digestive-general-surgery-hepatopancreaticobiliary-and-laparoscopy-surgery/dr-roshan-ghimire",
+        "designation": "Consultant General/GI & Laparoscopic Surgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) Council Number: 7721",
+        "specialty": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery"
+      },
+      {
+        "name": "Dr. Santosh Shrestha",
+        "department": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/department-of-digestive-general-surgery-hepatopancreaticobiliary-and-laparoscopy-surgery/dr-santosh-shrestha",
+        "designation": "Consultant General Surgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) Council Number: 8290",
+        "specialty": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery"
+      },
+      {
+        "name": "Dr. Bidur Prasad Acharya",
+        "department": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/department-of-digestive-general-surgery-hepatopancreaticobiliary-and-laparoscopy-surgery/dr-bidur-prasad-acharya",
+        "designation": "General Surgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) Council Number: 15076",
+        "specialty": "Department of Digestive, General Surgery, Hepatopancreaticobiliary and Laparoscopy Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Dermatology & STD",
+    "department_url": "https://www.grandehospital.com/en/departments/dermatology-std",
+    "description": "Skin & Aesthetic Clinic – Comprehensive Dermatology and Advanced Aesthetic Care Our state-of-the-art Skin & Aesthetic Clinic, housed within our multi-specialty corporate hospital, offers a full spectrum of dermatological and cosmetic services. We specialize in the diagnosis and treatment of hair, skin, and nail disorders, as well as comprehensive management of sexually transmitted infections (STIs). Led by a team of experienced dermatologists and trained aesthetic professionals, our clinic combines clinical excellence with advanced technology to deliver personalized care for every patient. Our services span across medical dermatology, aesthetic dermatology, and laser therapies, ensuring holistic skin health and cosmetic rejuvenation under one roof. Key Offerings: Medical Dermatology: Acne, eczema, psoriasis, vitiligo, fungal infections, and other common skin conditions Hair fall and scalp disorders, including alopecia Nail diseases and infections Diagnosis and management of STIs with confidentiality and sensitivity Advanced Aesthetic Treatments: Chemical peels, microneedling, and anti-aging therapies Skin brightening and pigmentation correction Non-surgical skin tightening and rejuvenation PRP (Platelet-Rich Plasma) for skin and hair, hair restoration. Laser and Light-Based Technologies: Laser hair reduction Tattoo and pigmentation removal Acne scar and wrinkle reduction Vascular lesion and mole removal Hydrafacial Our clinic is equipped with the latest laser and diagnostic technologies to ensure safe, effective, and minimally invasive treatments. We follow stringent clinical protocols and maintain international standards of hygiene and patient care.",
+    "doctors": [
+      {
+        "name": "Prof. Dr. Sagar Mani Jha",
+        "department": "Dermatology & STD",
+        "profile_url": "https://www.grandehospital.com/en/departments/dermatology-std/prof-dr-sagar-mani-jha",
+        "designation": "Consultant Dermatologist & STD",
+        "education": "M.B.B.S. M.D. (Dermatology & STD) Training in Cosmetology & Cosmetic Surgery Council Number: 2699",
+        "specialty": "Dermatology & STD"
+      },
+      {
+        "name": "Dr. Utsav Sharma",
+        "department": "Dermatology & STD",
+        "profile_url": "https://www.grandehospital.com/en/departments/dermatology-std/dr-utsav-sharma",
+        "designation": "Consultant Dermatologist",
+        "education": "M.B.B.S. M.D. (Dermatology) Council Number: 7619",
+        "specialty": "Dermatology & STD"
+      },
+      {
+        "name": "Dr. Anu Subedi",
+        "department": "Dermatology & STD",
+        "profile_url": "https://www.grandehospital.com/en/departments/dermatology-std/dr-anu-subedi",
+        "designation": "Dermatologist",
+        "education": "M.B.B.S. M.D. (Dermatology) Council Number: 13676",
+        "specialty": "Dermatology & STD"
+      }
+    ]
+  },
+  {
+    "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+    "department_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems",
+    "description": "A fully equipped Emergency Department with 2 Ambulances and facility for Heli rescue makes the Department of Emergency Medicine and Rapid Rescue one of the safest healthcare facility when it comes to need for urgent medical and surgical care. Headed by a specialist round the clock, the team is always ready to handle any cases of trauma or medical surgical emergencies.",
+    "doctors": [
+      {
+        "name": "Dr. Rajeeb Raj Thapaliya",
+        "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+        "profile_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems/dr-rajeeb-raj-thapaliya",
+        "designation": "HOD/Consultant, Emergency Medicine and Pre-Hospital Care, UN Examining Physician",
+        "education": "M.B.B.S. M.D. (General Practice & Emergency Medicine) Council Number: 7642",
+        "specialty": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)"
+      },
+      {
+        "name": "Dr. Shree Ram Shrestha",
+        "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+        "profile_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems/dr-shree-ram-shrestha",
+        "designation": "Consultant Emergency Medicine and Pre-Hospital Care",
+        "education": "M.B.B.S. M.D. (General Practice & Emergency Medicine) Council Number: 6843",
+        "specialty": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)"
+      },
+      {
+        "name": "Dr. Suraj Gyawali",
+        "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+        "profile_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems/dr-suraj-gyawali",
+        "designation": "Associate Consultant Emergency Medicine and Pre-Hospital Care",
+        "education": "M.B.B.S. M.D. (General Practice and Emergency Medicine) Council Number: 13186",
+        "specialty": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)"
+      },
+      {
+        "name": "Dr. Prasanna Rajbhandari",
+        "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+        "profile_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems/dr-prasanna-rajbhandari",
+        "designation": "Registrar Emergency Medicine and Pre-Hospital Care",
+        "education": "M.B.B.S. M.D. (General Practice and Emergency Medicine) Council Number: 13123",
+        "specialty": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)"
+      },
+      {
+        "name": "Dr. Olita Shilpakar",
+        "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+        "profile_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems/dr-olita-shilpakar",
+        "designation": "Consultant Emergency Medicine and Pre-Hospital Care",
+        "education": "M.B.B.S. M.D. (General Practice) DM (Emergency Medicine) Council Number: 6710",
+        "specialty": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)"
+      },
+      {
+        "name": "Dr. Subash Kharel",
+        "department": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)",
+        "profile_url": "https://www.grandehospital.com/en/departments/emergency-medicine-pre-hospital-care-ems-hems/dr-subash-kharel-83",
+        "designation": "Registrar Emergency Medicine and Pre-Hospital Care",
+        "education": "M.B.B.S. M.D. (General Practice and Emergency Medicine) Council Number: 15964",
+        "specialty": "Emergency Medicine & Pre-Hospital Care (EMS / HEMS)"
+      }
+    ]
+  },
+  {
+    "department": "Endocrinology and Diabetology",
+    "department_url": "https://www.grandehospital.com/en/departments/endocrinology-and-diabetology",
+    "description": "Endocrinology and Diabetology is a super specialty that deals with the diseases of hormones, be it thyroid disease or diabetes. Our renowned specialist would be able to clinch the diagnosis and treat as per the international standards.",
+    "doctors": [
+      {
+        "name": "Dr. Sandesh Panthi",
+        "department": "Endocrinology and Diabetology",
+        "profile_url": "https://www.grandehospital.com/en/departments/endocrinology-and-diabetology/dr-sandesh-panthi",
+        "designation": "HOD/Consultant Endocrinologist and Diabetologist",
+        "education": "M.B.B.S. M.D. (Endocrinology and Metabolism- BSMMU, Dhaka) (Gold Medalist) Council Number: 8230",
+        "specialty": "Endocrinology and Diabetology"
+      },
+      {
+        "name": "Dr. Subarna Dhoj Thapa",
+        "department": "Endocrinology and Diabetology",
+        "profile_url": "https://www.grandehospital.com/en/departments/endocrinology-and-diabetology/dr-subarna-dhoj-thapa",
+        "designation": "Consultant Endocrinologist & Diabetologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Fellowship in Endocrinology and Metabolism Council Number: 5648",
+        "specialty": "Endocrinology and Diabetology"
+      }
+    ]
+  },
+  {
+    "department": "ENT, Head & Neck Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery",
+    "description": "This department is dedicated to the diseases of the Ear, Nose and Throat. This super specialist surgical field takes care of all the problems of these very vital organs. Besides the non-surgical treatment plans, this department has been doing various surgical interventions for the diseases of the head and neck. With modern technologies and machines, the surgeries done at ours have yielded better results and early back to normal life of our patients. Some specialized services includes: · Endoscopic Ear, Nose & Laryngeal Surgery · All ENT, Head & Neck related Cancer Surgery · Throat Surgery · Rhinoplasty and head & neck related aesthetic (plastic) and reconstructive surgery · Endoscopic & Coblation assisted adenoid and tonsil surgeries Audiologist and Speech Therapy An Audiologist and Speech Therapist is a health-care professional who specializes in identification, evaluation and treatment of various types of communication, swallowing and ear disorders. ENT Department, Speech language and hearing sciences offers a wide range of services and products to help the individual hear, speak and live a better quality of life. Services · Hearing tests (Audiogram, Tympanometry and OAE) · Hearing aid fitting/trial (HAT) · Tinnitus retraining therapy (TRT) · Speech therapy · Swallowing therapy · Voice and fluency therapy · Vertigo Clinic",
+    "doctors": [
+      {
+        "name": "Dr. Anand Ghimire",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/dr-anand-ghimire",
+        "designation": "HOD/Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.D. M.S. (ENT, Head & Neck Surgery) Council Number: 2343",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Prof. Dr. Bimal Kumar Sinha",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/prof-dr-bimal-kumar-sinha",
+        "designation": "Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.S. (Otorhinolaryngology) F.I.C.S. Special Post Graduate Training in Otorhinolaryngology, Head & Neck Surgery Council Number: 638",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Dr. Prakash Kumar Kafle",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/dr-prakash-kumar-kafle",
+        "designation": "Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.D. (General Medicine) M.S. (Otorhinolaryngology & Head and Neck Surgery) Fellowship in Endoscopic Sinus Surgery Council Number: 2293",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Dr. Kunjan Acharya",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/dr-kunjan-acharya",
+        "designation": "Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.S. (Otorhinolaryngology & Head and Neck Surgery) Fellowship in ENT Fellowship in Head and Neck Surgical Oncology Council Number: 4251",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Dr. Neeta Shakya Malla",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/dr-neeta-shakya-malla",
+        "designation": "Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S M.S. (Otorhinolaryngology & Head and Neck Surgery) Council Number: 6900",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Dr. Jenu Suwal Dongol",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/dr-jenu-suwal-dongol",
+        "designation": "ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.S. (Otorhinolaryngology & Head and Neck Surgery) Fellowship in Facial Plastic & Reconstructive Surgery Council Number: 7730",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Dr. Bigyan Raj Gyawali",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/dr-bigyan-raj-gyawali",
+        "designation": "Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.S. (Otorhinolaryngology & Head and Neck Surgery) MRCS (ENT) FICS FACS Council Number: 13174",
+        "specialty": "ENT, Head & Neck Surgery"
+      },
+      {
+        "name": "Prof. Dr. Deepak Regmi",
+        "department": "ENT, Head & Neck Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/ent-head-neck-surgery/prof-dr-deepak-regmi",
+        "designation": "Consultant ENT, Head & Neck Surgeon",
+        "education": "M.B.B.S. M.S. (Otorhinolarynology & Head and Neck Surgery) Council Number: 5544",
+        "specialty": "ENT, Head & Neck Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Gastroenterology and Hepatology",
+    "department_url": "https://www.grandehospital.com/en/departments/gastroenterology-and-hepatology",
+    "description": "The Department of Gastroenterology at GIH is specialized in treating diseases and conditions related to gastrointestinal tract such as stomach, small intestine, large intestine, liver, pancreatic and biliary tract. We work together with our surgery, Radiology, Pathology and other departments to diagnose and manage variety of conditions of digestive tract. · Esophageal Diseases · Gastritis · Peptic ulcer disease · Inflammatory bowel disease · Irritable Bowel Syndrome · Diarrheal diseases. · Liver diseases · Pancreatic disease · Hemorrhoids · Cancer of Gastrointestinal Tract. Our dedicated staff at our Endoscopy Department perform more than 6000 procedures per year. The unit provides following diagnostic and therapeutic services: · UGI Endoscopy · Colonoscopy · Sigmoidoscopy",
+    "doctors": [
+      {
+        "name": "Dr. Vivek Sharma",
+        "department": "Gastroenterology and Hepatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/gastroenterology-and-hepatology/dr-vivek-sharma",
+        "designation": "Director, Department of Medical Gastroenterology & Hepatology",
+        "education": "M.B.B.S. M.D. ( Internal Medicine) Fellowship in Gastroenterology and Hepatology Council Number: 3034",
+        "specialty": "Gastroenterology and Hepatology"
+      },
+      {
+        "name": "Assoc. Prof. Dr. Akhilesh Kumar Kasyap",
+        "department": "Gastroenterology and Hepatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/gastroenterology-and-hepatology/assoc-prof-dr-akhilesh-kumar-kasyap",
+        "designation": "Executive Director, Department of Medical Gastroenterology and Hepatology",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Fellowship in Gastroenterology and Hepatology D.M (Gastroenterology) Post Graduate Training (SGRH) Short term Training (AIG) Fellow of Royal College of Physician Edinburgh FRCP Edin Council Number: 4068 Assoc. Prof. Dr. Akhilesh Kumar Kashyap Consultant – Gastroenterology & Liver Diseases Professional Summary: Assoc. Prof. Dr. Akhilesh Kumar Kashyap is a highly accomplished and internationally trained gastroenterologist with extensive experience in the diagnosis and treatment of gastrointestinal and liver diseases. With a strong academic background and specialized training in therapeutic endoscopy, ERCP, EUS, and liver care, Dr. Kashyap brings a comprehensive approach to digestive health management. He completed his foundational medical education in Nepal and pursued postgraduate studies and fellowships at some of the most prestigious institutions in India and the UK. His practice is informed by advanced skills in diagnostic and therapeutic procedures, and he has held faculty positions at several leading medical colleges in Nepal. Dr. Kashyap is widely recognized for his expertise in hepatobiliary diseases and gastrointestinal endoscopy, and he actively contributes to both academic and clinical gastroenterology in the region. Academic Background: • MBBS – B.P. Koirala Institute of Health Sciences (BPKIHS), Dharan, Nepal • MD (Internal Medicine) – Manipal Hospital, Bangalore, India • DM (Gastroenterology) – National Academy of Medical Sciences (NAMS), Bir Hospital, Nepal • Fellowship in Gastroenterology – All India Institute of Medical Sciences (AIIMS), New Delhi, India • Postgraduate Training – Sir Ganga Ram Hospital, New Delhi, India • Short-Term Training in ERCP & EUS – Asian Institute of Gastroenterology (AIG), Hyderabad, India • FRCP – Royal College of Physicians, Edinburgh, United Kingdom Dr. Kashyap’s academic qualifications reflect a continuous pursuit of medical excellence and skill development in advanced gastroenterological procedures. Areas of Expertise: • Liver Diseases – Management of hepatitis, cirrhosis, and metabolic liver conditions • Therapeutic Endoscopy – ERCP, EUS, polypectomy, and gastrointestinal bleeding interventions Dr. Kashyap’s clinical approach integrates cutting-edge diagnostic techniques with therapeutic interventions to ensure precision-based, patient-centered care. Professional Memberships: Dr. Kashyap is a member of several distinguished national and international medical associations, enabling active participation in clinical research, continued medical education, and global collaboration in the field of gastroenterology: • Nepal Medical Council (NMC) • Nepal Medical Association (NMA) • World Endoscopy Organization • Nepalese Society of Gastroenterologists • Nepalese Association for the Study of Liver Diseases • Indian National Association for the Study of Liver Diseases Trainings & Certifications: • Long-term Fellowship in Gastroenterology – AIIMS, New Delhi • Postgraduate Clinical Training – Sir Ganga Ram Hospital, New Delhi • Short-term Training in ERCP & EUS – Asian Institute of Gastroenterology, Hyderabad • FRCP – Royal College of Physicians, Edinburgh, UK These specialized trainings underscore Dr. Kashyap’s commitment to clinical excellence in gastroenterology and endoscopic procedures. Languages Spoken: • Nepali • English • Hindi Dr. Kashyap’s multilingual fluency enhances his ability to offer personalized and empathetic care to a diverse patient population. At Grande International Hospital: At Grande International Hospital, Assoc. Prof. Dr. Akhilesh Kumar Kashyap serves as a Consultant in Gastroenterology and Liver Diseases. His global training, academic leadership, and technical proficiency in liver care and therapeutic endoscopy contribute to the hospital’s excellence in gastroenterological services. Dr. Kashyap is dedicated to providing individualized, evidence-based treatment that ensures the best outcomes for patients with complex digestive disorders.",
+        "specialty": "Gastroenterology and Hepatology"
+      },
+      {
+        "name": "Dr. Rabin Hamal",
+        "department": "Gastroenterology and Hepatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/gastroenterology-and-hepatology/dr-rabin-hamal",
+        "designation": "Consultant Gastroenterologist & Hepatologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) D.M. (Gastroenterology) Council Number: 10425",
+        "specialty": "Gastroenterology and Hepatology"
+      },
+      {
+        "name": "Dr. Vivek Sharma Gastroenterology and Hepatology Assoc. Prof. Dr. Akhilesh",
+        "department": "Gastroenterology and Hepatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/gastroenterology-and-hepatology/dr-sunil-kumar-marik",
+        "designation": "Registrar Gastroenterologist and Hepatologist",
+        "education": "M.B.B.S. M.D. (Gastroenterology) Council Number: 9233",
+        "specialty": "Gastroenterology and Hepatology"
+      }
+    ]
+  },
+  {
+    "department": "Haematology",
+    "department_url": "https://www.grandehospital.com/en/departments/haematology",
+    "description": "Clinical Hematology focuses on the care of patients with various disorders of Blood, Bone marrow, and the lymphatic system. The Clinical Hematology Department provides/serves treating and counseling for the following blood and bone marrow diseases: 1. Hemoglobin Disorder Anemia: (Decreased hemoglobin): Different types of anemia Polycythemia: (Increased hemoglobin) 2. Platelet Disorder Thrombocytopenia: (Decreased platelet count) Thrombocytosis: (Increased Platelet count) 3. Blood Cancer Leukemia/Lymphoma/Multiple myeloma 4. Bone Marrow Failure: Aplastic anemia 5. White Blood Cell (WBC) Disorder Leucocytosis (Increased WBC count) Leucopenia (Decreased WBC Count) 6. Procedure: Bone marrow aspiration and biopsy procedure 7. Chemotherapy and Daycare Services",
+    "doctors": [
+      {
+        "name": "Assoc. Prof. Dr. Rinku Joshi",
+        "department": "Haematology",
+        "profile_url": "https://www.grandehospital.com/en/departments/haematology/assoc-prof-dr-rinku-joshi",
+        "designation": "Consultant Clinical Haematologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Fellowship in Clinical Haematology Council Number: 3396",
+        "specialty": "Haematology"
+      },
+      {
+        "name": "Assoc. Prof. Dr. Amar Narayan Shrestha",
+        "department": "Haematology",
+        "profile_url": "https://www.grandehospital.com/en/departments/haematology/assoc-prof-dr-amar-narayan-shrestha",
+        "designation": "Consultant Clinical Haematologist",
+        "education": "M.B.B.S. M.D. (Pathology) Fellowship in Clinical Haematology Council Number: 3733",
+        "specialty": "Haematology"
+      }
+    ]
+  },
+  {
+    "department": "Hepato Pancreatico Billiary Bariatric and Gastro Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/hepato-pancreatico-billiary-bariatric-and-gastro-surgery",
+    "description": "Hepato Pancreatico Biliary and Gastro Surgery: Be it simple diseases or complicated tumors of liver, pancreas or the biliary tract, our experienced team of surgeons would take an extra step for the best possible outcome. Bariatric Surgery: A newer specialty in surgery that deals with surgical intervention to decrease the weight of people who can’t do it the hard way. Grande International Hospital is one of the first hospitals to start this facility.",
+    "doctors": [
+      {
+        "name": "Dr. Rakesh Kumar Sah",
+        "department": "Hepato Pancreatico Billiary Bariatric and Gastro Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/hepato-pancreatico-billiary-bariatric-and-gastro-surgery/dr-rakesh-kumar-sah",
+        "designation": "Consultant Gastroenterology Surgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) M.Ch. (Surgical Gastroenterology) Council Number: 5858",
+        "specialty": "Hepato Pancreatico Billiary Bariatric and Gastro Surgery"
+      },
+      {
+        "name": "Dr. Rameshor Bhandari",
+        "department": "Hepato Pancreatico Billiary Bariatric and Gastro Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/hepato-pancreatico-billiary-bariatric-and-gastro-surgery/dr-rameshor-bhandari",
+        "designation": "Registrar Colorectal Surgeon",
+        "education": "M.B.B.S. M.S. (Colorectal Surgery) Council Number: 15966",
+        "specialty": "Hepato Pancreatico Billiary Bariatric and Gastro Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Internal Medicine",
+    "department_url": "https://www.grandehospital.com/en/departments/internal-medicine",
+    "description": "Department of Internal Medicine is the first line of patient investigation and management. It is the medical specialty dealing with the prevention, diagnosis, and treatment of adult diseases. Our Physicians are skilled in the management of patients who have undifferentiated or multi-system disease processes.",
+    "doctors": [
+      {
+        "name": "Dr. Binaya Kumar Regmi",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-binaya-kumar-regmi-57",
+        "designation": "HOD/Consultant Internal Medicine & Rheumatologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Fellowship in Rheumatology Council Number: 4190",
+        "specialty": "Internal Medicine"
+      },
+      {
+        "name": "Dr. Amit Gauli",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-amit-gauli",
+        "designation": "Consultant Internal Medicine, UN Examining Physician",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Diplomate of Philippine College of Physician Post Graduate Diploma in Respiratory Medicine Council Number: 11362",
+        "specialty": "Internal Medicine"
+      },
+      {
+        "name": "Dr. Prashant Tripathi",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-prashant-tripathi",
+        "designation": "Consultant Internal Medicine",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Post Graduate Diploma in Respiratory Medicine Council Number: 6913",
+        "specialty": "Internal Medicine"
+      },
+      {
+        "name": "Dr. Mukti Nath Sankhi",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-mukti-nath-sankhi",
+        "designation": "Physician",
+        "education": "M.B.B.S. M.D. (Internal Medicne) Council Number: 12986",
+        "specialty": "Internal Medicine"
+      },
+      {
+        "name": "Dr. Bikash Shrestha",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-bikash-shrestha",
+        "designation": "Registrar Internal Medicine",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 9474",
+        "specialty": "Internal Medicine"
+      },
+      {
+        "name": "Dr. Elina Mulmi",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-elina-mulmi",
+        "designation": "Registrar Internal Medicine",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 13886",
+        "specialty": "Internal Medicine"
+      },
+      {
+        "name": "Dr. Rashi Tamrakar",
+        "department": "Internal Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/internal-medicine/dr-rashi-tamrakar-97",
+        "designation": "Registrar Emergency Medicine and Pre-Hospital Care",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 8816",
+        "specialty": "Internal Medicine"
+      }
+    ]
+  },
+  {
+    "department": "Interventional Pain Management",
+    "department_url": "https://www.grandehospital.com/en/departments/interventional-pain-management",
+    "description": "This Department takes care of management of patients with chronic pain conditions as well as patients with acute pain needing specialized pain care. The Department focuses on both medical management as well as interventional approach to manage the pain. The Department deals with both Non cancer pain and cancer pain. Low back pain, Myofascial pains, Different Neuralgias and cancer pain are few examples of pain conditions that are regularly being treated in the Department.",
+    "doctors": [
+      {
+        "name": "Prof. Dr. Anil Shrestha",
+        "department": "Interventional Pain Management",
+        "profile_url": "https://www.grandehospital.com/en/departments/interventional-pain-management/prof-dr-anil-shrestha",
+        "designation": "Consultant Interventional Pain Physician",
+        "education": "M.B.B.S. M.D. (Anesthesiology & Critical Care Medicine) Fellowship in Interventional Pain Management Council Number: 3244",
+        "specialty": "Interventional Pain Management"
+      }
+    ]
+  },
+  {
+    "department": "Medical Oncology",
+    "department_url": "https://www.grandehospital.com/en/departments/medical-oncology",
+    "description": "Oncology department deals with Cancer patient. – Screening – Diagnostic work up and Staging of the disease – Discussing options of Treatment and Help choosing the best treatment modality for the patient. – Chemotherapy administration – Radiotherapy consultation – Provide Palliative care for the terminal patients – Pain Management – Formulating a personal plan of care – Continued follow up",
+    "doctors": [
+      {
+        "name": "Dr. Prabhu Prasad Sah",
+        "department": "Medical Oncology",
+        "profile_url": "https://www.grandehospital.com/en/departments/medical-oncology/dr-prabhu-prasad-sah",
+        "designation": "Consultant Medical Oncologist",
+        "education": "M.B.B.S. M.D. (Medical Oncology) Council Number: 3835",
+        "specialty": "Medical Oncology"
+      },
+      {
+        "name": "Dr. Rajeeb Kumar Deo",
+        "department": "Medical Oncology",
+        "profile_url": "https://www.grandehospital.com/en/departments/medical-oncology/dr-rajeeb-kumar-deo",
+        "designation": "Consultant Medical Oncologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Training in Medical Oncology Council Number: 2648",
+        "specialty": "Medical Oncology"
+      },
+      {
+        "name": "Dr. Sunil Shrestha",
+        "department": "Medical Oncology",
+        "profile_url": "https://www.grandehospital.com/en/departments/medical-oncology/dr-sunil-shrestha",
+        "designation": "Consultant Medical Oncologist",
+        "education": "M.B.B.S. M.D. (Oncology) Council Number: 12495",
+        "specialty": "Medical Oncology"
+      }
+    ]
+  },
+  {
+    "department": "Nephrology and Transplant Medicine",
+    "department_url": "https://www.grandehospital.com/en/departments/nephrology-and-transplant-medicine",
+    "description": "Grande Department of Nephrology and Renal Transplant Medicine offers a comprehensive state of the art health care to the patients across the range of kidney diseases including dialysis, transplant, plasmapheresis, immunoadsorption, renal histopathology and immmuno-histochemistry and stands as a pioneer corporate hospital in the country providing hemodialysis service even for the government supported free dialysis program to the patients. Grande nephrology department is the first private institute to start renal transplant service. Till date Grande has completed more than 120 successful renal transplant including ABO incompatible, seropostive(HIV,HBV & HCV positive patients) and the sensitized recipients cases. Recently Grande has optimized its hemodialysis service allocating a dedicated hemodialyis machine in ICU for patients needing multi disciplinary care. On top of it, Grande hospital is the only institute in the country providing the renal histo-pathology including immune-histo-chemistry service which has not only enhanced the patient care and timely treatment in severe kidney diseases like RPGN and transplant rejection but also economical and convenient to the patient by getting the reports easily. Our team of experienced nephrologists along with well trained nursing staffs, transplant coordinators, well equipped hemodialysi unit & OR, transplant ward and transplant surgeons provides services to all classes of patients across the country. Services offered: – Outpatient and Inpatient Services – Kidney Transplantation Services – Hemodialysis Services (Emergency Hemodialysis, ICU Dialysis, Maintenance Hemodialysis) – CAPD and CAPD Catheter Implantation – Temporary and Permanent Hemodialysis Catheter Insertion – Renal Biopsy – Plasmapheresis – Immunoadsorption Therapy – AV Fistula Creation",
+    "doctors": [
+      {
+        "name": "Prof. Dr. Dibya Singh Shah",
+        "department": "Nephrology and Transplant Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/nephrology-and-transplant-medicine/prof-dr-dibya-singh-shah",
+        "designation": "Consultant Nephrologist and Renal Transplant Physician",
+        "education": "M.B.B.S. M.D. (Internal Medicine) FISN Fellowship in Nephrology & Transplant Medicine Council Number: 1742",
+        "specialty": "Nephrology and Transplant Medicine"
+      },
+      {
+        "name": "Dr. Bishnu Pahari",
+        "department": "Nephrology and Transplant Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/nephrology-and-transplant-medicine/dr-bishnu-pahari",
+        "designation": "Consultant Nephrologist and Renal Transplant Physician",
+        "education": "M.B.B.S. M.D. (Internal Medicine) DM (Nephrology) Nephropathology Certification Course Fellowship in International Society of Nephrology Council Number: 3605",
+        "specialty": "Nephrology and Transplant Medicine"
+      },
+      {
+        "name": "Dr. Upendra Joshi",
+        "department": "Nephrology and Transplant Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/nephrology-and-transplant-medicine/dr-upendra-joshi",
+        "designation": "Consultant Nephrologist and Renal Transplant Physician",
+        "education": "M.B.B.S. M.D. (Nephrology) Council Number: 7190",
+        "specialty": "Nephrology and Transplant Medicine"
+      },
+      {
+        "name": "Dr. Satish Chandra Yadav",
+        "department": "Nephrology and Transplant Medicine",
+        "profile_url": "https://www.grandehospital.com/en/departments/nephrology-and-transplant-medicine/dr-satish-chandra-yadav",
+        "designation": "Registrar Nephrologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 13500",
+        "specialty": "Nephrology and Transplant Medicine"
+      }
+    ]
+  },
+  {
+    "department": "Neuroscience",
+    "department_url": "https://www.grandehospital.com/en/departments/neuroscience",
+    "description": "Neurosurgery: Neurosurgery is a super specialty that takes care of surgical conditions of brain and spine. With a highly specialized team of surgeons and nurses working in an advanced operation theater, we have served hundreds of patients who needed complicated neurosurgery. Neurology: The brain and the nerves play a vital role in a patient’s well-being. Diseases of these organs need meticulous workup and treatment. At our department of Neurology, the patients are completely evaluated, diagnosed, discussed and treatment is started with close follow up. With the EEG machine in the department, it’s easy for patient who need this investigation.",
+    "doctors": [
+      {
+        "name": "Dr. Raju Paudel",
+        "department": "Neuroscience",
+        "profile_url": "https://www.grandehospital.com/en/departments/neuroscience/dr-raju-paudel",
+        "designation": "Consultant Neurologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) D.M. (Neurology) Council Number: 2826",
+        "specialty": "Neuroscience"
+      },
+      {
+        "name": "Dr. Gopal Sedain",
+        "department": "Neuroscience",
+        "profile_url": "https://www.grandehospital.com/en/departments/neuroscience/dr-gopal-sedain",
+        "designation": "Consultant Neurosurgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) M.Ch. (Neurosurgery) Council Number: 8967",
+        "specialty": "Neuroscience"
+      },
+      {
+        "name": "Dr. Rupendra Bahadur Adhikari",
+        "department": "Neuroscience",
+        "profile_url": "https://www.grandehospital.com/en/departments/neuroscience/dr-rupendra-bahadur-adhikari",
+        "designation": "Consultant Neurosurgeon",
+        "education": "M.B.B.S. M.D. PhD Council Number: 8796",
+        "specialty": "Neuroscience"
+      },
+      {
+        "name": "Dr. Ram Chandra Subedi",
+        "department": "Neuroscience",
+        "profile_url": "https://www.grandehospital.com/en/departments/neuroscience/dr-ram-chandra-subedi",
+        "designation": "Consultant Neurologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Fellowship in Clinical Neurology Council Number: 17516",
+        "specialty": "Neuroscience"
+      },
+      {
+        "name": "Dr. Suvekchya Pandey",
+        "department": "Neuroscience",
+        "profile_url": "https://www.grandehospital.com/en/departments/neuroscience/dr-suvekchya-pandey",
+        "designation": "Clinical Fellow in Neurology",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 21584",
+        "specialty": "Neuroscience"
+      },
+      {
+        "name": "Dr. Pratik Paudel",
+        "department": "Neuroscience",
+        "profile_url": "https://www.grandehospital.com/en/departments/neuroscience/dr-pratik-paudel",
+        "designation": "Clinical Fellow in Neurology",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 15316",
+        "specialty": "Neuroscience"
+      }
+    ]
+  },
+  {
+    "department": "Nutrition and Dietetics",
+    "department_url": "https://www.grandehospital.com/en/departments/nutrition-and-dietetics",
+    "description": "Department of Nutrition and Dietetics A healthy balanced diet is that which meets nutritional requirement that ensures normal growth, development and ageing, helps to sustain a healthy body weight, and minimizes the risk of chronic disease leading to better outcome and thus is crucial for everyone throughout life. Clinical dietitians are health care professionals who are qualified to improve people’s health and nutritional status by providing adequate, smart and healthy food choices. General scope The department of Nutrition and Dietetics forms an integral part of the patient care services of GIH. The Department strives to improve human health and lifestyle through proven dietary interventions, ideas, plans, Nutrition care process and the dissemination of nutrition information through means of effective Nutrition education and counseling. The protocol or method used is SOAP method (Subjective, objective, Assessment and plan). Personalized diet plans are made incorporating the nutritional requirements, medical condition, allergies and intolerances of the individual. The socio-cultural factors, economic, religious factors , access , availability, dietary habits as well as dislikes and preferences are also taken in consideration. Our Service Areas Clinical Nutritionists and Dietitians are well proficient and experienced in providing effective diet chart , education and counseling in following areas. – Diabetes mellitus (Pre- diabetes, Hyperglycemia, Gestational diabetes, Secondary diabetes etc.) – Malnutrition (Overweight , Obesity , Underweight ) – Renal diseases(CKD, Dialysis, AKI, Stone etc.) – Gastro-intestinal diseases – Neurological diseases – Cardiac diseases – Pediatrics – Geriatrics – Pregnancy and Lactation – Food related allergies and intolerances – Pre and post operative conditions – Critical care Nutrition and so on Apart from this, holistic approach with additional tips and ideas on lifestyle, behavior etc. are also suggested to reach better outcome rapidly while considering the practicality of its adherence. Ds. Usha Shah Nutrition and Dietetics",
+    "doctors": []
+  },
+  {
+    "department": "Obstetrics and Gynecology",
+    "department_url": "https://www.grandehospital.com/en/departments/obstetrics-and-gynecology",
+    "description": "Department of Obstetrics and Gynecology takes care of women’s reproductive and fertility issues. A strong team of gynecologists take care of the women planning to conceive, do their antenatal checkup and pre conception counselling. When the women is ready to deliver the baby, our dedicated labor room has facilities of normal vaginal delivery, painless labor or if needed cesarean sections can be done any hour of the day and night so that the healthy newborn can be delivered without complications. This team is also well trained in Assisted Fertility. A dedicated IVF facility is available at Grande International Hospital aiming to provide best results to parents facing difficulty in conception",
+    "doctors": [
+      {
+        "name": "Prof. Dr. Padam Raj Pant",
+        "department": "Obstetrics and Gynecology",
+        "profile_url": "https://www.grandehospital.com/en/departments/obstetrics-and-gynecology/prof-dr-padam-raj-pant",
+        "designation": "HOD/Consultant, Obstetrics and Gynecology",
+        "education": "M.B.B.S. M.D. (Internal Medicine) M.S. (Obstetrics & Gynecology) F.I.C.S. in Obstetrics & Gynecology DMAS PhD (Obstetrics & Gynecology Infertility) Council Number: 1824",
+        "specialty": "Obstetrics and Gynecology"
+      },
+      {
+        "name": "Dr. Abha Shakya Shrestha",
+        "department": "Obstetrics and Gynecology",
+        "profile_url": "https://www.grandehospital.com/en/departments/obstetrics-and-gynecology/dr-abha-shakya-shrestha-38",
+        "designation": "Consultant Obstetrician & Gynecologist",
+        "education": "M.B.B.S. FCPS (Obstetrics & Gynecology) CPSP Fellowship in Minimal Access Surgery Infertility and IVF Training Council Number: 2958",
+        "specialty": "Obstetrics and Gynecology"
+      },
+      {
+        "name": "Dr. Samira Shafi Khan",
+        "department": "Obstetrics and Gynecology",
+        "profile_url": "https://www.grandehospital.com/en/departments/obstetrics-and-gynecology/dr-samira-shafi-khan",
+        "designation": "Consultant Obstetrician & Gynecologist",
+        "education": "M.B.B.S. M.D. Obstetrics & Gynecology, (Gold Medalist) Fellowship in Minimal Access Surgery Infertility and IVF Training Council Number: 3045",
+        "specialty": "Obstetrics and Gynecology"
+      },
+      {
+        "name": "Dr. Bandana Shrestha",
+        "department": "Obstetrics and Gynecology",
+        "profile_url": "https://www.grandehospital.com/en/departments/obstetrics-and-gynecology/dr-bandana-shrestha",
+        "designation": "Consultant Obstetrician & Gynecologist",
+        "education": "M.B.B.S. M.D. (Obstetrics & Gynecology) Council Number: 3548",
+        "specialty": "Obstetrics and Gynecology"
+      },
+      {
+        "name": "Dr. Nilam Subedi",
+        "department": "Obstetrics and Gynecology",
+        "profile_url": "https://www.grandehospital.com/en/departments/obstetrics-and-gynecology/dr-nilam-subedi",
+        "designation": "Consultant Obstetrician & Gynecologist",
+        "education": "M.B.B.S. M.D. (Obstetrics & Gynecology) Council Number: 10434",
+        "specialty": "Obstetrics and Gynecology"
+      }
+    ]
+  },
+  {
+    "department": "Ophthalmology & Vision Sciences",
+    "department_url": "https://www.grandehospital.com/en/departments/ophthalmology-vision-sciences",
+    "description": "Department of Ophthalmology and Vision Science is one of the most diligently setup departments at GIH. The team includes specialist Ophthalmologists, Ophthalmic assistants and optometrists to provide a holistic care to the patients. Ophthalmic evaluation for Refractive error, Diabetic/ Hypertensive retinopathy, glaucoma and squint/ Orthoptics, contact lens fitting services are available. There are two dedicated Eye Operation Theaters equipped with state of the art machines and cover most ophthalmic procedures and surgeries ranging from Pterygium excision, cataract surgery (Phacoemulsification. Small Incision Cataract Surgery), Eyelid surgeries like blepharoplasty, ptosis correction, Dacryocystorhinostomy and Eyelid tumor reconstruction. Ocular imaging facilities; Fundus photography, Optical Coherence tomography, Humphrey Visual field, Laser machines for Yag Capsulotomy. Peripheral Iridectomy services are also provided at the department.",
+    "doctors": [
+      {
+        "name": "Dr. Irina Kansakar (Tuladhar)",
+        "department": "Ophthalmology & Vision Sciences",
+        "profile_url": "https://www.grandehospital.com/en/departments/ophthalmology-vision-sciences/dr-irina-kansakar-tuladhar",
+        "designation": "HOD/Consultant Ophthalmologist",
+        "education": "M.B.B.S. M.D (Ophthalmology) Fellowship in Retina, Phaco & Urea Training Council Number: 2540",
+        "specialty": "Ophthalmology & Vision Sciences"
+      },
+      {
+        "name": "Dr. Paras Panjiyar",
+        "department": "Ophthalmology & Vision Sciences",
+        "profile_url": "https://www.grandehospital.com/en/departments/ophthalmology-vision-sciences/dr-paras-panjiyar",
+        "designation": "Consultant Ophthalmologist",
+        "education": "M.B.B.S. M.D. (Ophthalmology) Post Graduate Fellowship in Pediatric Ophthalmology and Strabismus Council Number: 5739",
+        "specialty": "Ophthalmology & Vision Sciences"
+      },
+      {
+        "name": "Dr. Prerana Kansakar",
+        "department": "Ophthalmology & Vision Sciences",
+        "profile_url": "https://www.grandehospital.com/en/departments/ophthalmology-vision-sciences/dr-prerana-kansakar",
+        "designation": "Consultant Ophthalmologist",
+        "education": "M.B.B.S. M.D. (Ophthalmology) Fellowship in Orbit & Oculofacial Surgery Council Number: 8122",
+        "specialty": "Ophthalmology & Vision Sciences"
+      }
+    ]
+  },
+  {
+    "department": "Orthopedics and Traumatology",
+    "department_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology",
+    "description": "1. Spine Services: Center for Spinal Surgery and Rehabilitation (CSSR) The back, which supports the body, is a crucial organ, and backaches are among the most frequent illnesses for which people visit the hospital. The patients are extensively evaluated by our trained team of spine surgeons, who then either treat them with medication, rehabilitation, or in the worst instance, surgery. In addition, our group has effectively treated a variety of complex spine illnesses, including malignancies. Our team of professionals offers innovative services for Spinal injury Deformity Degenerative Infection Tumor CSRR is the dedicated center for all kinds of spine-related conditions. With nearly 15 years of experience, a team of spine surgeons has been able to perform > 2000 surgeries with results comparable in par with the best centers in the world. 2. Arthroscopy, Sports Medicine and Joint Replacement The department of orthopedics is famous for providing sophisticated, yet compassionate, care for these illnesses, whether they are caused by severe joint damage or old age joint deterioration. We have performed a number of successful joint replacements and have treated several athletes. We can meet practically all of our patients’ orthopedic demands, no matter how basic or complex, thanks to our highly skilled staff in arthroscopy and joint replacement. 3. Traumatology A dedicated team of trauma surgeons take care of trauma, which mostly involves the limbs and the bones. With no delay, the surgeons manage trauma immediately and procedures are planned and executed any time of the day or night, so that the patient can have early recovery and less changes of complications of delay in the treatment. 4. Joint replacement surgery 5. Tumor surgery 6. Bone and joint infection 7. Pediatric orthopedic surgery",
+    "doctors": [
+      {
+        "name": "Dr. Binod Bijukachhe",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-binod-bijukachhe",
+        "designation": "Medical Director, Chief-Department of Orthopedics, Director- Division of Spine Surgery",
+        "education": "M.B.B.S. M.S. (Orthopedics) AO Fellowship – Spine Surgery POSNA COUR Fellowship Council Number: 2389 Profile: Dr. Binod Bijukachhe is a leading orthopedic and spine surgeon in Nepal, renowned for his clinical expertise, academic contributions, and leadership in advancing orthopedic care. With over 25 years of experience, he currently serves as the Medical Director and Head of the Department of Orthopedics at Grande International Hospital, Kathmandu, where he also directs the Division of Spine Surgery. He is the Senior Faculty and Program Coordinator for National Board of Medical Specialty (NBMS) program in Orthopedic surgery. He is also the Program Director and the Mentor in clinical Fellowship in Spinal Reconstruction and Rehabilitation (FSRR). Dr. Bijukachhe’s academic journey began with distinction, earning his MBBS from Rajshahi Medical College, Bangladesh, where he graduated first in his class. He completed his MS in Orthopedics from Kathmandu University with an impressive distinction score. His pursuit of specialized training led him to prestigious fellowships, including AO Spine Surgery at Amrita Institute of Medical Sciences, India, and Pediatric Orthopedic Fellowship at the University of Texas Health Science Center (USA), Children Hospital of Philadelphia (USA), San Francisco General Hospital (USA). In addition, he has obtained dedicated trainings on various aspects of spinal disorders from Australia, Germany and Japan. Dr. Bijukachhe is the pioneer and is the first one to introduce and begin Spinal Deformity Correction surgery, Spinal Instrumentation techniques, Spinal Reconstruction techniques and spinal decompression techniques in Nepal. His clinical focus spans spinal disorders, pediatric orthopedics, complex trauma surgery, and rehabilitation. He is widely respected for his surgical precision, compassionate care, and commitment to patient outcomes. Throughout his career, Dr. Bijukachhe has held key positions at B & B Hospital and the Hospital and Rehabilitation Center for Disabled Children, where he served as consultant and medical in-charge. He is the founding member of Association of Spine Surgeons of Nepal (ASSN) and has served as the General Secretary, Vice President and the President of the association. Dr. Bijukachhe is a prolific academic, with numerous publications in national and international journals. His research includes topics such as spinal tuberculosis, tibial nonunion, clubfoot management, and pediatric hip arthrodesis. His work has earned him accolades including the Mahendra Vidya Bhusan Class B and C (Bestowed by the King of Nepal), Agrani Bank and Dr. A.K. Khan Gold Medals (Bestowed by prime minister Khaleda Zia, Bangladesh), and the prestigious Suprabal Janasewa Shree awarded by the President of Nepal. He also received the Best English Paper Award at JSSR 2018 in Kobe, Japan. Beyond clinical and academic excellence, Dr. Bijukachhe is a passionate organizer of medical conferences. He has led several landmark events, including the International Conferences on Ponseti Method of Clubfoot Correction, Nepal–America Spine Conference (NASCON), International Symposium on Pediatric Orthopedics and Trauma (ISPOT), Pediatric Orthopedic Symposium (PedOS), Nepal-New Zealand-Australia-USA spine conference and Himalaya spine symposiums. These gatherings have fostered global collaboration and elevated Nepal’s presence in the orthopedic community. Fluent in English, Nepali, Hindi, Bengali, and Newari, Dr. Bijukachhe bridges cultural and linguistic gaps in patient care and professional exchange. His dedication to orthopedic advancement, mentorship, and service has made him a respected figure both nationally and internationally.",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Byapak Paudel",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-byapak-paudel",
+        "designation": "Asst. Director, Spine Services, Consultant Orthopedics & Spine Surgeon",
+        "education": "M.B.B.S. M.S. (Orthopedics) Fellowship in Spine Surgery Fellowship in Biportal Endoscopic Spinal Surgery Council Number: 2709",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Bibhuti Nath Mishra",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-bibhuti-nath-mishra",
+        "designation": "Consultant Arthroscopy, Sports & Joint Replacement Surgeon",
+        "education": "M.B.B.S. M.S. (Orthopedics) Fellowship in Arthroscopy & Sports Medicine Fellowship in Arthroscopy & Adult Joint Reconstruction Council Number: 6995 ﻿ Professional Summary Dr. Bibhuti Nath Mishra is a highly accomplished orthopedic surgeon with over 11 years of dedicated experience in the diagnosis, surgical management, and rehabilitation of musculoskeletal disorders. With specialized training in arthroscopy, sports injuries, and adult joint reconstruction, Dr. Mishra offers comprehensive and cutting-edge orthopedic care tailored to the needs of athletic, elderly and general populations. His approach integrates advanced surgical techniques with evidence-based rehabilitation protocols, ensuring optimal functional recovery and patient satisfaction. A graduate of Kathmandu University School of Medical Sciences, Dr. Mishra has further refined his expertise through prestigious fellowships in Singapore and India, gaining international exposure in state-of-the-art orthopedic and sports medicine practices. His clinical acumen and professional integrity have made him a trusted name in the field of orthopedic surgery. Academic Background MBBS – Kathmandu University School of Medical Sciences, Nepal MS (Orthopedics) – Kathmandu University School of Medical Sciences, Nepal Fellowship in Sports Medicine – Singapore General Hospital (SGH), National University of Singapore Fellowship in Arthroscopy & Adult Joint Reconstruction – Kolkata, India He is deeply involved in academic and research activities, with numerous research articles published in indexed journals. He also serves as the Editor-in-Chief of the Grande Medical Journal. His work has been widely recognized through scientific paper presentations at various national and international conferences. Additionally, he contributes to research oversight as the Joint Secretary of the Institutional Review Committee (GIH-IRC) at this hospital. Dr. Mishra’s academic and fellowship training reflects a deep commitment to continual learning and clinical excellence, with particular emphasis on minimally invasive techniques (arthroscopy surgery), sports injury management and joint replacement (knee/hip) Areas of Expertise Arthroscopy – Diagnostic and therapeutic procedures of the knee, shoulder, and other joints Sports Medicine – Prevention, diagnosis, and treatment of sports-related injuries Joint Replacement Surgery – Total and partial replacement of the knee, hip, and shoulder joints Through a multidisciplinary lens, Dr. Mishra’s practice focuses on restoring mobility, enhancing performance, and improving quality of life for patients ranging from young athletes to elderly individuals with degenerative joint conditions. Professional Memberships Dr. Mishra is an active member of numerous national and international professional associations, reflecting his engagement in academic exchange, continuing medical education, and the global orthopedic community: Nepal Medical Council (NMC) Nepal Medical Association (NMA) Nepal Orthopedic Association (NOA) Arthroscopy Society of Nepal (ASON) Nepal Arthroplasty Society (NAS) Indian Orthopedic Association (IOA) Indian Arthroscopy Society (IAS) West Bengal Orthopaedic Association (WBOA) West Bengal Arthroplasty Society (WBAS) Trainings & Certifications Basic Cardiac Life Support (BCLS) – Singapore This certification ensures readiness for critical care situations and reflects Dr. Mishra’s commitment to holistic patient safety throughout the surgical process. Languages Spoken Nepali English Maithili Bhojpuri Hindi Bengali Dr. Mishra’s fluency in multiple regional and international languages enhances his ability to communicate effectively with a diverse patient population, offering a more empathetic and personalized healthcare experience. At Grande International Hospital At Grande International Hospital, Dr. Bibhuti Nath Mishra serves as a Consultant in Orthopedics with a focused practice in sports medicine, arthroscopy, and joint replacement surgery. His patient-centric approach, combined with surgical precision and global exposure, positions him as a valuable asset in the hospital’s commitment to excellence in musculoskeletal care. Whether treating acute sports injuries or performing complex joint reconstructions, Dr. Mishra ensures that every patient receives individualized and evidence-based treatment aimed at restoring movement and improving life quality.",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Rabindra Regmi",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-rabindra-regmi",
+        "designation": "Consultant Orthopedics & Arthroplasty Surgeon",
+        "education": "M.B.B.S. M.S. (Orthopedics) Fellowship in Advanced Joint Reconstruction and Arthroplasty Surgery Council Number: 8128",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Shilu Shrestha",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-shilu-shrestha",
+        "designation": "Consultant Orthopedics Surgeon",
+        "education": "M.B.B.S. M.S. (Orthopedics) Clinical Fellowship in Hand & Reconstructive Microsurgery Council Number: 6890",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Ram Krishna Dahal",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-ram-krishna-dahal",
+        "designation": "Associate Consultant Orthopedics and Spine Surgeon",
+        "education": "M.B.B.S. M.S. (Orthopedics and Trauma Surgery) Clinical Fellowship in Spine Reconstructive Surgery Council Number: 12136",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Aayush Shrestha",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-aayush-shrestha",
+        "designation": "Associate Consultant Orthopedics and Spine Surgeon",
+        "education": "M.B.B.S. M.S. (Orthopedics) Clinical Fellowship in Spine Reconstructive Surgery Council Number: 12564",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Sachindra Raj Joshi",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-sachindra-raj-joshi",
+        "designation": "Clinical Fellow in Spine Reconstructive Surgery",
+        "education": "M.B.B.S. M.S. (Orthopedics) Fellowship in Trauma Surgery Council Number: 13657",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Sufiyan Babu",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-sufiyan-babu",
+        "designation": "Orthopedics Resident",
+        "education": "M.B.B.S. Council Number: 22274",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Rajib Sapkota",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-rajib-sapkota",
+        "designation": "Orthopedics Resident",
+        "education": "M.B.B.S. Council Number: 29899",
+        "specialty": "Orthopedics and Traumatology"
+      },
+      {
+        "name": "Dr. Mukesh Jayswal",
+        "department": "Orthopedics and Traumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/orthopedics-and-traumatology/dr-mukesh-jayswal",
+        "designation": "Orthopedics Resident",
+        "education": "M.B.B.S. M.D. (Internal Medicne) Council Number: 32590",
+        "specialty": "Orthopedics and Traumatology"
+      }
+    ]
+  },
+  {
+    "department": "Pathology",
+    "department_url": "https://www.grandehospital.com/en/departments/pathology",
+    "description": "The Pathology department plays a vital role in diagnosis of a disease condition. Be it a small lump for which FNAC was done or a big chunk of diseased tissue surgically resected, our team of pathologists meticulously evaluate the tissue to help clinicians clinch the diagnosis. Our state-of-art Clinical Laboratory offers a full spectrum of diagnostic services, combining medical expertise with cutting - edge technology – including Artificial Intelligence (AI) to deliver accurate and timely results to improve patient care. We serve as a critical support system to clinicians, using the latest automated systems and quality assurances practices. Why choose us? · Advanced AI and Automation · Modern equipment · NABH-Ready standards · Rapid reporting & AI integration · 24/7 Emergency Lab services Microbiology: A department well set with modern infrastructure to isolate the organism that is causing the infection and what antibiotics would do the best. With Bactec ™ the chances that the organism is identified is very high when compared to other laboratories available in Nepal.",
+    "doctors": [
+      {
+        "name": "Prof. Dr. Gita Sayami Joshi",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/prof-dr-gita-sayami-joshi",
+        "designation": "HOD/Consultant Pathologist",
+        "education": "M.B.B.S. M.D. (Pathology) PhD Council Number: 388",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Assoc. Prof. Dr. Anil Dev Pant",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/assoc-prof-dr-anil-dev-pant",
+        "designation": "Co-ordinator/Consultant Pathologist",
+        "education": "M.B.B.S. M.D. (Pathology) Clinical Research Fellowship in Renal Pathology Council Number: 2334",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Dr. Shova Banstola",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/dr-shova-banstola",
+        "designation": "Consultant Pathologist",
+        "education": "M.B.B.S. M.D. (Pathology) Council Number: 5168",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Dr. Manim Amatya",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/dr-manim-amatya",
+        "designation": "Associate Consultant Pathologist",
+        "education": "M.B.B.S. M.D. (Pathology) Council Number: 12850",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Assoc. Prof. Dr. Shovana Karki",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/assoc-prof-dr-shovana-karki",
+        "designation": "Consultant Pathologist",
+        "education": "M.B.B.S. M.D. (Pathology) Council Number: 3774",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Dr. Alina Awale",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/dr-alina-awale-76",
+        "designation": "Registrar Pathologist",
+        "education": "M.B.B.S. MD (Pathology) Council Number: 16779",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Dr. Ranjana Parajuli",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/dr-ranjana-parajuli",
+        "designation": "Consultant Microbiologist",
+        "education": "B.D.S. M.D. (Microbiology) Council Number: 5422",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Dr. Shaila Rana",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/dr-shaila-rana",
+        "designation": "Clinical Biochemist & Lab Manager",
+        "education": "M.B.B.S. M.D. (Medical Biochemistry) Council Number: 12745",
+        "specialty": "Pathology"
+      },
+      {
+        "name": "Dr. Sita Thapa",
+        "department": "Pathology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pathology/dr-sita-thapa",
+        "designation": "Registrar Microbiologist",
+        "education": "M.B.B.S. M.D. (Microbiology) Council Number: 13441",
+        "specialty": "Pathology"
+      }
+    ]
+  },
+  {
+    "department": "Pediatric Surgery & Pediatric Urology",
+    "department_url": "https://www.grandehospital.com/en/departments/pediatric-surgery-pediatric-urology",
+    "description": "Pediatric surgery is a super specialty branch focusing on providing surgical cases to neonates, infants, children, and adolescents. Pediatric surgeons are trained in a distinct set of skills and expertise to manage the unique physiological and developmental differences in young patients. Subspecialties of Pediatric Surgery Pediatric surgery encompasses various surgical procedures aimed at treating congenital anomalies, tumors, injuries etc. These includes: General Pediatric Surgery : * Appendicitis * Hernia & Hydrocele * Intussusception Pediatric Urology : * Hydronephrosis * Kidney Stones * VUR * Phimosis * Undescended Testes * Hypospadias Neonatal Surgery : * Hirschsprung’s Disease * Anorectal Malformation * Congenital Diaphragmatic Hernia Pediatric Solid Cancer ( Solid Tumors) : * Neuroblastoma * Wilms Tumor * Soft Tissue Sarcoma Pediatric Vascular Anomalies : * Haemangioma * Cystic Hygroma Pediatric Hepatobiliary Diseases : * Gall Bladder Stone * Choledochal Cyst * Biliary Atresia Various surgical methods are used to treat different diseases like open surgery, laparoscopic surgery, endourology using laser, electrosurgery etc.",
+    "doctors": [
+      {
+        "name": "Assoc. Prof. Dr. Suman Bikram Adhikari",
+        "department": "Pediatric Surgery & Pediatric Urology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatric-surgery-pediatric-urology/assoc-prof-dr-suman-bikram-adhikari",
+        "designation": "Consultant Pediatric Surgeon",
+        "education": "M.B.B.S. M.S. (Pediatrics Surgery) Fellowship in Pediatric Urology Council Number: 7865",
+        "specialty": "Pediatric Surgery & Pediatric Urology"
+      }
+    ]
+  },
+  {
+    "department": "Pediatrics & Neonatology",
+    "department_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology",
+    "description": "General Pediatrics: Pediatrics is a specialty that tackles the diseases in children below sixteen years. This department has a dedicated vaccination unit that provides vaccines according to the national policy and also special vaccines as per the child’s need. Pediatric Pulmonology: Respiratory diseases is not rare in children. Be it asthma or any other respiratory disease, our specialists meticulously work up the child to diagnose and then treat with the best evidence based treatment. Features: · 24X7 Pediatric Emergency Service : 24 x 7 Pediatric Service available through well trained Pediatrician ( PICU / NICU / Ward / Emergency) · 24X7 Pediatric OPD Service. · Healthy Baby Clinic. · 24X7 Free Neonatal Care Counseling. · Well managed NICU (14 bed). · Well managed PICU (6 bed) including one Isolation bed. · Vaccination services according to national policy & special vaccine as per child’s need. · Units are well managed with the team of best doctor’s and latest technology. · Pediatric Pulmonology / Cardiology · Vaccination Center : o All government vaccine available free of cost. o Additional vaccine also available o Adult / Student travelling abroad This department deals with emergency and elective surgical diseases of newborns to 15 years of age. We also deal with prenatal counseling about fetal surgical issues for better post-natal care and further management. Neonatal surgical problems are birth defects and anomalies. Pediatric surgical diseases are general and common pediatric surgery, pediatric urology, pediatric surgical oncology and pediatric Burns. From simple surgeries to complicated neonatal and pediatric surgeries, our Pediatric surgeons have proven themselves with careful and precise surgeries that have given the best possible outcomes to the child and their family.",
+    "doctors": [
+      {
+        "name": "Assoc. Prof. Dr. Prashant Prasad Rijal",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/assoc-prof-dr-prashant-prasad-rijal",
+        "designation": "Consultant Pediatric Pulmonologist",
+        "education": "M.B.B.S. M.D. (Pediatrics) Fellowship in Pediatrics Pulmonology Council Number: 3218 Dr. Prashant Prasad Rijal Consultant – Pediatric Pulmonology & General Pediatrics NMC No.: 3218 Professional Summary: Dr. Prashant Prasad Rijal is a skilled pediatric pulmonologist with specialized expertise in childhood respiratory diseases, including asthma, bronchiectasis, and chronic pulmonary conditions. With advanced training in pediatric pulmonology and bronchoscopy, he provides high-quality care for complex respiratory cases in infants and children. Dr. Rijal’s approach blends detailed clinical assessment, advanced diagnostics, and individualized treatment to ensure the best outcomes for young patients. He completed his MBBS at Manipal College of Medical Sciences and earned his MD in Pediatrics from Manipal, India, followed by a Fellowship in Pediatric Pulmonology at Gripmer, New Delhi. In addition to his clinical work, Dr. Rijal is actively involved in academic medicine as an Associate Professor at Nepal Medical College Teaching Hospital, where he trains future pediatricians and contributes to the field through continuous education and mentorship. Academic Background: • MBBS – Manipal College of Medical Sciences, Nepal • MD (Pediatrics) – Manipal Academy of Higher Education, India • Fellowship in Pediatric Pulmonology – Gripmer, New Delhi, India Dr. Rijal’s academic path demonstrates a deep dedication to pediatric respiratory medicine and general pediatric care, enhanced by international fellowship experience. Areas of Expertise: • Pediatric Pulmonary Function Testing • Childhood Asthma & Allergies – Diagnosis, management, and education • Chronic Respiratory Diseases in Children – Including bronchiectasis and recurrent infections • Pediatric Bronchoscopy – Neonatal and pediatric airway assessment and intervention • General Pediatrics – Comprehensive care for infants, children, and adolescents Dr. Rijal’s evidence-based and child-friendly approach ensures accurate diagnoses, timely interventions, and empathetic care for children with complex and chronic health concerns. Professional Memberships: Dr. Rijal is an engaged member of national and regional pediatric respiratory associations: • Nepal Pediatric Society (NEPAS) • Asian Pediatric Pulmonology Society Trainings & Certifications: • Neonatal and Pediatric Bronchoscopy Training • Childhood Asthma Management Training • PALS (Pediatric Advanced Life Support) • NALS (Neonatal Advanced Life Support) These certifications reflect Dr. Rijal’s commitment to emergency readiness and specialized pediatric care. Languages Spoken: • Nepali • English • Hindi His ability to communicate in multiple languages enhances trust and clarity in pediatric care settings involving both children and parents. At Grande International Hospital: At Grande International Hospital, Dr. Prashant Prasad Rijal serves as a Consultant in Pediatric Pulmonology and General Pediatrics, providing expert care for a wide range of childhood respiratory and general health conditions. His clinical precision, academic foundation, and compassionate approach make him a vital contributor to the hospital’s pediatric services.",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Sanjay Raj Thapa",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-sanjay-raj-thapa",
+        "designation": "Consultant Pediatrician, Pediatric Asthma & Allergist",
+        "education": "M.B.B.S. M.D. (Pediatrics) Fellowship in Pediatric Asthma & Allergy PGPN (Post Graduate Program in Pediatric Nutrition) Council Number: 5425 Dr. Sanjay Raj Thapa",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Amrit Ghimire",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-amrit-ghimire",
+        "designation": "Consultant Pediatric Pulmonologist",
+        "education": "M.B.B.S. M.D. (Pediatrics) Fellowship in Pediatric Pulmonology Council Number: 6984 Dr. Amrit Ghimire Consultant – Pediatric Pulmonology NMC No.: 6984 Professional Summary: Dr. Amrit Ghimire is an experienced pediatric pulmonologist with a strong clinical background in the diagnosis and treatment of childhood respiratory disorders. With over eight years of specialized experience as a consultant, Dr. Ghimire is known for his expertise in pediatric bronchoscopy and comprehensive respiratory care for infants, children, and adolescents. A graduate of Nepal Medical College, Kathmandu, Dr. Ghimire pursued his postgraduate training in pediatrics at the prestigious Institute of Medicine, Tribhuvan University. He further specialized in Pediatric Pulmonology through a fellowship program at Ganga Ram Institute of Postgraduate Medical Education & Research, New Delhi. His dedication to child lung health and long-standing commitment at Grande International Hospital reflect his focus on delivering high-quality, evidence-based care in pediatric respiratory medicine. Academic Background: • MBBS – Nepal Medical College, Kathmandu (2006) • MD (Pediatrics) – Institute of Medicine, Tribhuvan University Teaching Hospital, Kathmandu (2012) • Fellowship in Pediatric Pulmonology – Ganga Ram Institute of Postgraduate Medical Education & Research, New Delhi (2016) Dr. Ghimire’s academic and clinical training has provided him with in-depth knowledge and hands-on experience in managing a wide range of childhood respiratory illnesses, including rare and complex cases requiring advanced pulmonary diagnostics. Areas of Expertise: • Pediatric Bronchoscopy – Diagnostic and therapeutic bronchoscopy for airway evaluation and foreign body removal • Childhood Respiratory Disorders – Management of asthma, chronic cough, pneumonia, bronchitis, and congenital airway anomalies • Pulmonary Function Testing – Assessment and monitoring of pediatric lung function Dr. Ghimire’s clinical approach is guided by a balance of compassionate care and advanced technology to improve respiratory outcomes in children. Professional Memberships: Dr. Ghimire actively participates in professional organizations that support pediatric and respiratory medicine development in Nepal: • Nepal Medical Council (NMC) • Nepal Medical Association (NMA) • Nepal Pediatric Society (NEPAS) Trainings & Certifications: • Fellowship in Pediatric Pulmonology – Ganga Ram Institute of Postgraduate Medical Education & Research, New Delhi Languages Spoken: • Nepali • English • Hindi Dr. Ghimire’s multilingual fluency ensures clear communication with patients and families from diverse backgrounds, enhancing patient comfort and collaboration in care. At Grande International Hospital: At Grande International Hospital, Dr. Amrit Ghimire serves as a Consultant Pediatric Pulmonologist, offering specialized care in pediatric respiratory medicine since 2016. His commitment to excellence in clinical care and his expertise in pediatric bronchoscopy have been instrumental in advancing pulmonary diagnostics and interventions for children in Nepal. Dr. Ghimire’s patient-centered approach and long-term dedication make him a trusted figure in the hospital’s pediatric services.",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Anju Dangol",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-anju-dangol",
+        "designation": "Consultant General Pediatrician & Neonatologist",
+        "education": "M.B.B.S. M.D. (Pediatrics) Council Number: 3494 Dr. Anju Dangol Consultant – Pediatrics & Neonatology NMC No.: 3494 Professional Summary: Dr. Anju Dangol is a committed pediatrician with over 10 years of clinical experience in general pediatrics and neonatology. With a compassionate approach and a strong foundation in pediatric care, she has managed a wide range of childhood illnesses and neonatal conditions. Her clinical practice is focused on promoting healthy child development, early intervention, and family-centered care. Dr. Dangol completed her medical education in pediatrics at Fatima University, Manila, and has since served in various pediatric and neonatal roles across healthcare settings. Currently, she serves as a Consultant Pediatrician at Grande International Hospital, where she is actively involved in the care of infants, children, and adolescents, including management of neonatal conditions. Academic Background: • MD (Pediatrics) – Fatima University, Manila, Philippines Dr. Dangol’s academic training has equipped her with the core competencies required to manage pediatric and neonatal care with diligence and evidence-based practices. Areas of Expertise: • General Pediatrics – Diagnosis and treatment of childhood illnesses, immunization, and growth monitoring • Neonatology – Care of newborns including preterm and high-risk infants • Child Health Promotion – Preventive care and parental counseling Her pediatric practice emphasizes accurate diagnosis, early management, and preventive care to promote optimal growth and development in children. Professional Memberships: Dr. Dangol is affiliated with reputable national pediatric and medical organizations: • Nepal Medical Association (NMA) • Nepal Pediatric Society Trainings & Certifications: • Basic Life Support (BLS) • Neonatal Resuscitation Program (NRP) • Advanced Pediatric Life Support (APLS) These certifications reflect her preparedness for emergency pediatric and neonatal care and her commitment to clinical excellence. Languages Spoken: • English Dr. Dangol’s effective communication supports safe, empathetic care for children and ensures clarity for caregivers and families. At Grande International Hospital: At Grande International Hospital, Dr. Anju Dangol serves as a Consultant Pediatrician, providing high-quality care in both outpatient and inpatient pediatric and neonatal services. Her experience, clinical reliability, and dedication to children’s health make her a valuable member of the pediatric team, helping young patients recover, grow, and thrive.",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Ramita Shrestha",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-ramita-shrestha",
+        "designation": "Consultant Pediatrician & Neonatologist",
+        "education": "M.B.B.S. M.D. (Pediatrics) Council Number: 4959",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Neema Shrestha",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-neema-shrestha",
+        "designation": "Consultant Pediatrician & Neonatologist",
+        "education": "M.B.B.S. Diploma in Child Health (DCh) M.D. (Pediatrics) Fellowship in Neonatology Council Number: 7631",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Urmila Shakya",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-urmila-shakya",
+        "designation": "Consultant Pediatric Cardiologist",
+        "education": "M.B.B.S. M.D. (Pediatrics) Diploma in Pediatric Echocardiography Council Number: 1784",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Saroj Kumar Jha",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-saroj-kumar-jha",
+        "designation": "Pediatric Cardiologist",
+        "education": "M.B.B.S. MD (Pediatrics) PGPN Fellowship in Pediatric Cardiology Council Number: 13743",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Sarbesh Kumar Das",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-sarbesh-kumar-das",
+        "designation": "Registrar Pediatrician",
+        "education": "M.B.B.S. M.D. (Pediatrics) Council Number: 12095",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Saurav Kumar Singh",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-saurav-kumar-singh",
+        "designation": "Registrar Pediatrician",
+        "education": "M.B.B.S. M.D. (Pediatrics) Fellowship in PICU Council Number: 8315",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Dr. Pradeep Kumar Yadav",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-pradeep-kumar-yadav",
+        "designation": "",
+        "education": "",
+        "specialty": "Pediatrics & Neonatology"
+      },
+      {
+        "name": "Assoc. Prof. Dr. Prashant Prasad Rijal Pediatrics & Neonatology Dr. Sanjay Raj",
+        "department": "Pediatrics & Neonatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/pediatrics-neonatology/dr-sumit-adhikari",
+        "designation": "Registrar Pediatrician",
+        "education": "M.B.B.S. M.D. (Pediatrics) Council Number: 19690",
+        "specialty": "Pediatrics & Neonatology"
+      }
+    ]
+  },
+  {
+    "department": "Physiotherapy and Rehabilitation",
+    "department_url": "https://www.grandehospital.com/en/departments/physiotherapy-and-rehabilitation",
+    "description": "The Department of Physiotherapy and Rehabilitation is well equipped with modern equipment and ambient space for patients. Qualified, skilled and experienced team of Physiotherapists provide Physiotherapy service in various field of rehabilitation (Musculoskeletal, Neurological, Sports and Spine injuries, Intensive care, Pulmonological and cardiac, Pediatrics and Women’s Health). For our patients, individually tailored physiotherapy assessment and rehabilitation services provided are based on clinical reasoning and recent evidences. Rajesh Singh Physiotherapy and Rehabilitation Nima Sherpa Physiotherapy and Rehabilitation Pratik Pokharel Physiotherapy and Rehabilitation Anish Chapagain Physiotherapy and Rehabilitation Roshan Parajuli Physiotherapy and Rehabilitation Deepika Thapa Physiotherapy and Rehabilitation Sarthak Gautam Physiotherapy and Rehabilitation Shilu Maharjan Physiotherapy and Rehabilitation Sujata K.C Physiotherapy and Rehabilitation",
+    "doctors": []
+  },
+  {
+    "department": "Plastic, Reconstructive, Aesthetic and Hand Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/plastic-reconstructive-aesthetic-and-hand-surgery",
+    "description": "Divisions : · General Plastic Surgery · Reconstructive Trauma Surgery · Oncoplastic Surgery · Pediatric Plastic Surgery · Aesthetic Surgery · Hand Surgery Scope of Services: A. Plastic Reconstructive Surgery: (Scalp / Face/ Trunk / Perineum / Genitalia / Lower Extremity) Trauma wounds Treatment Congenital Abnormalities Burn Management and Reconstruction Cancer Excision and Defects Coverage Diabetic foot / Bedsore Management Skin Cancer Treatment Reconstructive Microsurgery Reconstruction for Head and Neck, Oral Cavity and Mandible Cancer Breast Cancer Reconstruction Burn Reconstruction Facial Paralysis Treatment Vascular Anomalies Tissue Expansion Surgeries Lymphedema B. Cosmetic Surgery: Scars Revision Moles, Lipoma, Cyst, Tumors Removal Fat Grafting Dimpleplasty Rhinoplasty (Nose reshaping) Asian Eyelid (Mongolian Eye) Upper Blepharoplasty Lower Eyebag Removal Ear Deformity Correction (Otoplasty) Facelift / Brow lift/ Neck lift Lip Enlargement /Lip Reduction / Lip Lift Arm Reduction / Thigh Reduction Breast Enlargement (Silicone Implant / Fat Graft) Breast Lift, Breast Reduction Gynecomastia (Male Breast Reduction) Abdominoplasty (Tummy Tuck) Liposuction (Waterjet) Vaginal Tightening / Labiaplasty Transgender Surgery C. Hand Surgery: Hand Infections, Hand Injury Tendon Repair / Tendon Transfer, Peripheral Nerve Surgery Brachial Plexus Surgery, Trigger Finger / Carpal Tunnel Release Dupuytrens Contracture, Post Burn Contracture Syndactyly / Polydactyly / Congenital Hand Anomaly Thumb Reconstruction, Hand / Finger / Thumb Replantation Revascularization, Toe Transfer Dr Anoj Rajkarnikar Plastic, Reconstructive, Aesthetic and Hand Surgery Dr Ashok Rai Plastic, Reconstructive, Aesthetic and Hand Surgery",
+    "doctors": []
+  },
+  {
+    "department": "Psychiatry",
+    "department_url": "https://www.grandehospital.com/en/departments/psychiatry",
+    "description": "This Department takes care of the mental and emotional wellbeing. As defined by the WHO, mental wellbeing is one of the major component of a person’s health. A team of psychiatrists take care of these patients. Our specialists are well trained. With care and concern for the patient and the family, they treat each individual with required effort and dedication.",
+    "doctors": [
+      {
+        "name": "Dr. Rachana Sharma Basnet",
+        "department": "Psychiatry",
+        "profile_url": "https://www.grandehospital.com/en/departments/psychiatry/dr-rachana-sharma-basnet",
+        "designation": "Consultant Psychiatrist",
+        "education": "M.B.B.S. M.D. (Psychiatry) Council Number: 6883",
+        "specialty": "Psychiatry"
+      },
+      {
+        "name": "Dr. Rojan Pokharel",
+        "department": "Psychiatry",
+        "profile_url": "https://www.grandehospital.com/en/departments/psychiatry/dr-rojan-pokharel",
+        "designation": "Consultant Psychiatrist",
+        "education": "M.B.B.S. M.D. (Psychiatry) Council Number: 11230",
+        "specialty": "Psychiatry"
+      },
+      {
+        "name": "Dr. Raman Koirala",
+        "department": "Psychiatry",
+        "profile_url": "https://www.grandehospital.com/en/departments/psychiatry/dr-raman-koirala",
+        "designation": "Registrar Psychiatrist",
+        "education": "M.B.B.S. M.D. (Psychiatry) Council Number: 12867",
+        "specialty": "Psychiatry"
+      },
+      {
+        "name": "Dr. Nikeshmani Rajbhandari",
+        "department": "Psychiatry",
+        "profile_url": "https://www.grandehospital.com/en/departments/psychiatry/dr-nikeshmani-rajbhandari",
+        "designation": "Consultant Psychiatrist",
+        "education": "M.B.B.S. M.D. (Psychiatry) Council Number: 10347",
+        "specialty": "Psychiatry"
+      }
+    ]
+  },
+  {
+    "department": "Pulmonology & Interventional Bronchoscopy",
+    "department_url": "https://www.grandehospital.com/en/departments/pulmonology-interventional-bronchoscopy",
+    "description": "Enhance your respiratory health with our expert care at the Department of Pulmonology. We provide specialized treatment for respiratory probes including COPD, asthma, pneumonia, tuberculosis, interstitial lung disease (ILD), and sleep-disordered breathing etc. Our comprehensive services encompass diagnosis, pulmonary function testing, bronchoscopy, ICU support, mechanical ventilation, and sleep studies. Utilizing equipment such as spirometers and bronchoscopy suites, we deliver thorough and effective care. Led by experienced pulmonologists, our dedicated team prioritizes patient-centered treatment to ensure your well-being.",
+    "doctors": [
+      {
+        "name": "Assoc. Prof. Dr. Prajowl Shrestha",
+        "department": "Pulmonology & Interventional Bronchoscopy",
+        "profile_url": "https://www.grandehospital.com/en/departments/pulmonology-interventional-bronchoscopy/assoc-prof-dr-prajowl-shrestha",
+        "designation": "Consultant Pulmonologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) D.M. (Pulmonary, Critical Care & Sleep Medicine) Council Number: 6389",
+        "specialty": "Pulmonology & Interventional Bronchoscopy"
+      },
+      {
+        "name": "Dr. Ravi Mahat",
+        "department": "Pulmonology & Interventional Bronchoscopy",
+        "profile_url": "https://www.grandehospital.com/en/departments/pulmonology-interventional-bronchoscopy/dr-ravi-mahat",
+        "designation": "Consultant Pulmonologist",
+        "education": "M.B.B.S. F.C.P.S. (Pulmonology) European Diploma in Adult Respiratory Medicine Council Number: 8092",
+        "specialty": "Pulmonology & Interventional Bronchoscopy"
+      }
+    ]
+  },
+  {
+    "department": "Radiology & Imaging Technology",
+    "department_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology",
+    "description": "Diagnostic Radiology: With the best in class 160 slice CT Scan, 1.5 Tesla MRI, Digital Mammography, DEXA Scan, multiple USG machines, digital X-rays, and OPG (Orthopantomography) department of Diagnostic Radiology can provide the best possible radiological diagnosis in the country. A handpicked team of well-trained radiologists, these imaging services are done 24×7 and reports are provided in the shortest time possible. Interventional Radiology: In the era of minimal invasion, interventional radiology plays a vital role in diagnosing and treating various diseases. With the use of Fluoroscope or Ultrasound, drain tubes can be placed to bypass the obstructions in ureters or bile ducts. There are very many interventions and procedures that can make the treatment less invasive and easy for the patient.",
+    "doctors": [
+      {
+        "name": "Dr. Sharma Paudel",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-sharma-paudel",
+        "designation": "HOD/Consultant Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Council Number: 4377",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Prakash Kayastha",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-prakash-kayastha",
+        "designation": "Consultant Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Council Number: 3316",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Saurav Krishna Malla",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-saurav-krishna-malla",
+        "designation": "Consultant Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Post Graduate Training in Cardiovascular Radiology and Endovascular Interventions Council Number: 6892",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Subash Phuyal",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-subash-phuyal",
+        "designation": "Consultant Neuroimaging & Interventional Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) D.M. (Neuroimaging and Interventional Radiology) Council Number: 9189",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Anamika Jha Kasyap",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-anamika-jha-kasyap",
+        "designation": "Consultant Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Short Term Training in Breast Imaging Council Number: 10074",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Kapil Dawadi",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-kapil-dawadi",
+        "designation": "Associate Consultant Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Council Number: 16586",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Ashish Shrestha",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-ashish-shrestha",
+        "designation": "Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Council Number: 12730",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Gaurab Shrestha",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-gaurab-shrestha",
+        "designation": "Radiologist",
+        "education": "M.B.B.S. M.D. (Radiodiagnosis) Council Number: 13601",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Manali Bhatta",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-manali-bhatta",
+        "designation": "Radiologist",
+        "education": "M.B.B.S. M.D. ( Radiodiagnosis ) Council Number: 22834",
+        "specialty": "Radiology & Imaging Technology"
+      },
+      {
+        "name": "Dr. Rajiv Chaudhary",
+        "department": "Radiology & Imaging Technology",
+        "profile_url": "https://www.grandehospital.com/en/departments/radiology-imaging-technology/dr-rajiv-chaudhary",
+        "designation": "",
+        "education": "",
+        "specialty": "Radiology & Imaging Technology"
+      }
+    ]
+  },
+  {
+    "department": "Rheumatology",
+    "department_url": "https://www.grandehospital.com/en/departments/rheumatology",
+    "description": "Rheumatology is a Subspecialty of Internal Medicine. Which Devoted to the Diagnosis & Treatment of Musculoskeletal Disease and Systemic Auto Immune Conditions. Rheumatologist treat arthritis, Autoimmune Diseases. There are more then 200 types of Rheumatological Diseases including RA, SLE, Vasculitis, Gout, Osteoarthritis, Systemic Sclerosis, Sarcoidosis etc..",
+    "doctors": [
+      {
+        "name": "Dr. Binaya Kumar Regmi",
+        "department": "Rheumatology",
+        "profile_url": "https://www.grandehospital.com/en/departments/rheumatology/dr-binaya-kumar-regmi-57",
+        "designation": "HOD/Consultant Internal Medicine & Rheumatologist",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Fellowship in Rheumatology Council Number: 4190",
+        "specialty": "Rheumatology"
+      }
+    ]
+  },
+  {
+    "department": "Transfusion Medicine & Blood Bank",
+    "department_url": "https://www.grandehospital.com/en/departments/transfusion-medicine-blood-bank",
+    "description": "Blood Transfusion Service is a very important part of the contemporary healthcare system, without which proficient medical care is impracticable. Grande International Hospital with its technical strength and excellent ranking in health and allied specialties, intend to strengthen the safe blood services by contributing towards lowering hemorrhage mortality and reducing the risk of transfusion transmitted infectious diseases in Nepal. Grande International Hospital, Department of Transfusion Medicine is self-sufficient at meeting the blood requirements for all in-house patients, and also provides blood and blood components to other hospitals nearby and to other hospital all over Nepal when required. GIH blood Bank support different components and test for Liver transplant, ABO mismatch renal transplant, Bone marrow Transplant all over Nepal. GIH blood bank is the only blood center in whole Nepal where Transfusion Medicine/ Blood Bank specialist is available so it is taking responsibility for advocating the betterment of Transfusion service in Nepal. Grande International Hospital has taken the initiative towards the provision of safe blood products, Safe Blood Transfusion Services have been initiated with the strong pillars of voluntary blood donation, training of human resource, developing service delivery in blood banking and well equipped laboratory with continuous education and training in transfusion sciences. GIH blood Bank is the referral center for blood banking problems where complicated cases on Blood Groping, cross matching, antibody screening and identification, antibody titration, DAT, ICT are handled efficiently.",
+    "doctors": [
+      {
+        "name": "Dr. Bipin Nepal",
+        "department": "Transfusion Medicine & Blood Bank",
+        "profile_url": "https://www.grandehospital.com/en/departments/transfusion-medicine-blood-bank/dr-bipin-nepal",
+        "designation": "Consultant Transfusion Medicine Specialist",
+        "education": "M.B.B.S. M.S. (Transfusion Medicine and Tissue Typing) Advance Certificate in Transfusion Medicine Council Number: 9520 Professional Summary: Dr. Bipin Nepal is a distinguished expert in the field of Transfusion Medicine and Blood Banking, with over a decade of dedicated experience in Nepal. He currently serves as the Head of the Department of Transfusion Medicine at Grande International Hospital. Dr. Nepal brings an extensive clinical and academic background, with expertise in areas such as tissue typing, cord blood processing, bone banking, immunohematology, and apheresis. He has made substantial contributions to national transfusion services, research, and policy-making, actively serving as a Technical Advisor to the Nepal Blood Bank and Transfusion Services (NBBTS) under the Ministry of Health, Government of Nepal. His leadership extends to academic roles and ethics committees, supporting both innovation and safety in clinical practices. Positions Held: Head, Department of Transfusion Medicine – Grande International Hospital Medical Director – TU Lions Blood Transfusion & Research Centre Head, Department of Transfusion Medicine – Birat Medical College IRB Member – Grande International Hospital Technical Advisor – NBBTS, Ministry of Health, Government of Nepal Areas of Expertise: Transfusion Medicine Blood Banking & Component Therapy Tissue Typing & Bone Banking Cord Blood Processing Apheresis Procedures Immunohematology Awards & Fellowships: Harold Gunson Fellowship, 2015 – London, UK Harold Gunson Fellowship, 2019 – Basel, Switzerland Reach the World Grant, ISTH, 2017 – Berlin, Germany Grant, European Hematology Association, 2016 – Copenhagen, Denmark South East Asia Pacific Grant, ANZSBT, 2019 – Sydney, Australia Ambassador for Peace Award – Universal Peace Federation Memberships: Nepal Medical Council (NMC) Nepal Medical Association (NMA) International Society of Blood Transfusion (ISBT) European Hematology Association (EHA) Australian & New Zealand Society of Blood Transfusion (ANZSBT) Pakistan Medical & Dental Council (PMDC) Languages Spoken: English Nepali Hindi Urdu",
+        "specialty": "Transfusion Medicine & Blood Bank"
+      }
+    ]
+  },
+  {
+    "department": "Urology & Kidney Transplantation Surgery",
+    "department_url": "https://www.grandehospital.com/en/departments/urology-kidney-transplantation-surgery",
+    "description": "This department deals with Genito-Urinary System in male & Urinary System only in female. Department was established from the very beginning of the GIH. One Professor & five qualified Urologists & Kidney Transplant Surgeons are providing world standard services for Kidney, Ureter, Urinary Bladder & Urethra. So far department has performed 158 Kidney Transplantation and thousands of surgery for Kidney Cancer, Kidney Stones, Urinary Bladder Cancer, Prostate Surgery and Complex Urethroplasty. Department is proud to become first in country to start RIRS (for kidney stones), Bipolar TURP for enlarged Prostate and Laparoscopic donor Nephrectomy (by Nepali Team only) in the country. Prompt diagnosis and world standard treatment is motto of the department.",
+    "doctors": [
+      {
+        "name": "Prof. Dr. Prem Raj Gyawali",
+        "department": "Urology & Kidney Transplantation Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/urology-kidney-transplantation-surgery/prof-dr-prem-raj-gyawali",
+        "designation": "Chief Consultant Urologist & Kidney Transplant Surgeon",
+        "education": "M.B.B.S. M.D. M.S. (General Surgery) MPH Fellowship in Urology & Kidney Transplantation Council Number: 2149 Doctors Profile Name: Prof. Dr. Prem Raj Gyawali Qualification with name of Institute: MD- Rostov State Medical College, Russia MS- Rostov State Medical College, Russia FNMH- National University Hospital, Singapore MPH- Institute of Medicine, Maharajgunj Proficiency in Languages: English, Nepali, Hindi, Russian NMC No.: 2149 Suprasiddha Prabal Janasewa Shri III Membership: NMC NAMS Nepal Transplantation Society Urological Association of Asia European Association of Urology Positions held in any organizations: Trainings: Experience: 25 + years Expertise in: Endo-Urology, Laparoscopic Urology, Uro oncology, Renal Transplantation. Uro- Oncology , Prostate Surgery, Kidney Transplantation.",
+        "specialty": "Urology & Kidney Transplantation Surgery"
+      },
+      {
+        "name": "Asst. Prof. Dr. Bhoj Raj Luitel",
+        "department": "Urology & Kidney Transplantation Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/urology-kidney-transplantation-surgery/asst-prof-dr-bhoj-raj-luitel",
+        "designation": "Consultant Urology & Kidney Transplant Surgeon",
+        "education": "M.B.B.S. M.S. (General Surgery) MCh (Urology) Council Number: 5231 Doctors Profile Name: Dr. Bhojraj Luitel Qualification with name of Institute: MBBS- Universal College of Medical Sciences MS- Maharajgunj Medical Campus Mch (Urology)- Maharajgunj Medical Campus Proficiency in Languages: English, Nepali, Hindi NMC No.: 5231 Awards & Accolades: Gold Medalist MBBS, MS, Mch MBBS Scholarship from Ministry of Education Travel Grant – Japanese society of clinical oncology Membership: Nepal Medical Association Nepal Association of Urological Surgeons Urological Association of Asia Positions held in any organizations: Asst. Professor, TU Teaching Hospital Trainings: Reconstructive Urology- Urethroplasty Endourology and laparoscopic Surgery Experience: 11 years (Post Mch Urology) Expertise in: Endourology, Renal Transplantation. Uro- oncology",
+        "specialty": "Urology & Kidney Transplantation Surgery"
+      },
+      {
+        "name": "Asst. Prof. Dr. Pawan Raj Chalise",
+        "department": "Urology & Kidney Transplantation Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/urology-kidney-transplantation-surgery/asst-prof-dr-pawan-raj-chalise",
+        "designation": "Consultant Urologist",
+        "education": "M.B.B.S. M.S. (General Surgery) MCh (Urology) Council Number: 3645",
+        "specialty": "Urology & Kidney Transplantation Surgery"
+      },
+      {
+        "name": "Dr. Surendra Bikram Adhikari",
+        "department": "Urology & Kidney Transplantation Surgery",
+        "profile_url": "https://www.grandehospital.com/en/departments/urology-kidney-transplantation-surgery/dr-surendra-bikram-adhikari",
+        "designation": "Consultant Urology & Kidney Transplant Surgeon",
+        "education": "M.B.B.S. M.S. (Urology) Council Number: 10966 Doctors Profile Name: Dr. Surendra Bikram Adhikari Qualification with name of Institute: MBBS – Rostov State Medical University Russia MS Urology - Rostov State Medical University Russia Proficiency in Languages: English, Nepali, English, Russian NMC No.: 10966 Membership: Nepal Association of Urological Surgeons (NAUS) European Association of Urology (EAU) Russian Association of Urology Experience: 15years + in Urology Expertise in: All Urology Procedure especially Endourology and Kidney Transplant Surgery.",
+        "specialty": "Urology & Kidney Transplantation Surgery"
+      }
+    ]
+  },
+  {
+    "department": "Wellness Center",
+    "department_url": "https://www.grandehospital.com/en/departments/wellness-center",
+    "description": "Wellness Center is a dedicated department for preventive health checkups and early identification and management of diseases. Various health checkup packages have been designed according to the needs of our clients. A team of Family Physicians do the initial workup and evaluation during the follow-up. We also provide : · Health Certificate for abroad Studies & Travel · Vaccination & Immunization Certificate",
+    "doctors": [
+      {
+        "name": "Dr. Bishwa Raj Dawadi",
+        "department": "Wellness Center",
+        "profile_url": "https://www.grandehospital.com/en/departments/wellness-center/dr-bishwa-raj-dawadi",
+        "designation": "Consultant Family Physician",
+        "education": "M.B.B.S. M.D.( General Practice) Diploma In Mountain Medicine Council Number: 4996 Dr. Bishwa Raj Dawadi Consultant – Family Medicine, Aviation & Mountain Medicine NMC No.: 4996 Professional Summary: Dr. Bishwa Raj Dawadi is a seasoned family physician with over 20 years of experience in family medicine, aviation medicine, and mountain and travel medicine. With a multidisciplinary clinical background and advanced certifications from internationally recognized institutions, he provides holistic and preventive care tailored to diverse populations, including those exposed to extreme environments and travel-related health risks. Dr. Dawadi completed his MBBS from Bangladesh and his MD in General Practice (MDGP) from Tribhuvan University Teaching Hospital (TUTH). He holds additional diplomas in Mountain Medicine and Aviation Medicine, equipping him with unique expertise in high-altitude and flight-related health conditions. He has also held key professional roles including as an Executive Member of the Nepal Medical Council and General Secretary of GPEMAN (General Practitioners and Emergency Physicians of Nepal). Academic Background: • MBBS – Bangladesh • MDGP (General Practice) – Tribhuvan University Teaching Hospital (TUTH), Nepal • Diploma in Mountain Medicine – UIAA (International Climbing and Mountaineering Federation) • Diploma in Aviation Medicine – Germany Dr. Dawadi’s diverse academic qualifications reflect a deep commitment to integrated, preventive, and environment-specific medical care. Areas of Expertise: • Family Medicine – Comprehensive care for individuals and families across all age groups • Aviation Medicine – Health assessments and interventions related to flight and aerospace physiology • Mountain & Travel Medicine – Diagnosis and prevention of altitude sickness, travel vaccinations, and expedition-related care His broad expertise allows him to treat acute and chronic illnesses while considering environmental, occupational, and lifestyle factors. Professional Memberships: Dr. Dawadi is actively engaged in the professional medical community through membership and leadership roles in: • Nepal Medical Council (NMC) • Nepal Medical Association (NMA) • General Practitioners and Emergency Physicians of Nepal (GPEMAN) Positions Held: • Executive Member – Nepal Medical Council • General Secretary – GPEMAN These leadership roles highlight Dr. Dawadi’s commitment to advancing the standards of general practice and medical governance in Nepal. Trainings & Certifications: (Additional trainings may be included as provided) Languages Spoken: • English • Nepali • Bengali • Hindi Dr. Dawadi’s multilingual fluency supports effective communication with a wide range of patients, including those in remote and high-altitude communities. At Grande International Hospital: At Grande International Hospital, Dr. Bishwa Raj Dawadi serves as a Consultant in Family Medicine, Aviation Medicine, and Mountain & Travel Medicine. His extensive clinical experience, combined with environmental and occupational health expertise, makes him uniquely equipped to provide comprehensive care for families, frequent travelers, and individuals facing extreme physiological conditions. He is a cornerstone of the hospital’s preventive and general medicine services.",
+        "specialty": "Wellness Center"
+      },
+      {
+        "name": "Dr. Bikash Shrestha",
+        "department": "Wellness Center",
+        "profile_url": "https://www.grandehospital.com/en/departments/wellness-center/dr-bikash-shrestha-59",
+        "designation": "Consultant, General Practice",
+        "education": "M.B.B.S. M.D. (General Practice) Fellowship in Diabetes Management (DFID) Council Number: 8209 Dr. Bikash Shrestha Consultant – Family Medicine & Preventive Care NMC No.: 8209 Professional Summary: Dr. Bikash Shrestha is a dedicated and experienced physician specializing in Family Medicine, Preventive Care, and Chronic Disease Management, with over 10 years of clinical service in Nepal. He is recognized for his holistic, patient-centered approach, emphasizing early diagnosis, preventive health screening, and long-term disease management—particularly in the areas of diabetes care and general practice. Dr. Shrestha completed his medical education and postgraduate training at two of Nepal’s most respected institutions and further expanded his specialty in diabetes through a distance fellowship at CMC Vellore, India. As a Consultant at Grande International Hospital, he provides comprehensive care that integrates evidence-based medicine with a compassionate and community-oriented approach. Academic Background: • MBBS – Tribhuvan University Teaching Hospital (TUTH), Kathmandu, Nepal • MD (General Practice) – National Academy of Medical Sciences (NAMS), Kathmandu, Nepal • Distance Fellowship in Diabetes Management (DFID) – Christian Medical College (CMC), Vellore, India Dr. Shrestha’s educational background reflects a strong commitment to generalist medicine, continuous learning, and specialized training in non-communicable disease management. Areas of Expertise: • Health Screening & Preventive Medicine – Risk assessments, early diagnosis, and lifestyle-based interventions • Family Medicine – Continuity of care for all age groups with a focus on holistic and longitudinal management • Diabetes Management – Screening, education, pharmacologic and non-pharmacologic management • Community-Based Primary Care – Patient empowerment and health promotion at the family and community level Dr. Shrestha emphasizes prevention-first strategies while offering integrated care across all stages of life. Professional Memberships: Dr. Shrestha is an active member of various professional organizations, reflecting his engagement in collaborative practice and continued professional development: • Nepal Medical Council (NMC) • Nepal Medical Association (NMA) • General Practitioners and Emergency Physicians of Nepal (GEPMAN) Trainings & Certifications: • Diabetes Foot Care & Footwear Training – 2018 • (Additional trainings to be listed as provided) These trainings enhance Dr. Shrestha’s ability to deliver specialized diabetic care and community-based interventions. Languages Spoken: • Nepali • Newari • English Dr. Shrestha’s fluency in regional and international languages enables him to connect with a wide patient base, offering culturally sensitive and accessible care. At Grande International Hospital: At Grande International Hospital, Dr. Bikash Shrestha serves as a Consultant in Family Medicine & Preventive Care, playing a critical role in promoting wellness, managing chronic diseases, and strengthening the hospital’s focus on proactive and community-oriented care. His preventive philosophy, empathetic communication, and long-term patient relationships make him a cornerstone of primary care services at the hospital.",
+        "specialty": "Wellness Center"
+      },
+      {
+        "name": "Dr. Binti Shah",
+        "department": "Wellness Center",
+        "profile_url": "https://www.grandehospital.com/en/departments/wellness-center/dr-binti-shah",
+        "designation": "Associate Consultant, General Physician",
+        "education": "M.B.B.S. M.D. (Internal Medicine) Council Number: 10685 Dr. Binti Shah Associate Consultant – General Medicine & Preventive Care NMC No.: 10685 Professional Summary: Dr. Binti Shah is a committed general physician with over 7 years of clinical experience in general medicine, preventive healthcare, and health screening. She provides comprehensive medical evaluation and treatment, emphasizing early diagnosis, patient education, and preventive strategies. Her approach is rooted in evidence-based medicine and holistic care tailored to the needs of diverse patient populations. Dr. Shah completed her MBBS from Kathmandu University at Nepal Medical College, followed by an MD in Medicine from Yanbian University, Jilin, China. Her educational background and international training have strengthened her diagnostic acumen and broadened her clinical perspective. Academic Background: • MBBS – Nepal Medical College, Kathmandu University, Nepal • MD (Internal Medicine) – Yanbian University, Jilin, China Dr. Shah’s academic foundation equips her with the essential knowledge and skills to manage a wide range of medical conditions and promote preventive health. Areas of Expertise: • Health Screening – Routine checkups, risk factor evaluation, and health education • Preventive Medicine – Chronic disease prevention, lifestyle counseling, and wellness planning • General Medicine – Diagnosis and management of common acute and chronic conditions Her clinical work emphasizes the importance of early detection and intervention, empowering patients to take charge of their long-term health. Professional Memberships: Dr. Shah is an active member of national professional bodies that support continuing medical education and peer collaboration: • Nepal Medical Council (NMC) • Nepal Medical Association (NMA) Trainings & Certifications: • Basic Life Support (BLS) Training This training ensures Dr. Shah’s readiness to respond to medical emergencies with appropriate resuscitation measures. Languages Spoken: • Nepali • English • Chinese • Hindi • Maithili Her multilingual fluency enhances her ability to serve patients from various linguistic and cultural backgrounds with clarity and empathy. At Grande International Hospital: At Grande International Hospital, Dr. Binti Shah serves as an Associate Consultant in General Medicine & Preventive Care, offering personalized and preventive health services to individuals across all age groups. Her dedication to patient well-being, focus on lifestyle-based interventions, and proactive medical management make her an integral part of the hospital’s general medicine team.",
+        "specialty": "Wellness Center"
+      }
+    ]
+  }
+]

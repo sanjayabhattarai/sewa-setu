@@ -84,6 +84,7 @@ CREATE TABLE "Tag" (
 -- CreateTable
 CREATE TABLE "Hospital" (
     "id" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" "HospitalType" NOT NULL,
     "locationId" TEXT NOT NULL,
@@ -105,20 +106,71 @@ CREATE TABLE "Doctor" (
     "id" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
     "gender" TEXT,
-    "experienceYears" INTEGER NOT NULL,
+    "experienceYears" INTEGER,
     "education" TEXT,
     "bio" TEXT,
-    "languages" JSONB NOT NULL,
-    "consultationModes" JSONB NOT NULL,
+    "languages" JSONB,
+    "consultationModes" JSONB,
     "licenseNumber" TEXT,
-    "feeMin" INTEGER NOT NULL,
-    "feeMax" INTEGER NOT NULL,
-    "currency" TEXT NOT NULL,
+    "feeMin" INTEGER,
+    "feeMax" INTEGER,
+    "currency" TEXT,
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Doctor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "HospitalDepartment" (
+    "id" TEXT NOT NULL,
+    "hospitalId" TEXT NOT NULL,
+    "specialtyId" TEXT,
+    "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "overview" TEXT,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "dataOrigin" TEXT NOT NULL DEFAULT 'IMPORTED',
+    "sourceUrl" TEXT,
+    "sourceHash" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "HospitalDepartment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DepartmentDoctor" (
+    "id" TEXT NOT NULL,
+    "departmentId" TEXT NOT NULL,
+    "doctorId" TEXT NOT NULL,
+    "designation" TEXT,
+    "education" TEXT,
+    "profileText" TEXT,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "DepartmentDoctor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "HospitalPackage" (
+    "id" TEXT NOT NULL,
+    "hospitalId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "price" INTEGER,
+    "currency" TEXT,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "dataOrigin" TEXT NOT NULL DEFAULT 'MANUAL',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "HospitalPackage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -161,29 +213,14 @@ CREATE TABLE "DoctorService" (
     "id" TEXT NOT NULL,
     "doctorId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
-    "currency" TEXT NOT NULL,
-    "durationMinutes" INTEGER NOT NULL,
+    "price" INTEGER,
+    "currency" TEXT,
+    "durationMinutes" INTEGER,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "DoctorService_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "HospitalService" (
-    "id" TEXT NOT NULL,
-    "hospitalId" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
-    "currency" TEXT NOT NULL,
-    "description" TEXT,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "HospitalService_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -238,19 +275,9 @@ CREATE TABLE "Booking" (
     "patientId" TEXT NOT NULL,
     "hospitalId" TEXT NOT NULL,
     "doctorId" TEXT,
-    "doctorServiceId" TEXT,
-    "hospitalServiceId" TEXT,
     "mode" "ConsultationMode" NOT NULL,
     "scheduledAt" TIMESTAMP(3) NOT NULL,
     "notes" TEXT,
-    "localContactName" TEXT,
-    "localContactPhone" TEXT,
-    "snapshotHospitalName" TEXT,
-    "snapshotDoctorName" TEXT,
-    "snapshotServiceName" TEXT,
-    "snapshotPrice" INTEGER,
-    "snapshotCurrency" TEXT,
-    "stripeSessionId" TEXT,
     "status" "BookingStatus" NOT NULL DEFAULT 'DRAFT',
 
     CONSTRAINT "Booking_pkey" PRIMARY KEY ("id")
@@ -281,6 +308,9 @@ CREATE INDEX "Specialty_name_idx" ON "Specialty"("name");
 CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Hospital_slug_key" ON "Hospital"("slug");
+
+-- CreateIndex
 CREATE INDEX "Hospital_locationId_idx" ON "Hospital"("locationId");
 
 -- CreateIndex
@@ -293,25 +323,22 @@ CREATE INDEX "Doctor_fullName_idx" ON "Doctor"("fullName");
 CREATE INDEX "Doctor_verified_idx" ON "Doctor"("verified");
 
 -- CreateIndex
-CREATE INDEX "Doctor_feeMin_feeMax_idx" ON "Doctor"("feeMin", "feeMax");
+CREATE INDEX "HospitalDepartment_hospitalId_isActive_sortOrder_idx" ON "HospitalDepartment"("hospitalId", "isActive", "sortOrder");
 
 -- CreateIndex
-CREATE INDEX "DoctorSpecialty_specialtyId_idx" ON "DoctorSpecialty"("specialtyId");
+CREATE UNIQUE INDEX "HospitalDepartment_hospitalId_slug_key" ON "HospitalDepartment"("hospitalId", "slug");
 
 -- CreateIndex
-CREATE INDEX "DoctorHospital_hospitalId_idx" ON "DoctorHospital"("hospitalId");
+CREATE INDEX "DepartmentDoctor_doctorId_idx" ON "DepartmentDoctor"("doctorId");
 
 -- CreateIndex
-CREATE INDEX "DoctorTag_tagId_idx" ON "DoctorTag"("tagId");
+CREATE UNIQUE INDEX "DepartmentDoctor_departmentId_doctorId_key" ON "DepartmentDoctor"("departmentId", "doctorId");
 
 -- CreateIndex
-CREATE INDEX "HospitalTag_tagId_idx" ON "HospitalTag"("tagId");
+CREATE INDEX "HospitalPackage_hospitalId_isActive_idx" ON "HospitalPackage"("hospitalId", "isActive");
 
 -- CreateIndex
 CREATE INDEX "DoctorService_doctorId_idx" ON "DoctorService"("doctorId");
-
--- CreateIndex
-CREATE INDEX "HospitalService_hospitalId_idx" ON "HospitalService"("hospitalId");
 
 -- CreateIndex
 CREATE INDEX "AvailabilitySlot_doctorId_idx" ON "AvailabilitySlot"("doctorId");
@@ -321,15 +348,6 @@ CREATE INDEX "AvailabilitySlot_hospitalId_idx" ON "AvailabilitySlot"("hospitalId
 
 -- CreateIndex
 CREATE INDEX "AvailabilitySlot_dayOfWeek_mode_idx" ON "AvailabilitySlot"("dayOfWeek", "mode");
-
--- CreateIndex
-CREATE INDEX "DoctorMedia_doctorId_idx" ON "DoctorMedia"("doctorId");
-
--- CreateIndex
-CREATE INDEX "HospitalMedia_hospitalId_idx" ON "HospitalMedia"("hospitalId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Booking_stripeSessionId_key" ON "Booking"("stripeSessionId");
 
 -- CreateIndex
 CREATE INDEX "Booking_userId_idx" ON "Booking"("userId");
@@ -354,6 +372,21 @@ ALTER TABLE "Patient" ADD CONSTRAINT "Patient_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Hospital" ADD CONSTRAINT "Hospital_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "HospitalDepartment" ADD CONSTRAINT "HospitalDepartment_hospitalId_fkey" FOREIGN KEY ("hospitalId") REFERENCES "Hospital"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "HospitalDepartment" ADD CONSTRAINT "HospitalDepartment_specialtyId_fkey" FOREIGN KEY ("specialtyId") REFERENCES "Specialty"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DepartmentDoctor" ADD CONSTRAINT "DepartmentDoctor_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "HospitalDepartment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DepartmentDoctor" ADD CONSTRAINT "DepartmentDoctor_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "HospitalPackage" ADD CONSTRAINT "HospitalPackage_hospitalId_fkey" FOREIGN KEY ("hospitalId") REFERENCES "Hospital"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DoctorSpecialty" ADD CONSTRAINT "DoctorSpecialty_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -383,9 +416,6 @@ ALTER TABLE "HospitalTag" ADD CONSTRAINT "HospitalTag_tagId_fkey" FOREIGN KEY ("
 ALTER TABLE "DoctorService" ADD CONSTRAINT "DoctorService_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "HospitalService" ADD CONSTRAINT "HospitalService_hospitalId_fkey" FOREIGN KEY ("hospitalId") REFERENCES "Hospital"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "AvailabilitySlot" ADD CONSTRAINT "AvailabilitySlot_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -408,9 +438,3 @@ ALTER TABLE "Booking" ADD CONSTRAINT "Booking_hospitalId_fkey" FOREIGN KEY ("hos
 
 -- AddForeignKey
 ALTER TABLE "Booking" ADD CONSTRAINT "Booking_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Booking" ADD CONSTRAINT "Booking_doctorServiceId_fkey" FOREIGN KEY ("doctorServiceId") REFERENCES "DoctorService"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Booking" ADD CONSTRAINT "Booking_hospitalServiceId_fkey" FOREIGN KEY ("hospitalServiceId") REFERENCES "HospitalService"("id") ON DELETE SET NULL ON UPDATE CASCADE;
