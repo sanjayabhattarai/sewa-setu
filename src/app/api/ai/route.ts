@@ -151,7 +151,7 @@ what type of consultation or checkup may be needed.
           ...h,
           minPrice:
             h.packages.length > 0 // <-- Fixed schema name
-              ? Math.min(...h.packages.map((p) => p.price))
+              ? Math.min(...h.packages.map((p) => p.price ?? 999999).filter((p): p is number => typeof p === 'number'))
               : 999999,
         }))
         .sort((a, b) => a.minPrice - b.minPrice)
@@ -315,7 +315,7 @@ export async function PUT(req: Request) {
     if (hospitalServiceId) {
       const selectedPackage = hospital.packages.find((p) => p.id === hospitalServiceId); // <-- Fixed schema name
       if (selectedPackage) {
-        snapshotPrice = selectedPackage.price;
+        snapshotPrice = selectedPackage.price ?? 0;
         snapshotServiceName = selectedPackage.title;
       }
     }
@@ -325,26 +325,13 @@ export async function PUT(req: Request) {
         userId: patient.userId,
         patientId: patient.id,
         hospitalId: hospital.id,
-        
-        // Note: If your Prisma Booking model uses 'packageId' instead 
-        // of 'hospitalServiceId', you will need to change the key below.
-        hospitalServiceId: hospitalServiceId || undefined, 
-        
         mode: "PHYSICAL",
         scheduledAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        notes: `Problem: ${problemDescription}`,
-        snapshotHospitalName: hospital.name,
-        snapshotServiceName,
-        snapshotPrice,
-        snapshotCurrency: snapshotPrice > 0 ? "NPR" : "EUR",
+        notes: `Problem: ${problemDescription}\nService: ${snapshotServiceName}\nPrice: ${snapshotPrice}`,
         status: "REQUESTED",
       },
       include: {
         hospital: true,
-        
-        // Note: If your Prisma Booking model uses 'package' instead 
-        // of 'hospitalService', you will need to change this to `package: true`
-        hospitalService: true, 
       },
     });
 
@@ -353,9 +340,9 @@ export async function PUT(req: Request) {
       booking: {
         id: booking.id,
         hospitalName: booking.hospital.name,
-        serviceName: booking.snapshotServiceName,
-        price: booking.snapshotPrice,
-        currency: booking.snapshotCurrency,
+        serviceName: snapshotServiceName,
+        price: snapshotPrice,
+        currency: snapshotPrice > 0 ? "NPR" : "EUR",
         patientName: patient.fullName,
         status: booking.status,
       },

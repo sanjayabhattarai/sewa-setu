@@ -128,7 +128,7 @@ export function FloatingAI() {
   const selectHospital = (hospital: any) => {
     console.log("[Floating AI] Clicking hospital:", hospital.name, hospital.slug);
     const specialtyParams = hospital.specialties && hospital.specialties.length > 0 
-      ? hospital.specialties.map(s => `specialty=${encodeURIComponent(s)}`).join("&")
+      ? hospital.specialties.map((s: string) => `specialty=${encodeURIComponent(s)}`).join("&")
       : "";
     const hospitalUrl = `/hospital/${hospital.slug}?tab=doctors${specialtyParams ? "&" + specialtyParams : ""}`;
     console.log("[Floating AI] Navigating to:", hospitalUrl);
