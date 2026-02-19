@@ -178,7 +178,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 ))}
               </div>
 
-              <h2 className="text-lg font-bold text-slate-900">Summary</h2>
+              <h2 className="text-lg font-bold text-slate-900">Hospital's Vision</h2>
               <p className="mt-2 text-slate-600">
                 {hospital.servicesSummary || "More details will be added soon."}
               </p>
