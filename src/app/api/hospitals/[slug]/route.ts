@@ -1,5 +1,4 @@
 // src/app/api/hospitals/[slug]/route.ts
-
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
@@ -28,17 +27,38 @@ export async function GET(
     include: {
       location: true,
       media: { orderBy: { isPrimary: "desc" } },
-      services: { where: { isActive: true }, orderBy: { price: "asc" } },
+
+      // Packages (DB)
+      packages: { where: { isActive: true }, orderBy: [{ price: "asc" }] },
+
+      // Departments (DB) + DepartmentDoctor join
+      departments: {
+        where: { isActive: true },
+        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        include: {
+          doctors: {
+            where: { isActive: true },
+            orderBy: [{ sortOrder: "asc" }],
+            select: {
+              id: true,
+              doctorId: true,
+              designation: true,
+              education: true,
+              sortOrder: true,
+            },
+          },
+        },
+      },
+
       tags: { include: { tag: true } },
 
+      // Doctors (via DoctorHospital join)
       doctors: {
         include: {
           doctor: {
             include: {
               media: { orderBy: { isPrimary: "desc" } },
-              specialties: {
-                include: { specialty: true },
-              },
+              specialties: { include: { specialty: true } },
               availability: {
                 where: { isActive: true },
                 orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
@@ -54,7 +74,7 @@ export async function GET(
     return NextResponse.json({ error: "Hospital not found" }, { status: 404 });
   }
 
-  // Flatten doctors from DoctorHospital join
+  // Flatten doctors
   const doctors = hospital.doctors.map((dh) => {
     const d = dh.doctor;
 
@@ -72,23 +92,22 @@ export async function GET(
       id: d.id,
       fullName: d.fullName,
       gender: d.gender ?? null,
-      experienceYears: d.experienceYears,
+      experienceYears: d.experienceYears ?? null,
       education: d.education ?? null,
       bio: d.bio ?? null,
       languages: safeStringArray(d.languages),
       consultationModes: safeModeArray(d.consultationModes),
       licenseNumber: d.licenseNumber ?? null,
-      feeMin: d.feeMin,
-      feeMax: d.feeMax,
-      currency: d.currency,
+      feeMin: d.feeMin ?? null,
+      feeMax: d.feeMax ?? null,
+      currency: d.currency ?? null,
       verified: d.verified,
       image,
       specialties,
     };
   });
 
-  // Availability: keep only slots relevant to this hospital (hospitalId matches OR null)
-  // (online slots may have hospitalId null, depending on how you seed)
+  // Availability
   const availability = hospital.doctors
     .flatMap((dh) => dh.doctor.availability)
     .filter((s) => s.isActive)
@@ -104,6 +123,31 @@ export async function GET(
       slotDurationMinutes: s.slotDurationMinutes,
       isActive: s.isActive,
     }));
+
+  // Keep "services" key so existing UI remains OK (mapped from packages)
+  const services = hospital.packages.map((p) => ({
+    id: p.id,
+    name: p.title,
+    price: p.price ?? 0,
+    currency: p.currency ?? "NPR",
+    description: p.description ?? "",
+    features: p.description ? [p.description] : [],
+  }));
+
+  // Departments payload: only what UI needs right now
+  const departments = hospital.departments.map((d) => ({
+    id: d.id,
+    name: d.name,
+    slug: d.slug,
+    overview: d.overview ?? null,
+    doctorCount: d.doctors.length,
+    doctors: d.doctors.map((x) => ({
+      doctorId: x.doctorId,
+      designation: x.designation ?? null,
+      education: x.education ?? null,
+      sortOrder: x.sortOrder,
+    })),
+  }));
 
   const payload = {
     id: hospital.id,
@@ -140,19 +184,16 @@ export async function GET(
       isPrimary: m.isPrimary,
     })),
 
-    rating: 4.8, // TODO later
-    reviewCount: 120, // TODO later
+    rating: 4.8,
+    reviewCount: 120,
 
     tags: hospital.tags.map((t) => t.tag.name),
 
-    services: hospital.services.map((s) => ({
-      id: s.id,
-      name: s.title,
-      price: s.price,
-      currency: s.currency,
-      description: s.description ?? "",
-      features: s.description ? [s.description] : [],
-    })),
+    // legacy key
+    services,
+
+    // new keys (DB aligned)
+    departments,
 
     doctors,
     availability,

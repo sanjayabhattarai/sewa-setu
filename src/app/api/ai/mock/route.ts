@@ -35,7 +35,7 @@ export async function POST(req: Request) {
             addressLine: true,
           },
         },
-        services: {
+        packages: {
           select: {
             title: true,
             price: true,
@@ -48,8 +48,8 @@ export async function POST(req: Request) {
     const hospitalsWithMinPrice = hospitals
       .map((h) => ({
         ...h,
-        minPrice: h.services.length > 0 
-          ? Math.min(...h.services.map(s => s.price))
+        minPrice: h.packages.length > 0 
+          ? Math.min(...h.packages.map(s => s.price).filter((p): p is number => p !== null))
           : 999999,
       }))
       .sort((a, b) => a.minPrice - b.minPrice)
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         type: h.type,
         location: `${h.location.area || h.location.addressLine || ""}, ${h.location.city}`,
         minPrice: h.minPrice,
-        services: h.services.map(s => s.title),
+        services: h.packages.map(s => s.title),
       })),
       nextStep: "select_hospital",
     });
@@ -127,7 +127,6 @@ export async function PUT(req: Request) {
     // Get hospital
     const hospital = await db.hospital.findUnique({
       where: { id: hospitalId },
-      include: { services: true },
     });
 
     if (!hospital) {
@@ -143,9 +142,6 @@ export async function PUT(req: Request) {
         mode: "PHYSICAL",
         scheduledAt: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
         notes: `Problem: ${problemDescription}`,
-        snapshotHospitalName: hospital.name,
-        snapshotPrice: hospital.services[0]?.price || 0,
-        snapshotCurrency: "NPR",
         status: "REQUESTED",
       },
     });

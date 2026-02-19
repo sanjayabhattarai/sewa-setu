@@ -1,18 +1,41 @@
+import type { ApiDoctor, ApiAvailabilitySlot } from "./hospital";
+
 export type ApiHospitalDetails = {
   id: string;
   slug: string;
   name: string;
   type: "HOSPITAL" | "CLINIC" | "LAB";
-  city: string;
-  district: string;
-  area: string | null;
+
+  verified: boolean;
+  emergencyAvailable: boolean;
+  openingHours: string | null;
+
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+
+  servicesSummary: string | null;
+
+  location: {
+    country: string;
+    district: string;
+    city: string;
+    area: string | null;
+    addressLine: string | null;
+    postalCode: string | null;
+    lat: number | null;
+    lng: number | null;
+  };
+
   image: string | null;
+  media: { url: string; altText: string | null; isPrimary: boolean }[];
 
   rating: number;
   reviewCount: number;
-  specialty: string;
+
   tags: string[];
 
+  // legacy (mapped from packages)
   services: {
     id: string;
     name: string;
@@ -22,39 +45,21 @@ export type ApiHospitalDetails = {
     features: string[];
   }[];
 
-  doctors: {
+  // NEW: departments from DB
+  departments: {
     id: string;
-    fullName: string;
-    gender: string | null;
-    experienceYears: number;
-    education: string | null;
-    bio: string | null;
-
-    verified: boolean;
-    licenseNumber: string | null;
-
-    feeMin: number;
-    feeMax: number;
-    currency: string;
-
-    languages: string[];
-    consultationModes: string[];
-
-    positionTitle: string | null;
-    isPrimaryAtHospital: boolean;
-
-    primarySpecialty: string | null;
-    specialties: string[];
-
-    photo: string | null;
-
-    availabilitySummary: {
-      id: string;
-      dayOfWeek: number;
-      mode: "ONLINE" | "PHYSICAL";
-      startTime: string;
-      endTime: string;
-      slotDurationMinutes: number;
+    name: string;
+    slug: string;
+    overview: string | null;
+    doctorCount: number;
+    doctors: {
+      doctorId: string;
+      designation: string | null;
+      education: string | null;
+      sortOrder: number;
     }[];
   }[];
+
+  doctors: ApiDoctor[];
+  availability: ApiAvailabilitySlot[];
 };

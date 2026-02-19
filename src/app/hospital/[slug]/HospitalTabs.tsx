@@ -2,16 +2,32 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { ApiHospitalDetails, ApiDoctor } from "@/types/hospital";
+import type { ApiDoctor } from "@/types/hospital";
+import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { PackageAccordion } from "@/components/package-accordion";
 import { DoctorCard } from "@/components/doctor-card";
 import { AvailabilitySchedule } from "@/components/availability-schedule";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Phone, Mail, Globe, Clock, Siren, Search } from "lucide-react";
+import {
+  CheckCircle2,
+  Phone,
+  Mail,
+  Globe,
+  Clock,
+  Siren,
+  Search,
+  ChevronLeft,
+} from "lucide-react";
 
-type TabKey = "overview" | "services" | "doctors" | "availability" | "contact";
+type TabKey =
+  | "overview"
+  | "services"
+  | "doctors"
+  | "departments"
+  | "availability"
+  | "contact";
 
 type UiPackage = {
   id: string;
@@ -24,10 +40,29 @@ type UiPackage = {
 type Props = {
   hospital: ApiHospitalDetails;
   packages: UiPackage[];
+  onBookDoctor: (doctorId: string) => void;
 };
 
-export function HospitalTabs({ hospital, packages }: Props) {
+export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
   const [tab, setTab] = useState<TabKey>("overview");
+
+  // Departments UI state (list -> detail)
+  const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
+
+  const selectedDept = useMemo(() => {
+    if (!selectedDeptId) return null;
+    return hospital.departments.find((d) => d.id === selectedDeptId) ?? null;
+  }, [hospital.departments, selectedDeptId]);
+
+  const deptDoctorIdSet = useMemo(() => {
+    if (!selectedDept) return new Set<string>();
+    return new Set(selectedDept.doctors.map((x) => x.doctorId));
+  }, [selectedDept]);
+
+  const deptDoctors = useMemo(() => {
+    if (!selectedDept) return [];
+    return hospital.doctors.filter((d) => deptDoctorIdSet.has(d.id));
+  }, [hospital.doctors, deptDoctorIdSet, selectedDept]);
 
   // Doctors filters
   const [doctorQuery, setDoctorQuery] = useState("");
@@ -58,10 +93,12 @@ export function HospitalTabs({ hospital, packages }: Props) {
       docs = docs.filter((d) => d.specialties.some((s) => s.name === specialty));
     }
 
+    const exp = (v: number | null | undefined) => v ?? 0;
+
     if (sort === "EXP_DESC") {
-      docs.sort((a, b) => b.experienceYears - a.experienceYears);
+      docs.sort((a, b) => exp(b.experienceYears) - exp(a.experienceYears));
     } else {
-      docs.sort((a, b) => a.feeMin - b.feeMin);
+      docs.sort((a, b) => (a.feeMin ?? 0) - (b.feeMin ?? 0));
     }
 
     return docs;
@@ -83,7 +120,10 @@ export function HospitalTabs({ hospital, packages }: Props) {
 
   const TabButton = ({ k, label }: { k: TabKey; label: string }) => (
     <button
-      onClick={() => setTab(k)}
+      onClick={() => {
+        setTab(k);
+        if (k !== "departments") setSelectedDeptId(null);
+      }}
       className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
         tab === k
           ? "bg-blue-600 text-white border-blue-600"
@@ -101,6 +141,7 @@ export function HospitalTabs({ hospital, packages }: Props) {
         <TabButton k="overview" label="Overview" />
         <TabButton k="services" label="Services & Packages" />
         <TabButton k="doctors" label="Doctors" />
+        <TabButton k="departments" label="Departments" />
         <TabButton k="availability" label="Availability" />
         <TabButton k="contact" label="Contact" />
       </div>
@@ -127,18 +168,22 @@ export function HospitalTabs({ hospital, packages }: Props) {
                   </Badge>
                 )}
                 {hospital.tags?.slice(0, 8).map((t) => (
-                  <Badge key={t} variant="secondary" className="bg-white border border-slate-200 text-slate-700">
+                  <Badge
+                    key={t}
+                    variant="secondary"
+                    className="bg-white border border-slate-200 text-slate-700"
+                  >
                     {t}
                   </Badge>
                 ))}
               </div>
 
-              <h2 className="text-lg font-bold text-slate-900">Summary</h2>
+              <h2 className="text-lg font-bold text-slate-900">Hospital's Vision</h2>
               <p className="mt-2 text-slate-600">
                 {hospital.servicesSummary || "More details will be added soon."}
               </p>
 
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+              <div className="mt-5 grid gap-4 sm:grid-cols-4">
                 <div className="rounded-2xl border border-slate-100 p-4">
                   <p className="text-sm text-slate-500">Starting from</p>
                   <p className="text-xl font-bold text-slate-900">
@@ -154,6 +199,12 @@ export function HospitalTabs({ hospital, packages }: Props) {
                   </p>
                 </div>
                 <div className="rounded-2xl border border-slate-100 p-4">
+                  <p className="text-sm text-slate-500">Departments</p>
+                  <p className="text-xl font-bold text-slate-900">
+                    {hospital.departments?.length ?? 0}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-slate-100 p-4">
                   <p className="text-sm text-slate-500">City</p>
                   <p className="text-xl font-bold text-slate-900">
                     {hospital.location.city}
@@ -165,8 +216,8 @@ export function HospitalTabs({ hospital, packages }: Props) {
                 <Button className="rounded-full" onClick={() => setTab("services")}>
                   View Packages
                 </Button>
-                <Button variant="outline" className="rounded-full" onClick={() => setTab("doctors")}>
-                  Browse Doctors
+                <Button variant="outline" className="rounded-full" onClick={() => setTab("departments")}>
+                  Browse Departments
                 </Button>
                 <Button variant="outline" className="rounded-full" onClick={() => setTab("availability")}>
                   Check Availability
@@ -188,7 +239,12 @@ export function HospitalTabs({ hospital, packages }: Props) {
 
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {hospital.doctors.slice(0, 2).map((d) => (
-                <DoctorCard key={d.id} doctor={d} slots={hospital.availability} />
+                  <DoctorCard
+                  key={d.id}
+                  doctor={d}
+                  slots={hospital.availability}
+                  onBook={() => onBookDoctor(d.id)}
+                />
                 ))}
               </div>
             </div>
@@ -210,6 +266,91 @@ export function HospitalTabs({ hospital, packages }: Props) {
               <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
                 No packages added yet.
               </div>
+            )}
+          </div>
+        )}
+
+        {tab === "departments" && (
+          <div className="space-y-4">
+            {!selectedDept ? (
+              <>
+                <div className="bg-white rounded-2xl border border-slate-100 p-6">
+                  <h2 className="text-lg font-bold text-slate-900">Departments</h2>
+                  <p className="mt-1 text-slate-600">
+                    Select a department to view its doctors.
+                  </p>
+                </div>
+
+                {hospital.departments?.length ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {hospital.departments.map((d) => (
+                      <button
+                        key={d.id}
+                        onClick={() => setSelectedDeptId(d.id)}
+                        className="text-left bg-white rounded-2xl border border-slate-100 p-5 hover:border-slate-200 hover:shadow-sm transition-all"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <h3 className="font-bold text-slate-900">{d.name}</h3>
+                            <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+                              {d.overview || "Department details will be added soon."}
+                            </p>
+                          </div>
+
+                          <div className="shrink-0 rounded-full bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1">
+                            {d.doctorCount} doctors
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
+                    No departments added yet.
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="bg-white rounded-2xl border border-slate-100 p-6">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSelectedDeptId(null)}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-600"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Back to departments
+                    </button>
+                  </div>
+
+                  <h2 className="mt-4 text-xl font-bold text-slate-900">
+                    {selectedDept.name}
+                  </h2>
+                  <p className="mt-2 text-slate-600">
+                    {selectedDept.overview || "Department details will be added soon."}
+                  </p>
+
+                  <div className="mt-4 text-sm text-slate-500">
+                    Showing{" "}
+                    <span className="font-semibold text-slate-900">
+                      {deptDoctors.length}
+                    </span>{" "}
+                    doctors in this department.
+                  </div>
+                </div>
+
+                {deptDoctors.length ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {deptDoctors.map((d) => (
+                      <DoctorCard key={d.id} doctor={d} slots={hospital.availability} onBook={() => onBookDoctor(d.id)}/>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
+                    No doctors found for this department.
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -273,7 +414,11 @@ export function HospitalTabs({ hospital, packages }: Props) {
                 </label>
 
                 <span className="text-sm text-slate-500">
-                  Showing <span className="font-semibold text-slate-900">{filteredDoctors.length}</span> doctors
+                  Showing{" "}
+                  <span className="font-semibold text-slate-900">
+                    {filteredDoctors.length}
+                  </span>{" "}
+                  doctors
                 </span>
               </div>
             </div>
@@ -289,11 +434,7 @@ export function HospitalTabs({ hospital, packages }: Props) {
                     </h3>
                     <div className="grid gap-4 sm:grid-cols-2">
                       {docs.map((d) => (
-                        <DoctorCard
-                          key={d.id}
-                          doctor={d}
-                          slots={hospital.availability}
-                        />
+                        <DoctorCard key={d.id} doctor={d} slots={hospital.availability} onBook={() => onBookDoctor(d.id)} />
                       ))}
                     </div>
                   </div>
@@ -308,11 +449,10 @@ export function HospitalTabs({ hospital, packages }: Props) {
         )}
 
         {tab === "availability" && (
-  <div id="availability">
-    <AvailabilitySchedule slots={hospital.availability} doctors={hospital.doctors} />
-  </div>
-)}
-
+          <div id="availability">
+            <AvailabilitySchedule slots={hospital.availability} doctors={hospital.doctors} />
+          </div>
+        )}
 
         {tab === "contact" && (
           <div className="space-y-4">
@@ -320,13 +460,23 @@ export function HospitalTabs({ hospital, packages }: Props) {
               <h2 className="text-lg font-bold text-slate-900">Contact</h2>
 
               <div className="mt-4 grid gap-3">
-                <a 
+                <a
                   href={hospital.phone ? `tel:${hospital.phone}` : "javascript:void(0)"}
-                  className={`flex items-center gap-2 text-slate-700 ${hospital.phone ? "hover:text-blue-600 transition-colors" : ""}`}
+                  className={`flex items-center gap-2 text-slate-700 ${
+                    hospital.phone ? "hover:text-blue-600 transition-colors" : ""
+                  }`}
                 >
                   <Phone className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Phone:</span>
-                  <span className={hospital.phone ? "text-blue-600 font-semibold underline" : "text-slate-600"}>{hospital.phone || "Will be added soon"}</span>
+                  <span
+                    className={
+                      hospital.phone
+                        ? "text-blue-600 font-semibold underline"
+                        : "text-slate-600"
+                    }
+                  >
+                    {hospital.phone || "Will be added soon"}
+                  </span>
                 </a>
 
                 <div className="flex items-center gap-2 text-slate-700">
@@ -344,7 +494,9 @@ export function HospitalTabs({ hospital, packages }: Props) {
                 <div className="flex items-center gap-2 text-slate-700">
                   <Clock className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Opening hours:</span>
-                  <span className="text-slate-600">{hospital.openingHours || "Will be added soon"}</span>
+                  <span className="text-slate-600">
+                    {hospital.openingHours || "Will be added soon"}
+                  </span>
                 </div>
               </div>
 
@@ -363,9 +515,7 @@ export function HospitalTabs({ hospital, packages }: Props) {
                     .join(", ") || "Will be added soon"}
                 </p>
 
-                <p className="mt-3 text-xs text-slate-400">
-                  Map will be added soon.
-                </p>
+                <p className="mt-3 text-xs text-slate-400">Map will be added soon.</p>
               </div>
             </div>
           </div>
