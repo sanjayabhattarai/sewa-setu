@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { X, Send, MessageCircle, Stethoscope, Loader2, MapPin } from "lucide-react";
 
 type Message = {
@@ -15,12 +16,14 @@ type Message = {
     location: string;
     minPrice: number;
     services: string[];
+    specialties?: string[];
   }>;
 };
 
 type BookingStep = "chat" | "symptoms" | "hospital_selection" | "confirmation";
 
 export function FloatingAI() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -123,20 +126,14 @@ export function FloatingAI() {
   };
 
   const selectHospital = (hospital: any) => {
-    setSelectedHospital(hospital);
-    setBookingStep("confirmation");
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "user",
-        content: `I'd like to book at ${hospital.name}`,
-      },
-      {
-        role: "bot",
-        content: `Great! I'll help you book at ${hospital.name} in ${hospital.location}. Please provide your details to confirm the booking.`,
-        type: "confirmation",
-      },
-    ]);
+    console.log("[Floating AI] Clicking hospital:", hospital.name, hospital.slug);
+    const specialtyParams = hospital.specialties && hospital.specialties.length > 0 
+      ? hospital.specialties.map(s => `specialty=${encodeURIComponent(s)}`).join("&")
+      : "";
+    const hospitalUrl = `/hospital/${hospital.slug}?tab=doctors${specialtyParams ? "&" + specialtyParams : ""}`;
+    console.log("[Floating AI] Navigating to:", hospitalUrl);
+    router.push(hospitalUrl);
+    setIsOpen(false);
   };
 
   const submitBooking = async (e: React.FormEvent) => {
@@ -674,33 +671,45 @@ export function FloatingAI() {
                         {msg.hospitals.map((h) => (
                           <div
                             key={h.id}
-                            onClick={() => selectHospital(h)}
+                            onClick={() => {
+                              console.log("[Floating AI] Clicking hospital:", h.name, h.slug);
+                              selectHospital(h);
+                            }}
                             style={{
                               background: "white",
-                              border: "1px solid #d0f5ef",
+                              border: "2px solid #0f9580",
                               borderRadius: "8px",
-                              padding: "10px",
+                              padding: "12px",
                               cursor: "pointer",
-                              transition: "all 0.2s",
+                              transition: "all 0.3s ease",
+                              backgroundColor: "#f0faf8",
+                              userSelect: "none",
                             }}
                             onMouseEnter={(e) => {
-                              (e.currentTarget as HTMLElement).style.borderColor = "#0f9580";
-                              (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(15, 149, 128, 0.2)";
+                              (e.currentTarget as HTMLElement).style.borderColor = "#0d6457";
+                              (e.currentTarget as HTMLElement).style.backgroundColor = "#e0ede8";
+                              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                              (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 12px rgba(15, 149, 128, 0.3)";
                             }}
                             onMouseLeave={(e) => {
-                              (e.currentTarget as HTMLElement).style.borderColor = "#d0f5ef";
+                              (e.currentTarget as HTMLElement).style.borderColor = "#0f9580";
+                              (e.currentTarget as HTMLElement).style.backgroundColor = "#f0faf8";
+                              (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
                               (e.currentTarget as HTMLElement).style.boxShadow = "none";
                             }}
                           >
-                            <div style={{ fontSize: "13px", fontWeight: "600", color: "#1a2e2b" }}>
-                              {h.name}
+                            <div style={{ fontSize: "13px", fontWeight: "700", color: "#0d6457", textDecoration: "underline", cursor: "pointer" }}>
+                              🏥 {h.name}
                             </div>
-                            <div style={{ fontSize: "11px", color: "#7a9a95", display: "flex", alignItems: "center", gap: "4px", marginTop: "4px" }}>
+                            <div style={{ fontSize: "11px", color: "#7a9a95", display: "flex", alignItems: "center", gap: "4px", marginTop: "6px" }}>
                               <MapPin size={12} />
                               {h.location}
                             </div>
-                            <div style={{ fontSize: "11px", color: "#0f9580", marginTop: "4px", fontWeight: "500" }}>
-                              Starting from ₹{h.minPrice}
+                            <div style={{ fontSize: "11px", color: "#0f9580", marginTop: "6px", fontWeight: "600" }}>
+                              📋 {h.specialties && h.specialties.length > 0 ? `${h.specialties.slice(0, 2).join(", ")}${h.specialties.length > 2 ? " +" : ""}` : "Multiple specialties"}
+                            </div>
+                            <div style={{ fontSize: "10px", color: "#0f9580", marginTop: "6px", fontStyle: "italic" }}>
+                              ➜ Click to view doctors
                             </div>
                           </div>
                         ))}
