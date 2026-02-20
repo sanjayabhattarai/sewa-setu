@@ -6,28 +6,13 @@ import type { ApiDoctor } from "@/types/hospital";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { PackageAccordion } from "@/components/package-accordion";
 import { DoctorCard } from "@/components/doctor-card";
-import { AvailabilitySchedule } from "@/components/availability-schedule";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  CheckCircle2,
-  Phone,
-  Mail,
-  Globe,
-  Clock,
-  Siren,
-  Search,
-  ChevronLeft,
-} from "lucide-react";
+import * as lucideReact from "lucide-react";
+import { HospitalAvailability } from "./HospitalAvailability";
 
-type TabKey =
-  | "overview"
-  | "services"
-  | "doctors"
-  | "departments"
-  | "availability"
-  | "contact";
+type TabKey = "overview" | "services" | "doctors" | "departments" | "availability" | "contact";
 
 type UiPackage = {
   id: string;
@@ -51,12 +36,13 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
 
   const selectedDept = useMemo(() => {
     if (!selectedDeptId) return null;
-    return hospital.departments.find((d) => d.id === selectedDeptId) ?? null;
+    return hospital.departments?.find((d) => d.id === selectedDeptId) ?? null;
   }, [hospital.departments, selectedDeptId]);
 
   const deptDoctorIdSet = useMemo(() => {
     if (!selectedDept) return new Set<string>();
-    return new Set(selectedDept.doctors.map((x) => x.doctorId));
+    const ids = (selectedDept.doctors ?? []).map((x) => x.doctorId);
+    return new Set(ids);
   }, [selectedDept]);
 
   const deptDoctors = useMemo(() => {
@@ -154,17 +140,17 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
               <div className="flex flex-wrap gap-2 mb-4">
                 {hospital.verified && (
                   <Badge className="bg-green-50 text-green-700 hover:bg-green-50">
-                    <CheckCircle2 className="h-4 w-4 mr-1" /> Verified
+                    <lucideReact.CheckCircle2 className="h-4 w-4 mr-1" /> Verified
                   </Badge>
                 )}
                 {hospital.emergencyAvailable && (
                   <Badge className="bg-red-50 text-red-700 hover:bg-red-50">
-                    <Siren className="h-4 w-4 mr-1" /> Emergency
+                    <lucideReact.Siren className="h-4 w-4 mr-1" /> Emergency
                   </Badge>
                 )}
                 {hospital.openingHours && (
                   <Badge className="bg-slate-100 text-slate-900 hover:bg-slate-100">
-                    <Clock className="h-4 w-4 mr-1" /> Hours available
+                    <lucideReact.Clock className="h-4 w-4 mr-1" /> Hours available
                   </Badge>
                 )}
                 {hospital.tags?.slice(0, 8).map((t) => (
@@ -178,7 +164,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 ))}
               </div>
 
-              <h2 className="text-lg font-bold text-slate-900">Hospital's Vision</h2>
+              <h2 className="text-lg font-bold text-slate-900">Hospital&apos;s Vision</h2>
               <p className="mt-2 text-slate-600">
                 {hospital.servicesSummary || "More details will be added soon."}
               </p>
@@ -194,9 +180,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </div>
                 <div className="rounded-2xl border border-slate-100 p-4">
                   <p className="text-sm text-slate-500">Doctors</p>
-                  <p className="text-xl font-bold text-slate-900">
-                    {hospital.doctors.length}
-                  </p>
+                  <p className="text-xl font-bold text-slate-900">{hospital.doctors.length}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-100 p-4">
                   <p className="text-sm text-slate-500">Departments</p>
@@ -206,9 +190,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </div>
                 <div className="rounded-2xl border border-slate-100 p-4">
                   <p className="text-sm text-slate-500">City</p>
-                  <p className="text-xl font-bold text-slate-900">
-                    {hospital.location.city}
-                  </p>
+                  <p className="text-xl font-bold text-slate-900">{hospital.location.city}</p>
                 </div>
               </div>
 
@@ -216,10 +198,18 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 <Button className="rounded-full" onClick={() => setTab("services")}>
                   View Packages
                 </Button>
-                <Button variant="outline" className="rounded-full" onClick={() => setTab("departments")}>
+                <Button
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => setTab("departments")}
+                >
                   Browse Departments
                 </Button>
-                <Button variant="outline" className="rounded-full" onClick={() => setTab("availability")}>
+                <Button
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => setTab("availability")}
+                >
                   Check Availability
                 </Button>
               </div>
@@ -240,11 +230,11 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {hospital.doctors.slice(0, 2).map((d) => (
                   <DoctorCard
-                  key={d.id}
-                  doctor={d}
-                  slots={hospital.availability}
-                  onBook={() => onBookDoctor(d.id)}
-                />
+                    key={d.id}
+                    doctor={d}
+                    slots={hospital.availability}
+                    onSelectSlot={() => onBookDoctor(d.id)}
+                  />
                 ))}
               </div>
             </div>
@@ -276,9 +266,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
               <>
                 <div className="bg-white rounded-2xl border border-slate-100 p-6">
                   <h2 className="text-lg font-bold text-slate-900">Departments</h2>
-                  <p className="mt-1 text-slate-600">
-                    Select a department to view its doctors.
-                  </p>
+                  <p className="mt-1 text-slate-600">Select a department to view its doctors.</p>
                 </div>
 
                 {hospital.departments?.length ? (
@@ -318,23 +306,19 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                       onClick={() => setSelectedDeptId(null)}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-600"
                     >
-                      <ChevronLeft className="h-4 w-4" />
+                      <lucideReact.ChevronLeft className="h-4 w-4" />
                       Back to departments
                     </button>
                   </div>
 
-                  <h2 className="mt-4 text-xl font-bold text-slate-900">
-                    {selectedDept.name}
-                  </h2>
+                  <h2 className="mt-4 text-xl font-bold text-slate-900">{selectedDept.name}</h2>
                   <p className="mt-2 text-slate-600">
                     {selectedDept.overview || "Department details will be added soon."}
                   </p>
 
                   <div className="mt-4 text-sm text-slate-500">
                     Showing{" "}
-                    <span className="font-semibold text-slate-900">
-                      {deptDoctors.length}
-                    </span>{" "}
+                    <span className="font-semibold text-slate-900">{deptDoctors.length}</span>{" "}
                     doctors in this department.
                   </div>
                 </div>
@@ -342,7 +326,12 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 {deptDoctors.length ? (
                   <div className="grid gap-4 sm:grid-cols-2">
                     {deptDoctors.map((d) => (
-                      <DoctorCard key={d.id} doctor={d} slots={hospital.availability} onBook={() => onBookDoctor(d.id)}/>
+                      <DoctorCard
+                        key={d.id}
+                        doctor={d}
+                        slots={hospital.availability}
+                        onSelectSlot={() => onBookDoctor(d.id)}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -361,7 +350,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
             <div className="bg-white rounded-2xl border border-slate-100 p-5">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <lucideReact.Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                   <Input
                     value={doctorQuery}
                     onChange={(e) => setDoctorQuery(e.target.value)}
@@ -414,10 +403,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </label>
 
                 <span className="text-sm text-slate-500">
-                  Showing{" "}
-                  <span className="font-semibold text-slate-900">
-                    {filteredDoctors.length}
-                  </span>{" "}
+                  Showing <span className="font-semibold text-slate-900">{filteredDoctors.length}</span>{" "}
                   doctors
                 </span>
               </div>
@@ -434,7 +420,12 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                     </h3>
                     <div className="grid gap-4 sm:grid-cols-2">
                       {docs.map((d) => (
-                        <DoctorCard key={d.id} doctor={d} slots={hospital.availability} onBook={() => onBookDoctor(d.id)} />
+                        <DoctorCard
+                          key={d.id}
+                          doctor={d}
+                          slots={hospital.availability}
+                          onSelectSlot={() => onBookDoctor(d.id)}
+                        />
                       ))}
                     </div>
                   </div>
@@ -450,7 +441,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
 
         {tab === "availability" && (
           <div id="availability">
-            <AvailabilitySchedule slots={hospital.availability} doctors={hospital.doctors} />
+            <HospitalAvailability hospital={hospital} />
           </div>
         )}
 
@@ -461,12 +452,12 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
 
               <div className="mt-4 grid gap-3">
                 <a
-                  href={hospital.phone ? `tel:${hospital.phone}` : "javascript:void(0)"}
+                  href={hospital.phone ? `tel:${hospital.phone}` : undefined}
                   className={`flex items-center gap-2 text-slate-700 ${
                     hospital.phone ? "hover:text-blue-600 transition-colors" : ""
                   }`}
                 >
-                  <Phone className="h-4 w-4 text-slate-400" />
+                  <lucideReact.Phone className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Phone:</span>
                   <span
                     className={
@@ -480,23 +471,21 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </a>
 
                 <div className="flex items-center gap-2 text-slate-700">
-                  <Mail className="h-4 w-4 text-slate-400" />
+                  <lucideReact.Mail className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Email:</span>
                   <span className="text-slate-600">{hospital.email || "Will be added soon"}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-slate-700">
-                  <Globe className="h-4 w-4 text-slate-400" />
+                  <lucideReact.Globe className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Website:</span>
                   <span className="text-slate-600">{hospital.website || "Will be added soon"}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-slate-700">
-                  <Clock className="h-4 w-4 text-slate-400" />
+                  <lucideReact.Clock className="h-4 w-4 text-slate-400" />
                   <span className="font-medium">Opening hours:</span>
-                  <span className="text-slate-600">
-                    {hospital.openingHours || "Will be added soon"}
-                  </span>
+                  <span className="text-slate-600">{hospital.openingHours || "Will be added soon"}</span>
                 </div>
               </div>
 

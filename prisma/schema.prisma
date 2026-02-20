@@ -392,7 +392,10 @@ model AvailabilitySlot {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([doctorId, hospitalId, mode, dayOfWeek, startTime])
+  @@unique([doctorId, hospitalId, mode, dayOfWeek, startTime, endTime])
+  @@index([doctorId])
+  @@index([hospitalId])
+  @@index([dayOfWeek, mode])
 }
 
 /**
