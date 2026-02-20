@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { ApiDoctor } from "@/types/hospital";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { PackageAccordion } from "@/components/package-accordion";
+import { PackageCard } from "@/components/package-card";
 import { DoctorCard } from "@/components/doctor-card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -110,10 +111,10 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
         setTab(k);
         if (k !== "departments") setSelectedDeptId(null);
       }}
-      className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
+      className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
         tab === k
-          ? "bg-blue-600 text-white border-blue-600"
-          : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105"
+          : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm"
       }`}
     >
       {label}
@@ -136,20 +137,20 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
       <div className="mt-6">
         {tab === "overview" && (
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-100 p-6">
+            <div className="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 rounded-2xl border border-blue-100 p-6 shadow-sm">
               <div className="flex flex-wrap gap-2 mb-4">
                 {hospital.verified && (
-                  <Badge className="bg-green-50 text-green-700 hover:bg-green-50">
+                  <Badge className="bg-green-50 text-green-700 hover:bg-green-50 border border-green-200">
                     <lucideReact.CheckCircle2 className="h-4 w-4 mr-1" /> Verified
                   </Badge>
                 )}
                 {hospital.emergencyAvailable && (
-                  <Badge className="bg-red-50 text-red-700 hover:bg-red-50">
+                  <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border border-red-200">
                     <lucideReact.Siren className="h-4 w-4 mr-1" /> Emergency
                   </Badge>
                 )}
                 {hospital.openingHours && (
-                  <Badge className="bg-slate-100 text-slate-900 hover:bg-slate-100">
+                  <Badge className="bg-slate-100 text-slate-900 hover:bg-slate-100 border border-slate-200">
                     <lucideReact.Clock className="h-4 w-4 mr-1" /> Hours available
                   </Badge>
                 )}
@@ -157,78 +158,103 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                   <Badge
                     key={t}
                     variant="secondary"
-                    className="bg-white border border-slate-200 text-slate-700"
+                    className="bg-white border border-slate-200 text-slate-700 hover:border-slate-300"
                   >
                     {t}
                   </Badge>
                 ))}
               </div>
 
-              <h2 className="text-lg font-bold text-slate-900">Hospital&apos;s Vision</h2>
-              <p className="mt-2 text-slate-600">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <lucideReact.Sparkles className="h-5 w-5 text-blue-600" />
+                Hospital&apos;s Vision
+              </h2>
+              <p className="mt-3 text-slate-700 leading-relaxed">
                 {hospital.servicesSummary || "More details will be added soon."}
               </p>
 
-              <div className="mt-5 grid gap-4 sm:grid-cols-4">
-                <div className="rounded-2xl border border-slate-100 p-4">
-                  <p className="text-sm text-slate-500">Starting from</p>
-                  <p className="text-xl font-bold text-slate-900">
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-5 hover:shadow-lg transition-all duration-300">
+                  <div className="absolute top-0 right-0 h-20 w-20 bg-blue-200 opacity-20 rounded-full blur-2xl"></div>
+                  <lucideReact.DollarSign className="h-6 w-6 text-blue-600 mb-2" />
+                  <p className="text-sm text-slate-600 font-medium">Starting from</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">
                     {hospital.services?.[0]
                       ? `${hospital.services[0].currency} ${hospital.services[0].price}`
                       : "—"}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-100 p-4">
-                  <p className="text-sm text-slate-500">Doctors</p>
-                  <p className="text-xl font-bold text-slate-900">{hospital.doctors.length}</p>
+                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 p-5 hover:shadow-lg transition-all duration-300">
+                  <div className="absolute top-0 right-0 h-20 w-20 bg-green-200 opacity-20 rounded-full blur-2xl"></div>
+                  <lucideReact.Users className="h-6 w-6 text-green-600 mb-2" />
+                  <p className="text-sm text-slate-600 font-medium">Doctors</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">{hospital.doctors.length}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-100 p-4">
-                  <p className="text-sm text-slate-500">Departments</p>
-                  <p className="text-xl font-bold text-slate-900">
+                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 p-5 hover:shadow-lg transition-all duration-300">
+                  <div className="absolute top-0 right-0 h-20 w-20 bg-purple-200 opacity-20 rounded-full blur-2xl"></div>
+                  <lucideReact.Building2 className="h-6 w-6 text-purple-600 mb-2" />
+                  <p className="text-sm text-slate-600 font-medium">Departments</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">
                     {hospital.departments?.length ?? 0}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-100 p-4">
-                  <p className="text-sm text-slate-500">City</p>
-                  <p className="text-xl font-bold text-slate-900">{hospital.location.city}</p>
+                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 p-5 hover:shadow-lg transition-all duration-300">
+                  <div className="absolute top-0 right-0 h-20 w-20 bg-orange-200 opacity-20 rounded-full blur-2xl"></div>
+                  <lucideReact.MapPin className="h-6 w-6 text-orange-600 mb-2" />
+                  <p className="text-sm text-slate-600 font-medium">City</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">{hospital.location.city}</p>
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Button className="rounded-full" onClick={() => setTab("services")}>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button 
+                  className="rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/30" 
+                  onClick={() => setTab("services")}
+                >
+                  <lucideReact.Package className="h-4 w-4 mr-2" />
                   View Packages
                 </Button>
                 <Button
                   variant="outline"
-                  className="rounded-full"
+                  className="rounded-full hover:bg-slate-50"
                   onClick={() => setTab("departments")}
                 >
+                  <lucideReact.Building2 className="h-4 w-4 mr-2" />
                   Browse Departments
                 </Button>
                 <Button
                   variant="outline"
-                  className="rounded-full"
+                  className="rounded-full hover:bg-slate-50"
                   onClick={() => setTab("availability")}
                 >
+                  <lucideReact.Calendar className="h-4 w-4 mr-2" />
                   Check Availability
                 </Button>
               </div>
             </div>
 
             {/* Preview doctors */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-6">
-              <div className="flex items-center justify-between gap-4">
-                <h2 className="text-lg font-bold text-slate-900">Top Doctors</h2>
+            <div className="bg-gradient-to-br from-white via-green-50/30 to-emerald-50/30 rounded-2xl border border-green-100 p-6 shadow-sm">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30">
+                    <lucideReact.Star className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">Top Doctors</h2>
+                    <p className="text-sm text-slate-600">Our most experienced specialists</p>
+                  </div>
+                </div>
                 <button
-                  className="text-blue-600 font-semibold hover:underline"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-blue-600 font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all"
                   onClick={() => setTab("doctors")}
                 >
                   View all
+                  <lucideReact.ArrowRight className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {hospital.doctors.slice(0, 2).map((d) => (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">{hospital.doctors.slice(0, 2).map((d) => (
                   <DoctorCard
                     key={d.id}
                     doctor={d}
@@ -242,21 +268,73 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
         )}
 
         {tab === "services" && (
-          <div className="space-y-4">
+          <div>
+            {/* Header Section */}
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-8 mb-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <lucideReact.Package className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Health Packages</h2>
+                  <p className="text-sm text-slate-600">Choose the perfect plan for your health needs</p>
+                </div>
+              </div>
+              <p className="text-slate-700 leading-relaxed mt-4">
+                Our comprehensive health packages are designed to provide complete care at competitive prices. 
+                All packages include consultations with experienced specialists and necessary diagnostic tests.
+              </p>
+            </div>
+
+            {/* Packages Grid */}
             {packages.length ? (
-              packages.map((pkg, index) => (
-                <PackageAccordion
-                  key={pkg.id}
-                  pkg={pkg as any}
-                  index={index}
-                  hospitalName={hospital.name}
-                />
-              ))
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {packages.map((pkg, index) => (
+                  <PackageCard
+                    key={pkg.id}
+                    pkg={pkg as any}
+                    hospitalName={hospital.name}
+                    featured={index === 1} // Mark the 2nd package as featured
+                  />
+                ))}
+              </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
-                No packages added yet.
+              <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
+                <lucideReact.Package className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-500 text-lg">No packages available yet.</p>
+                <p className="text-slate-400 text-sm mt-2">Check back soon for health packages.</p>
               </div>
             )}
+
+            {/* Info Section */}
+            <div className="mt-8 bg-blue-50 border border-blue-100 rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <lucideReact.Info className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Package Information</h3>
+                  <ul className="space-y-1.5 text-sm text-slate-700">
+                    <li className="flex items-start gap-2">
+                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>All packages are valid for 3 months from the date of booking</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>Advance booking required for all consultations and tests</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>Reports will be available within 24-48 hours</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>Free follow-up consultation within 7 days</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -264,63 +342,79 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
           <div className="space-y-4">
             {!selectedDept ? (
               <>
-                <div className="bg-white rounded-2xl border border-slate-100 p-6">
-                  <h2 className="text-lg font-bold text-slate-900">Departments</h2>
-                  <p className="mt-1 text-slate-600">Select a department to view its doctors.</p>
+                <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                      <lucideReact.Building2 className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">Medical Departments</h2>
+                      <p className="text-sm text-slate-600">Select a department to view its specialist doctors</p>
+                    </div>
+                  </div>
                 </div>
 
                 {hospital.departments?.length ? (
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {hospital.departments.map((d) => (
                       <button
                         key={d.id}
                         onClick={() => setSelectedDeptId(d.id)}
-                        className="text-left bg-white rounded-2xl border border-slate-100 p-5 hover:border-slate-200 hover:shadow-sm transition-all"
+                        className="group text-left bg-white rounded-2xl border border-slate-200 p-6 hover:border-blue-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <h3 className="font-bold text-slate-900">{d.name}</h3>
-                            <p className="mt-1 text-sm text-slate-600 line-clamp-2">
-                              {d.overview || "Department details will be added soon."}
-                            </p>
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-blue-200 group-hover:border-blue-300 transition-colors">
+                            <lucideReact.Stethoscope className="h-6 w-6 text-blue-600" />
                           </div>
-
-                          <div className="shrink-0 rounded-full bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1">
+                          <div className="shrink-0 rounded-full bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1.5 border border-blue-200 group-hover:bg-blue-100 transition-colors">
                             {d.doctorCount} doctors
                           </div>
+                        </div>
+                        <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">{d.name}</h3>
+                        <p className="text-sm text-slate-600 line-clamp-2">
+                          {d.overview || "Department details will be added soon."}
+                        </p>
+                        <div className="mt-4 flex items-center gap-2 text-sm text-blue-600 font-semibold">
+                          View Doctors
+                          <lucideReact.ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </button>
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
-                    No departments added yet.
+                  <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
+                    <lucideReact.Building2 className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                    <p className="text-slate-500 text-lg">No departments available yet</p>
                   </div>
                 )}
               </>
             ) : (
               <>
-                <div className="bg-white rounded-2xl border border-slate-100 p-6">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setSelectedDeptId(null)}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-600"
-                    >
-                      <lucideReact.ChevronLeft className="h-4 w-4" />
-                      Back to departments
-                    </button>
+                <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
+                  <button
+                    onClick={() => setSelectedDeptId(null)}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors mb-4"
+                  >
+                    <lucideReact.ChevronLeft className="h-4 w-4" />
+                    Back to all departments
+                  </button>
+
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                      <lucideReact.Stethoscope className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-slate-900">{selectedDept.name}</h2>
+                      <p className="text-sm text-slate-600 flex items-center gap-2">
+                        <lucideReact.Users className="h-4 w-4" />
+                        {deptDoctors.length} specialist doctors available
+                      </p>
+                    </div>
                   </div>
 
-                  <h2 className="mt-4 text-xl font-bold text-slate-900">{selectedDept.name}</h2>
-                  <p className="mt-2 text-slate-600">
+                  <p className="mt-3 text-slate-700">
                     {selectedDept.overview || "Department details will be added soon."}
                   </p>
-
-                  <div className="mt-4 text-sm text-slate-500">
-                    Showing{" "}
-                    <span className="font-semibold text-slate-900">{deptDoctors.length}</span>{" "}
-                    doctors in this department.
-                  </div>
                 </div>
 
                 {deptDoctors.length ? (
@@ -347,7 +441,14 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
         {tab === "doctors" && (
           <div className="space-y-6">
             {/* Filters */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
+            <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50/30 rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <lucideReact.Filter className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Find Your Doctor</h3>
+              </div>
+              
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="relative">
                   <lucideReact.Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -355,12 +456,12 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                     value={doctorQuery}
                     onChange={(e) => setDoctorQuery(e.target.value)}
                     placeholder="Search doctor name..."
-                    className="pl-10"
+                    className="pl-10 h-10 rounded-xl border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
 
                 <select
-                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none"
+                  className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                   value={specialty}
                   onChange={(e) => setSpecialty(e.target.value)}
                 >
@@ -373,7 +474,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </select>
 
                 <select
-                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none"
+                  className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                   value={mode}
                   onChange={(e) => setMode(e.target.value as any)}
                 >
@@ -383,7 +484,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </select>
 
                 <select
-                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none"
+                  className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                   value={sort}
                   onChange={(e) => setSort(e.target.value as any)}
                 >
@@ -392,20 +493,24 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 </select>
               </div>
 
-              <div className="mt-3 flex items-center gap-3">
-                <label className="text-sm text-slate-700 flex items-center gap-2 cursor-pointer">
+              <div className="mt-4 flex items-center justify-between gap-3 pt-3 border-t border-slate-200">
+                <label className="text-sm text-slate-700 flex items-center gap-2 cursor-pointer hover:text-slate-900 transition-colors">
                   <input
                     type="checkbox"
                     checked={verifiedOnly}
                     onChange={(e) => setVerifiedOnly(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                   />
+                  <lucideReact.CheckCircle2 className="h-4 w-4 text-green-600" />
                   Verified only
                 </label>
 
-                <span className="text-sm text-slate-500">
-                  Showing <span className="font-semibold text-slate-900">{filteredDoctors.length}</span>{" "}
-                  doctors
-                </span>
+                <div className="flex items-center gap-2 text-sm">
+                  <lucideReact.Users className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-600">
+                    Showing <span className="font-bold text-blue-600">{filteredDoctors.length}</span> doctors
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -414,10 +519,15 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
               <div className="space-y-8">
                 {groupedDoctors.map(([groupName, docs]) => (
                   <div key={groupName}>
-                    <h3 className="text-lg font-bold text-slate-900 mb-3">
-                      {groupName}
-                      <span className="text-slate-500 font-medium"> ({docs.length})</span>
-                    </h3>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-8 w-1 rounded-full bg-gradient-to-b from-blue-500 to-indigo-600"></div>
+                      <h3 className="text-xl font-bold text-slate-900">
+                        {groupName}
+                      </h3>
+                      <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-semibold border border-blue-200">
+                        {docs.length}
+                      </span>
+                    </div>
                     <div className="grid gap-4 sm:grid-cols-2">
                       {docs.map((d) => (
                         <DoctorCard
@@ -432,8 +542,10 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
-                No doctors match your filters.
+              <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
+                <lucideReact.UserX className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-600 text-lg font-medium">No doctors match your filters</p>
+                <p className="text-slate-500 text-sm mt-2">Try adjusting your search criteria</p>
               </div>
             )}
           </div>
@@ -447,64 +559,92 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
 
         {tab === "contact" && (
           <div className="space-y-4">
-            <div className="bg-white rounded-2xl border border-slate-100 p-6">
-              <h2 className="text-lg font-bold text-slate-900">Contact</h2>
-
-              <div className="mt-4 grid gap-3">
-                <a
-                  href={hospital.phone ? `tel:${hospital.phone}` : undefined}
-                  className={`flex items-center gap-2 text-slate-700 ${
-                    hospital.phone ? "hover:text-blue-600 transition-colors" : ""
-                  }`}
-                >
-                  <lucideReact.Phone className="h-4 w-4 text-slate-400" />
-                  <span className="font-medium">Phone:</span>
-                  <span
-                    className={
-                      hospital.phone
-                        ? "text-blue-600 font-semibold underline"
-                        : "text-slate-600"
-                    }
-                  >
-                    {hospital.phone || "Will be added soon"}
-                  </span>
-                </a>
-
-                <div className="flex items-center gap-2 text-slate-700">
-                  <lucideReact.Mail className="h-4 w-4 text-slate-400" />
-                  <span className="font-medium">Email:</span>
-                  <span className="text-slate-600">{hospital.email || "Will be added soon"}</span>
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <lucideReact.Phone className="h-6 w-6 text-white" />
                 </div>
-
-                <div className="flex items-center gap-2 text-slate-700">
-                  <lucideReact.Globe className="h-4 w-4 text-slate-400" />
-                  <span className="font-medium">Website:</span>
-                  <span className="text-slate-600">{hospital.website || "Will be added soon"}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-slate-700">
-                  <lucideReact.Clock className="h-4 w-4 text-slate-400" />
-                  <span className="font-medium">Opening hours:</span>
-                  <span className="text-slate-600">{hospital.openingHours || "Will be added soon"}</span>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Contact Information</h2>
+                  <p className="text-sm text-slate-600">Get in touch with us</p>
                 </div>
               </div>
 
-              <div className="mt-6 rounded-2xl bg-slate-50 border border-slate-100 p-5">
-                <h3 className="font-semibold text-slate-900">Address</h3>
-                <p className="mt-1 text-slate-600">
-                  {[
-                    hospital.location.addressLine,
-                    hospital.location.area,
-                    hospital.location.city,
-                    hospital.location.district,
-                    hospital.location.country,
-                    hospital.location.postalCode,
-                  ]
-                    .filter(Boolean)
-                    .join(", ") || "Will be added soon"}
-                </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <a
+                  href={hospital.phone ? `tel:${hospital.phone}` : undefined}
+                  className={`bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3 ${
+                    hospital.phone ? "hover:border-blue-300 hover:shadow-md transition-all cursor-pointer" : ""
+                  }`}
+                >
+                  <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <lucideReact.Phone className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-slate-500">Phone</p>
+                    <p className={`text-sm font-semibold truncate ${
+                      hospital.phone ? "text-blue-600" : "text-slate-600"
+                    }`}>
+                      {hospital.phone || "Will be added soon"}
+                    </p>
+                  </div>
+                </a>
 
-                <p className="mt-3 text-xs text-slate-400">Map will be added soon.</p>
+                <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <lucideReact.Mail className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-slate-500">Email</p>
+                    <p className="text-sm font-semibold text-slate-700 truncate">{hospital.email || "Will be added soon"}</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+                    <lucideReact.Globe className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-slate-500">Website</p>
+                    <p className="text-sm font-semibold text-slate-700 truncate">{hospital.website || "Will be added soon"}</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+                    <lucideReact.Clock className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-slate-500">Opening Hours</p>
+                    <p className="text-sm font-semibold text-slate-700 truncate">{hospital.openingHours || "Will be added soon"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-lg bg-red-50 flex items-center justify-center">
+                  <lucideReact.MapPin className="h-5 w-5 text-red-600" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Address & Location</h3>
+              </div>
+              <p className="text-slate-700 leading-relaxed">
+                {[
+                  hospital.location.addressLine,
+                  hospital.location.area,
+                  hospital.location.city,
+                  hospital.location.district,
+                  hospital.location.country,
+                  hospital.location.postalCode,
+                ]
+                  .filter(Boolean)
+                  .join(", ") || "Will be added soon"}
+              </p>
+
+              <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-4 flex items-center gap-3">
+                <lucideReact.Map className="h-5 w-5 text-slate-400" />
+                <p className="text-sm text-slate-600">Interactive map will be added soon.</p>
               </div>
             </div>
           </div>

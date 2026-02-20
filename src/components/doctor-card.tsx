@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AvailabilityModal } from "@/components/availability-modal";
 import { CheckCircle2, GraduationCap } from "lucide-react";
+import * as lucideReact from "lucide-react";
 import type { ApiDoctor, ApiAvailabilitySlot } from "@/types/hospital";
 import type { Occurrence } from "@/lib/availability";
 
@@ -88,14 +89,24 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
   const feeText = formatFeeWholeEUR(doctor.feeMin ?? null, doctor.currency ?? "eur");
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
-      <div className="p-5 flex gap-4">
+    <div className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+      {/* Subtle gradient decoration */}
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+      
+      <div className="relative p-5 flex gap-4">
         {/* Photo */}
-        <img
-          src={doctor.image ?? "https://picsum.photos/seed/doctor/200/200"}
-          alt={doctor.fullName}
-          className="h-16 w-16 rounded-2xl object-cover border border-slate-100"
-        />
+        <div className="relative">
+          <img
+            src={doctor.image ?? "https://picsum.photos/seed/doctor/200/200"}
+            alt={doctor.fullName}
+            className="h-16 w-16 rounded-xl object-cover border-2 border-slate-100 group-hover:border-blue-200 transition-colors"
+          />
+          {doctor.verified && (
+            <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-white shadow-lg">
+              <CheckCircle2 className="h-3 w-3 text-white" />
+            </div>
+          )}
+        </div>
 
         <div className="flex-1 min-w-0">
           {/* Top row */}
@@ -103,21 +114,25 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
             <div className="min-w-0">
               {/* Name */}
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-slate-900 truncate">
+                <h3 className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
                   {withDrPrefix(doctor.fullName)}
                 </h3>
-                {doctor.verified && (
-                  <span title="Verified">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                  </span>
-                )}
               </div>
 
               {/* Specialty (+ experience only if present) */}
-              <p className="text-sm text-slate-600 mt-1">
-                {primarySpecialty}
-                {hasExperience ? ` · ${doctor.experienceYears} yrs exp` : ""}
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-sm text-slate-600">
+                  {primarySpecialty}
+                </p>
+                {hasExperience && (
+                  <>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-sm font-semibold text-blue-600">
+                      {doctor.experienceYears} yrs
+                    </span>
+                  </>
+                )}
+              </div>
 
               {/* Education */}
               {educationText && (
@@ -133,8 +148,8 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
 
             {/* Fee */}
             <div className="text-right shrink-0">
-              <p className="text-xs text-slate-500">Fee</p>
-              <p className="font-semibold text-slate-900">{feeText}</p>
+              <p className="text-xs text-slate-500 font-medium">Fee</p>
+              <p className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{feeText}</p>
             </div>
           </div>
 
@@ -143,11 +158,11 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
             <Button
               onClick={() => setShowAvailability(true)}
               size="sm"
-              variant="outline"
-              className="rounded-full"
+              className="rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-md hover:shadow-lg"
               disabled={doctorSlots.length === 0}
               title={doctorSlots.length === 0 ? "No availability available" : "Check Availability"}
             >
+              <lucideReact.Calendar className="h-4 w-4 mr-1.5" />
               Check Availability
             </Button>
           </div>
