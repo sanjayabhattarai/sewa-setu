@@ -41,7 +41,7 @@ export function Navbar() {
           </span>
 
           <SignedOut>
-            <Link href="/sign-in">
+            <Link href="/sign-in" className="hidden md:block">
               <button className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors px-3 py-1.5">
                 Sign In
               </button>
@@ -49,20 +49,23 @@ export function Navbar() {
           </SignedOut>
 
           <SignedIn>
-            <Link href="/profile" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
-              Profile
+            <Link href="/profile" className="hidden md:block">
+              <button className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                Profile
+              </button>
             </Link>
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
 
-          {/* Get Started button for mobile/unauthenticated */}
+          {/* Get Started button */}
           <SignedOut>
             <Link href="/sign-up">
-              <button className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-all hover:shadow-lg hover:-translate-y-0.5 hidden md:block">
+              <button className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-all hover:shadow-lg hover:-translate-y-0.5">
                 Get Started
               </button>
             </Link>
           </SignedOut>
+          
           <SignedIn>
             <Link href="/search">
               <button className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-all hover:shadow-lg hover:-translate-y-0.5 hidden md:block">
