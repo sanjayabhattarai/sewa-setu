@@ -40,14 +40,14 @@ export function HospitalAvailability({ hospital }: Props) {
   return (
     <div className="space-y-5">
       {/* Department selector */}
-      <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
+      <div className="bg-gradient-to-br from-[#0f1e38] to-[#1a3059] rounded-2xl border border-[#0f1e38] p-6 shadow-sm">
         <div className="flex items-center gap-3 mb-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-            <lucideReact.Calendar className="h-5 w-5 text-white" />
+          <div className="h-10 w-10 rounded-xl bg-[#c8a96e]/20 border border-[#c8a96e]/30 flex items-center justify-center shadow-lg">
+            <lucideReact.Calendar className="h-5 w-5 text-[#c8a96e]" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Availability by Department</h3>
-            <p className="text-sm text-slate-600">Choose a department to view available time slots</p>
+            <h3 className="text-xl font-bold text-white">Availability by Department</h3>
+            <p className="text-sm text-white/70">Choose a department to view available time slots</p>
           </div>
         </div>
 
@@ -57,8 +57,8 @@ export function HospitalAvailability({ hospital }: Props) {
               key={dep.id}
               variant={selectedDeptSlug === dep.slug ? "default" : "outline"}
               className={selectedDeptSlug === dep.slug 
-                ? "rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/30"
-                : "rounded-full hover:bg-slate-50 hover:border-slate-300"
+                ? "rounded-full bg-[#c8a96e] hover:bg-[#a88b50] text-[#0f1e38] font-semibold shadow-lg"
+                : "rounded-full border-white/30 text-white hover:bg-white/10 hover:border-white/50"
               }
               onClick={() => setSelectedDeptSlug(dep.slug)}
             >
@@ -89,14 +89,14 @@ export function HospitalAvailability({ hospital }: Props) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+          <div className="bg-[#c8a96e]/15 border border-[#c8a96e]/25 rounded-xl p-4">
             <div className="flex items-center gap-3">
-              <lucideReact.Stethoscope className="h-5 w-5 text-blue-600" />
+              <lucideReact.Stethoscope className="h-5 w-5 text-[#c8a96e]" />
               <div>
-                <p className="text-sm font-medium text-slate-700">
-                  Department: <span className="font-bold text-slate-900">{selectedDept?.name}</span>
+                <p className="text-sm font-medium text-[#0f1e38]/70">
+                  Department: <span className="font-bold text-[#0f1e38]">{selectedDept?.name}</span>
                 </p>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-[#0f1e38]/60">
                   {deptDoctors.length} specialist {deptDoctors.length === 1 ? 'doctor' : 'doctors'} available
                 </p>
               </div>
@@ -109,7 +109,7 @@ export function HospitalAvailability({ hospital }: Props) {
                 key={doc.id}
                 doctor={doc}
                 slots={slots}
-                onSelectSlot={(occ) => {
+                onSelectSlotAction={(occ) => {
                   console.log("Selected occurrence:", occ);
                 }}
               />

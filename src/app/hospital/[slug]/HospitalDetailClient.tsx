@@ -1,10 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { HospitalCTA } from "./hospital-cta";
 import { HospitalTabs } from "./HospitalTabs";
-import { HospitalBookingModal } from "./hospital-booking-modal";
 
 type UiPackage = {
   id: string;
@@ -20,235 +18,275 @@ type Props = {
 };
 
 export function HospitalDetailClient({ hospital, packages }: Props) {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [preselectedDoctorId, setPreselectedDoctorId] = useState<string | null>(null);
-
-  const openBooking = (doctorId?: string) => {
-    setPreselectedDoctorId(doctorId ?? null);
-    setIsBookingOpen(true);
-  };
-
-  const closeBooking = () => {
-    setIsBookingOpen(false);
-    setPreselectedDoctorId(null);
-  };
-
-  const preselectedDoctor = useMemo(() => {
-    if (!preselectedDoctorId) return null;
-    return hospital.doctors.find((d) => d.id === preselectedDoctorId) ?? null;
-  }, [hospital.doctors, preselectedDoctorId]);
-
   return (
     <>
-      {/*
-        ─────────────────────────────────────────────────────
-        DESIGN TOKENS  (injected once at the root wrapper)
-        ─────────────────────────────────────────────────────
-        Palette:  deep navy + warm off-white + gold accent
-        Feel:     clinical-luxury — precise, calm, trustworthy
-        Font:     "Playfair Display" (headings) + "DM Sans" (body)
-      */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
+        /* ── Design tokens ──────────────────────────────── */
         .hdc-root {
-          --hdc-navy:      #0f1e38;
-          --hdc-navy-mid:  #1a3059;
-          --hdc-navy-soft: #243f6b;
-          --hdc-gold:      #c8a96e;
-          --hdc-gold-dim:  #a88b50;
-          --hdc-cream:     #f8f5f0;
-          --hdc-white:     #ffffff;
-          --hdc-muted:     #6b7a96;
-          --hdc-border:    rgba(15,30,56,.10);
-          --hdc-shadow-sm: 0 2px 12px rgba(15,30,56,.07);
-          --hdc-shadow-md: 0 8px 32px rgba(15,30,56,.11);
-          --hdc-shadow-lg: 0 20px 60px rgba(15,30,56,.14);
-          --hdc-radius:    16px;
-          --hdc-radius-sm: 10px;
+          --navy:         #0f1e38;
+          --navy-mid:     #1a3059;
+          --navy-soft:    #243f6b;
+          --navy-ghost:   rgba(15,30,56,.06);
+          --gold:         #c8a96e;
+          --gold-lt:      #dfc08a;
+          --gold-dim:     #a88b50;
+          --gold-pale:    rgba(200,169,110,.10);
+          --gold-border:  rgba(200,169,110,.28);
+          --cream:        #f7f4ef;
+          --white:        #ffffff;
+          --ink:          #0f1e38;
+          --ink-mid:      #3d506e;
+          --ink-soft:     #6b7a96;
+          --ink-ghost:    #9aaac0;
+          --border:       rgba(15,30,56,.09);
+          --sh-sm:        0 2px 10px rgba(15,30,56,.06);
+          --sh-md:        0 6px 28px rgba(15,30,56,.10);
+          --sh-lg:        0 20px 64px rgba(15,30,56,.16);
+          --r:            20px;
+          --r-sm:         12px;
+          --r-xs:         8px;
 
-          font-family: 'DM Sans', sans-serif;
-          color: var(--hdc-navy);
-          background: var(--hdc-cream);
+          font-family: 'Inter', sans-serif;
+          color: var(--ink);
+          background: var(--cream);
+          -webkit-font-smoothing: antialiased;
         }
 
-        /* ── CTA strip ──────────────────────────────────── */
-        .hdc-cta-wrapper {
+        /* ── Page shell ─────────────────────────────────── */
+        .hdc-shell {
+          max-width: 980px;
+          margin: 0 auto;
+          padding: 2rem 1.25rem 5rem;
           position: relative;
-          overflow: hidden;
-          background: linear-gradient(110deg, var(--hdc-navy) 0%, var(--hdc-navy-mid) 55%, var(--hdc-navy-soft) 100%);
-          border-radius: var(--hdc-radius) var(--hdc-radius) 0 0;
-          padding: 1.5rem 2rem;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1.25rem;
-          flex-wrap: wrap;
-          box-shadow: var(--hdc-shadow-md);
+        }
+        .hdc-shell::before {
+          content: '';
+          position: fixed; inset: 0;
+          background:
+            radial-gradient(ellipse 70% 45% at 15% 8%, rgba(200,169,110,.05) 0%, transparent 55%),
+            radial-gradient(ellipse 55% 35% at 85% 92%, rgba(15,30,56,.04) 0%, transparent 55%);
+          pointer-events: none; z-index: 0;
         }
 
-        /* Decorative geometry behind CTA */
-        .hdc-cta-wrapper::before,
-        .hdc-cta-wrapper::after {
-          content: '';
-          position: absolute;
-          border-radius: 50%;
+        /* ── Card ───────────────────────────────────────── */
+        .hdc-card {
+          position: relative; z-index: 1;
+          border-radius: var(--r);
+          border: 1px solid var(--border);
+          overflow: hidden;
+          box-shadow: var(--sh-lg), 0 1px 0 rgba(200,169,110,.12) inset;
+          animation: hdc-rise .6s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes hdc-rise {
+          from { opacity:0; transform:translateY(20px) scale(.997); }
+          to   { opacity:1; transform:translateY(0) scale(1); }
+        }
+
+        /* ── CTA bar ────────────────────────────────────── */
+        .hdc-cta {
+          position: relative; overflow: hidden;
+          background: linear-gradient(118deg, var(--navy) 0%, var(--navy-mid) 48%, var(--navy-soft) 100%);
+          padding: 1.75rem 2.5rem;
+          display: flex; align-items: center;
+          justify-content: space-between;
+          gap: 1.5rem; flex-wrap: wrap;
+        }
+        /* Mesh grid texture */
+        .hdc-cta::before {
+          content: ''; position: absolute; inset: 0;
+          background-image:
+            linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+          background-size: 36px 36px;
           pointer-events: none;
         }
-        .hdc-cta-wrapper::before {
-          width: 260px; height: 260px;
-          top: -90px; right: 120px;
-          background: radial-gradient(circle, rgba(200,169,110,.18) 0%, transparent 70%);
+        /* Glow orbs */
+        .hdc-g1, .hdc-g2 {
+          position: absolute; border-radius: 50%; pointer-events: none;
         }
-        .hdc-cta-wrapper::after {
-          width: 160px; height: 160px;
-          bottom: -70px; right: 30px;
-          background: radial-gradient(circle, rgba(200,169,110,.13) 0%, transparent 70%);
+        .hdc-g1 {
+          width:320px; height:320px; top:-150px; right:80px;
+          background: radial-gradient(circle, rgba(200,169,110,.17) 0%, transparent 65%);
+        }
+        .hdc-g2 {
+          width:160px; height:160px; bottom:-90px; left:12%;
+          background: radial-gradient(circle, rgba(200,169,110,.09) 0%, transparent 65%);
+        }
+        /* Top gold rule */
+        .hdc-cta-rule {
+          position: absolute; top:0; left:0; right:0; height:1px;
+          background: linear-gradient(90deg,
+            transparent 0%, rgba(200,169,110,.7) 35%,
+            rgba(200,169,110,.7) 65%, transparent 100%);
+        }
+        /* Identity block */
+        .hdc-cta-id {
+          position: relative; z-index:1;
+          display:flex; flex-direction:column; gap:.3rem;
+        }
+        .hdc-eyebrow {
+          display:flex; align-items:center; gap:.5rem;
+          font-size:.6rem; font-weight:600;
+          letter-spacing:.2em; text-transform:uppercase;
+          color:var(--gold); opacity:.85;
+        }
+        .hdc-eyebrow::before {
+          content:''; display:inline-block;
+          width:18px; height:1px; background:var(--gold); opacity:.5;
+        }
+        .hdc-hospname {
+          font-family:'Plus Jakarta Sans', sans-serif;
+          font-size: clamp(1rem, 2.4vw, 1.3rem);
+          font-weight:700; color:var(--white);
+          line-height:1.25; letter-spacing:-.01em;
         }
 
-        /* Gold rule accent on top of CTA */
-        .hdc-cta-accent-line {
-          position: absolute;
-          top: 0; left: 2rem; right: 2rem;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, var(--hdc-gold), transparent);
-          opacity: 0.7;
+        /* ─── CTA button overrides ───────────────────────
+           Works regardless of whether HospitalCTA renders
+           <button>, <a> or shadcn Button components.      */
+        .hdc-cta button,
+        .hdc-cta a[role="button"] {
+          font-family:'DM Sans', sans-serif !important;
+          font-weight:500 !important;
+          border-radius: var(--r-xs) !important;
+          transition: all .2s cubic-bezier(.22,1,.36,1) !important;
+          position: relative !important;
+          z-index: 1 !important;
+        }
+        /* Primary – gold fill */
+        .hdc-cta button:first-of-type {
+          background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%) !important;
+          color: var(--navy) !important;
+          border: none !important;
+          box-shadow: 0 4px 16px rgba(200,169,110,.40), 0 1px 2px rgba(0,0,0,.18) !important;
+        }
+        .hdc-cta button:first-of-type:hover {
+          background: linear-gradient(135deg, var(--gold-lt) 0%, var(--gold) 100%) !important;
+          box-shadow: 0 6px 24px rgba(200,169,110,.52) !important;
+          transform: translateY(-1px) !important;
+        }
+        /* Secondary – ghost gold */
+        .hdc-cta button:last-of-type {
+          background: rgba(200,169,110,.08) !important;
+          color: var(--gold-lt) !important;
+          border: 1px solid var(--gold-border) !important;
+          box-shadow: none !important;
+        }
+        .hdc-cta button:last-of-type:hover {
+          background: rgba(200,169,110,.16) !important;
+          border-color: rgba(200,169,110,.55) !important;
+          transform: translateY(-1px) !important;
         }
 
-        /* ── Body / tab area ────────────────────────────── */
+        /* ── Body ───────────────────────────────────────── */
         .hdc-body {
           position: relative;
-          background: var(--hdc-white);
-          border-radius: 0 0 var(--hdc-radius) var(--hdc-radius);
-          box-shadow: var(--hdc-shadow-lg);
-          overflow: hidden;
+          background: var(--white);
         }
-
-        /* Thin gold left-border accent inside body */
+        /* Gold left accent bar */
         .hdc-body::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; bottom: 0;
-          width: 3px;
-          background: linear-gradient(180deg, var(--hdc-gold) 0%, transparent 100%);
-          opacity: 0.45;
-          pointer-events: none;
+          content:''; position:absolute;
+          top:0; left:0; bottom:0; width:3px;
+          background: linear-gradient(180deg, var(--gold) 0%, rgba(200,169,110,.18) 55%, transparent 100%);
+          pointer-events:none; z-index:1;
         }
-
-        /* Inner padding area */
+        /* Subtle inner shadow from CTA */
+        .hdc-body::after {
+          content:''; position:absolute;
+          top:0; left:0; right:0; height:52px;
+          background: linear-gradient(180deg, rgba(15,30,56,.025) 0%, transparent 100%);
+          pointer-events:none;
+        }
         .hdc-body-inner {
-          padding: 2.5rem 2.5rem 3rem;
-        }
-
-        @media (max-width: 640px) {
-          .hdc-cta-wrapper { padding: 1.25rem 1.25rem; border-radius: var(--hdc-radius-sm) var(--hdc-radius-sm) 0 0; }
-          .hdc-body-inner  { padding: 1.5rem 1.25rem 2rem; }
-        }
-
-        /* ── Outer page chrome ──────────────────────────── */
-        .hdc-page-shell {
-          max-width: 960px;
-          margin: 0 auto;
-          padding: 2rem 1rem 4rem;
-        }
-
-        /* Subtle noise texture overlay on cream bg */
-        .hdc-page-shell::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        .hdc-card {
-          position: relative;
-          z-index: 1;
-          border: 1px solid var(--hdc-border);
-          border-radius: var(--hdc-radius);
-          overflow: hidden;
-
-          /* Entrance animation */
-          animation: hdc-rise 0.55s cubic-bezier(0.22,1,0.36,1) both;
-        }
-
-        @keyframes hdc-rise {
-          from { opacity: 0; transform: translateY(18px); }
-          to   { opacity: 1; transform: translateY(0); }
+          position:relative; z-index:1;
+          padding: 2.5rem 2.75rem 3.5rem;
         }
 
         /* ── Section divider ────────────────────────────── */
-        .hdc-section-divider {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 1.75rem;
+        .hdc-divider {
+          display:flex; align-items:center; gap:1rem;
+          margin-bottom:2rem;
         }
-        .hdc-section-divider-line {
-          flex: 1;
-          height: 1px;
-          background: linear-gradient(90deg, var(--hdc-gold) 0%, transparent 100%);
-          opacity: 0.3;
+        .hdc-div-l {
+          flex:1; height:1px;
+          background:linear-gradient(90deg, rgba(200,169,110,.4) 0%, transparent 100%);
         }
-        .hdc-section-label {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.65rem;
-          font-weight: 500;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: var(--hdc-gold-dim);
+        .hdc-div-r {
+          flex:1; height:1px;
+          background:linear-gradient(90deg, transparent 0%, rgba(200,169,110,.4) 100%);
+        }
+        .hdc-div-mid {
+          display:flex; flex-direction:column; align-items:center; gap:.3rem;
+        }
+        .hdc-div-label {
+          font-size:.58rem; font-weight:600;
+          letter-spacing:.22em; text-transform:uppercase;
+          color:var(--gold-dim);
+        }
+        .hdc-div-gem {
+          width:5px; height:5px;
+          background:var(--gold); transform:rotate(45deg); opacity:.5;
+        }
+
+        /* ── Responsive ─────────────────────────────────── */
+        @media (max-width:660px) {
+          .hdc-cta       { padding:1.5rem 1.25rem; }
+          .hdc-body-inner{ padding:1.75rem 1.25rem 2.5rem; }
+          .hdc-shell     { padding:1.25rem .75rem 4rem; }
         }
       `}</style>
 
       <div className="hdc-root">
-        <div className="hdc-page-shell">
+        <div className="hdc-shell">
           <div className="hdc-card">
 
-            {/* ── CTA strip ───────────────────────────────── */}
+            {/* CTA bar */}
             {hospital.phone && (
-              <div className="hdc-cta-wrapper">
-                <span className="hdc-cta-accent-line" aria-hidden />
+              <div className="hdc-cta">
+                <span className="hdc-cta-rule" aria-hidden />
+                <span className="hdc-g1" aria-hidden />
+                <span className="hdc-g2" aria-hidden />
+
+                <div className="hdc-cta-id">
+                  <span className="hdc-eyebrow">Healthcare Facility</span>
+                  <span className="hdc-hospname">{hospital.name}</span>
+                </div>
+
                 <HospitalCTA
                   hospitalPhone={hospital.phone}
-                  onBook={() => openBooking()}
+                  onBookAction={() => {
+                    document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" });
+                  }}
                 />
               </div>
             )}
 
-            {/* ── Body with tabs ───────────────────────────── */}
+            {/* Body */}
             <div className="hdc-body">
               <div className="hdc-body-inner" id="services-section">
 
-                {/* Decorative header above tabs */}
-                <div className="hdc-section-divider" aria-hidden>
-                  <div className="hdc-section-divider-line" />
-                  <span className="hdc-section-label">Services &amp; Information</span>
-                  <div
-                    className="hdc-section-divider-line"
-                    style={{ background: "linear-gradient(90deg, transparent 0%, var(--hdc-gold) 100%)" }}
-                  />
+                <div className="hdc-divider" aria-hidden>
+                  <div className="hdc-div-l" />
+                  <div className="hdc-div-mid">
+                    <span className="hdc-div-label">Services &amp; Information</span>
+                    <span className="hdc-div-gem" />
+                  </div>
+                  <div className="hdc-div-r" />
                 </div>
 
                 <HospitalTabs
                   hospital={hospital}
                   packages={packages}
-                  onBookDoctor={(doctorId) => openBooking(doctorId)}
+                  onBookDoctorAction={() => {}}
                 />
               </div>
             </div>
 
-          </div>{/* /hdc-card */}
-        </div>{/* /hdc-page-shell */}
-      </div>{/* /hdc-root */}
-
-      {/* ONE modal only — unchanged */}
-      <HospitalBookingModal
-        hospital={hospital}
-        isOpen={isBookingOpen}
-        onClose={closeBooking}
-        preselectedDoctor={preselectedDoctor}
-      />
+          </div>
+        </div>
+      </div>
     </>
   );
 }

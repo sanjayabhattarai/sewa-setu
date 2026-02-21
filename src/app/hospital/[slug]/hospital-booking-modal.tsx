@@ -13,11 +13,11 @@ type Step = "details" | "doctor" | "availability" | "review";
 type Props = {
   hospital: ApiHospitalDetails;
   isOpen: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   preselectedDoctor?: ApiDoctor | null;
 };
 
-export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoctor }: Props) {
+export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselectedDoctor }: Props) {
   const [step, setStep] = useState<Step>("details");
   const [formData, setFormData] = useState({
     patientName: "",
@@ -65,9 +65,53 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
 
   const closeModal = () => {
     resetAll();
-    onClose();
+    onCloseAction();
   };
 
+  // ✅ Only show slots that belong to this hospital (or global) + active
+  const doctorSlots = useMemo(() => {
+    if (!selectedDoctor) return [];
+    return hospital.availability
+      .filter((s) => s.isActive)
+      .filter((s) => s.doctorId === selectedDoctor.id)
+      .filter((s) => s.hospitalId === hospital.id || s.hospitalId == null)
+      .sort((a, b) => {
+        if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }, [hospital.availability, hospital.id, selectedDoctor]);
+
+  const byDay = useMemo(() => {
+    const map = new Map<number, ApiAvailabilitySlot[]>();
+    for (const s of doctorSlots) {
+      const arr = map.get(s.dayOfWeek) ?? [];
+      arr.push(s);
+      map.set(s.dayOfWeek, arr);
+    }
+    // ensure stable sorting inside each day
+    for (const [k, v] of map.entries()) {
+      v.sort((a, b) => a.startTime.localeCompare(b.startTime));
+      map.set(k, v);
+    }
+    return map;
+  }, [doctorSlots]);
+
+  const sortedTimes = useMemo(() => {
+    const allTimes = new Set<string>();
+    for (const s of doctorSlots) allTimes.add(s.startTime);
+    return Array.from(allTimes).sort();
+  }, [doctorSlots]);
+
+  const canGoNext =
+    (step === "details" &&
+      !!formData.patientName &&
+      !!formData.patientAge &&
+      !!formData.patientPhone &&
+      !!formData.buyerEmail) ||
+    (step === "doctor" && !!selectedDoctor) ||
+    (step === "availability" && !!selectedSlot);
+
+  // Early return AFTER all hooks
   if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,49 +172,6 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
     }
   };
 
-  // ✅ Only show slots that belong to this hospital (or global) + active
-  const doctorSlots = useMemo(() => {
-    if (!selectedDoctor) return [];
-    return hospital.availability
-      .filter((s) => s.isActive)
-      .filter((s) => s.doctorId === selectedDoctor.id)
-      .filter((s) => s.hospitalId === hospital.id || s.hospitalId == null)
-      .sort((a, b) => {
-        if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-        return a.startTime.localeCompare(b.startTime);
-      });
-  }, [hospital.availability, hospital.id, selectedDoctor]);
-
-  const byDay = useMemo(() => {
-    const map = new Map<number, ApiAvailabilitySlot[]>();
-    for (const s of doctorSlots) {
-      const arr = map.get(s.dayOfWeek) ?? [];
-      arr.push(s);
-      map.set(s.dayOfWeek, arr);
-    }
-    // ensure stable sorting inside each day
-    for (const [k, v] of map.entries()) {
-      v.sort((a, b) => a.startTime.localeCompare(b.startTime));
-      map.set(k, v);
-    }
-    return map;
-  }, [doctorSlots]);
-
-  const sortedTimes = useMemo(() => {
-    const allTimes = new Set<string>();
-    for (const s of doctorSlots) allTimes.add(s.startTime);
-    return Array.from(allTimes).sort();
-  }, [doctorSlots]);
-
-  const canGoNext =
-    (step === "details" &&
-      !!formData.patientName &&
-      !!formData.patientAge &&
-      !!formData.patientPhone &&
-      !!formData.buyerEmail) ||
-    (step === "doctor" && !!selectedDoctor) ||
-    (step === "availability" && !!selectedSlot);
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
@@ -196,10 +197,10 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
               key={s}
               className={`flex-1 h-2 rounded-full transition-colors ${
                 step === s
-                  ? "bg-blue-600"
+                  ? "bg-[#c8a96e]"
                   : (["details", "doctor", "availability", "review"] as Step[]).indexOf(step) > i
                   ? "bg-green-500"
-                  : "bg-slate-200"
+                  : "bg-[#0f1e38]/15"
               }`}
             />
           ))}
@@ -217,7 +218,7 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                   value={formData.patientName}
                   onChange={handleInputChange}
                   placeholder="Your name"
-                  className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+                  className="w-full h-10 rounded-xl border border-[#0f1e38]/15 px-3 text-sm outline-none focus:border-[#c8a96e]"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -229,7 +230,7 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                     value={formData.patientAge}
                     onChange={handleInputChange}
                     placeholder="30"
-                    className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+                    className="w-full h-10 rounded-xl border border-[#0f1e38]/15 px-3 text-sm outline-none focus:border-[#c8a96e]"
                   />
                 </div>
                 <div>
@@ -239,7 +240,7 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                     value={formData.patientPhone}
                     onChange={handleInputChange}
                     placeholder="98XXXXXXXX"
-                    className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+                    className="w-full h-10 rounded-xl border border-[#0f1e38]/15 px-3 text-sm outline-none focus:border-[#c8a96e]"
                   />
                 </div>
               </div>
@@ -251,7 +252,7 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                   value={formData.buyerEmail}
                   onChange={handleInputChange}
                   placeholder="you@example.com"
-                  className="w-full h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-500"
+                  className="w-full h-10 rounded-xl border border-[#0f1e38]/15 px-3 text-sm outline-none focus:border-[#c8a96e]"
                 />
               </div>
             </div>
@@ -269,8 +270,8 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                   onClick={() => setSelectedDoctor(doctor)}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                     selectedDoctor?.id === doctor.id
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-slate-200 hover:border-slate-300"
+                      ? "border-[#c8a96e] bg-[#c8a96e]/10"
+                      : "border-[#0f1e38]/15 hover:border-[#c8a96e]/50"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -312,7 +313,7 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                         <div
                           key={i}
                           className={`px-3 py-2 text-center rounded-t-lg text-xs font-semibold ${
-                            dayHasSlots ? "bg-blue-50 text-blue-700" : "bg-slate-50 text-slate-600"
+                            dayHasSlots ? "bg-[#c8a96e]/15 text-[#a88b50]" : "bg-[#0f1e38]/5 text-[#0f1e38]/50"
                           }`}
                         >
                           {DAYS[i]}
@@ -353,10 +354,10 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
                                 className={`w-full text-xs p-1.5 rounded-lg border-2 transition-all ${
                                   selectedSlot?.id === slot.id
                                     ? slot.mode === "ONLINE"
-                                      ? "border-blue-500 bg-blue-100"
+                                      ? "border-[#c8a96e] bg-[#c8a96e]/15"
                                       : "border-emerald-500 bg-emerald-100"
                                     : slot.mode === "ONLINE"
-                                    ? "border-blue-200 bg-blue-50 hover:bg-blue-100"
+                                    ? "border-[#c8a96e]/30 bg-white hover:bg-[#c8a96e]/10"
                                     : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
                                 }`}
                               >
@@ -380,25 +381,25 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
         {/* Step 4: Review & Pay */}
         {step === "review" && selectedDoctor && selectedSlot && (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="rounded-xl bg-blue-50 p-4 border border-blue-100 space-y-2">
+            <div className="rounded-xl bg-[#c8a96e]/10 p-4 border border-[#c8a96e]/20 space-y-2">
               <div className="flex justify-between">
-                <span className="text-slate-700">Doctor:</span>
-                <span className="font-semibold text-slate-900">{selectedDoctor.fullName}</span>
+                <span className="text-[#0f1e38]/70">Doctor:</span>
+                <span className="font-semibold text-[#0f1e38]">{selectedDoctor.fullName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-700">Mode:</span>
-                <span className="font-semibold text-slate-900">{selectedSlot.mode}</span>
+                <span className="text-[#0f1e38]/70">Mode:</span>
+                <span className="font-semibold text-[#0f1e38]">{selectedSlot.mode}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-700">Time:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="text-[#0f1e38]/70">Time:</span>
+                <span className="font-semibold text-[#0f1e38]">
                   {DAYS[selectedSlot.dayOfWeek]}, {selectedSlot.startTime}–{selectedSlot.endTime}
                 </span>
               </div>
-              <div className="h-px bg-blue-200 my-2" />
+              <div className="h-px bg-[#c8a96e]/30 my-2" />
               <div className="flex justify-between">
-                <span className="text-blue-700 font-medium">Total to pay:</span>
-                <span className="text-2xl font-bold text-blue-700">
+                <span className="text-[#a88b50] font-medium">Total to pay:</span>
+                <span className="text-2xl font-bold text-[#a88b50]">
                   {selectedDoctor.feeMin != null
                     ? `${selectedDoctor.currency ?? ""} ${selectedDoctor.feeMin}`
                     : "—"}
@@ -417,7 +418,7 @@ export function HospitalBookingModal({ hospital, isOpen, onClose, preselectedDoc
               </Button>
               <Button
                 type="submit"
-                className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                className="flex-1 h-10 bg-[#0f1e38] hover:bg-[#1a3059] text-[#c8a96e] rounded-lg"
                 disabled={isLoading}
               >
                 {isLoading ? "Processing..." : "Pay Securely"}
