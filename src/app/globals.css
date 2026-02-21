@@ -1,42 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f4ef;
+  --foreground: #0f1e38;
+  --navy:        #0f1e38;
+  --navy-mid:    #1a3059;
+  --gold:        #c8a96e;
+  --gold-dim:    #a88b50;
+  --cream:       #f7f4ef;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth; /* <--- ADD THIS LINE */
+    scroll-behavior: smooth;
   }
-  
+
   body {
-    @apply bg-slate-50 text-slate-600 antialiased;
+    font-family: var(--font-inter), sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    @apply antialiased;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    @apply text-slate-900 tracking-tight;
+    font-family: var(--font-plus-jakarta), sans-serif;
+    color: var(--navy);
+    @apply tracking-tight;
   }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @keyframes blob {
