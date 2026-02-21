@@ -3,17 +3,17 @@ import { Heart, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer id="contact" className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+    <footer id="contact" className="bg-[#0f1e38] text-slate-300 py-12 border-t border-[rgba(200,169,110,0.15)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           
           {/* Brand Column */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-white font-bold text-xl">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
-                <Heart className="h-4 w-4 text-white fill-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-[#c8a96e] to-[#a88b50]">
+                <Heart className="h-4 w-4 text-[#0f1e38] fill-[#0f1e38]" />
               </div>
-              <span>Sewa-Setu</span>
+              <span>Sewa<span className="text-[#c8a96e]">-Setu</span></span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
               Bridging the distance between you and your family's health. 
@@ -25,10 +25,10 @@ export function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/search" className="hover:text-blue-400 transition-colors">Find a Hospital</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">How it Works</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">For Doctors</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">Login / Sign Up</Link></li>
+              <li><Link href="/search" className="hover:text-[#c8a96e] transition-colors">Find a Hospital</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">How it Works</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">For Doctors</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">Login / Sign Up</Link></li>
             </ul>
           </div>
 
@@ -36,10 +36,10 @@ export function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Company</h3>
             <ul className="space-y-3 text-sm">
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">Contact Support</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">About Us</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">Contact Support</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-[#c8a96e] transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
