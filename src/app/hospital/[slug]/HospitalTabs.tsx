@@ -11,9 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import * as lucideReact from "lucide-react";
-import { HospitalAvailability } from "./HospitalAvailability";
-
-type TabKey = "overview" | "services" | "doctors" | "departments" | "availability" | "contact";
+type TabKey = "overview" | "services" | "doctors" | "departments" | "contact";
 
 type UiPackage = {
   id: string;
@@ -26,13 +24,12 @@ type UiPackage = {
 type Props = {
   hospital: ApiHospitalDetails;
   packages: UiPackage[];
-  onBookDoctor: (doctorId: string) => void;
+  onBookDoctorAction: (doctorId: string) => void;
 };
 
-export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
+export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) {
   const [tab, setTab] = useState<TabKey>("overview");
 
-  // Departments UI state (list -> detail)
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
 
   const selectedDept = useMemo(() => {
@@ -51,7 +48,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
     return hospital.doctors.filter((d) => deptDoctorIdSet.has(d.id));
   }, [hospital.doctors, deptDoctorIdSet, selectedDept]);
 
-  // Doctors filters
   const [doctorQuery, setDoctorQuery] = useState("");
   const [mode, setMode] = useState<"ALL" | "ONLINE" | "PHYSICAL">("ALL");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -66,34 +62,19 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
 
   const filteredDoctors = useMemo(() => {
     let docs = [...hospital.doctors];
-
     const q = doctorQuery.trim().toLowerCase();
     if (q) docs = docs.filter((d) => d.fullName.toLowerCase().includes(q));
-
     if (verifiedOnly) docs = docs.filter((d) => d.verified);
-
-    if (mode !== "ALL") {
-      docs = docs.filter((d) => d.consultationModes.includes(mode));
-    }
-
-    if (specialty !== "ALL") {
-      docs = docs.filter((d) => d.specialties.some((s) => s.name === specialty));
-    }
-
+    if (mode !== "ALL") docs = docs.filter((d) => d.consultationModes.includes(mode));
+    if (specialty !== "ALL") docs = docs.filter((d) => d.specialties.some((s) => s.name === specialty));
     const exp = (v: number | null | undefined) => v ?? 0;
-
-    if (sort === "EXP_DESC") {
-      docs.sort((a, b) => exp(b.experienceYears) - exp(a.experienceYears));
-    } else {
-      docs.sort((a, b) => (a.feeMin ?? 0) - (b.feeMin ?? 0));
-    }
-
+    if (sort === "EXP_DESC") docs.sort((a, b) => exp(b.experienceYears) - exp(a.experienceYears));
+    else docs.sort((a, b) => (a.feeMin ?? 0) - (b.feeMin ?? 0));
     return docs;
   }, [hospital.doctors, doctorQuery, verifiedOnly, mode, specialty, sort]);
 
   const groupedDoctors = useMemo(() => {
     const groups = new Map<string, ApiDoctor[]>();
-
     for (const d of filteredDoctors) {
       const primary = d.specialties.find((s) => s.isPrimary) ?? d.specialties[0];
       const key = primary?.name ?? "Other";
@@ -101,165 +82,389 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
       arr.push(d);
       groups.set(key, arr);
     }
-
     return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }, [filteredDoctors]);
 
-  const TabButton = ({ k, label }: { k: TabKey; label: string }) => (
-    <button
-      onClick={() => {
-        setTab(k);
-        if (k !== "departments") setSelectedDeptId(null);
-      }}
-      className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-        tab === k
-          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105"
-          : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm"
-      }`}
-    >
-      {label}
-    </button>
-  );
+  const TABS: { k: TabKey; label: string }[] = [
+    { k: "overview",     label: "Overview" },
+    { k: "services",     label: "Services & Packages" },
+    { k: "doctors",      label: "Doctors" },
+    { k: "departments",  label: "Departments" },
+    { k: "contact",      label: "Contact" },
+  ];
 
   return (
-    <div className="mt-6">
-      {/* Tabs header */}
-      <div className="flex flex-wrap gap-2">
-        <TabButton k="overview" label="Overview" />
-        <TabButton k="services" label="Services & Packages" />
-        <TabButton k="doctors" label="Doctors" />
-        <TabButton k="departments" label="Departments" />
-        <TabButton k="availability" label="Availability" />
-        <TabButton k="contact" label="Contact" />
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Interstate:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
-      {/* Tab content */}
-      <div className="mt-6">
+        /* ───────────────────────────────────────────────
+           HospitalTabs — Navy + Gold theme
+           Inherits --navy, --gold, etc. from .hdc-root
+        ─────────────────────────────────────────────── */
+
+        /* Tab navigation */
+        .ht-nav {
+          display: flex; flex-wrap: wrap; gap: .45rem;
+          padding-bottom: 1.4rem;
+          border-bottom: 1px solid rgba(15,30,56,.08);
+          margin-bottom: 1.75rem;
+        }
+        .ht-tab-btn {
+          padding: .5rem 1.1rem;
+          border-radius: 100px;
+          font-size: .8rem; font-weight: 500;
+          cursor: pointer; white-space: nowrap;
+          border: 1px solid rgba(15,30,56,.12);
+          background: transparent; color: #6b7a96;
+          transition: all .18s ease;
+          font-family: 'Interstate', sans-serif;
+        }
+        .ht-tab-btn:hover {
+          border-color: rgba(200,169,110,.4);
+          color: #a88b50;
+          background: rgba(200,169,110,.05);
+        }
+        .ht-tab-btn.active {
+          background: #0f1e38; color: #c8a96e;
+          border-color: #0f1e38;
+          font-weight: 600;
+          box-shadow: 0 2px 12px rgba(15,30,56,.2);
+        }
+
+        /* Section header */
+        .ht-head { display:flex; align-items:center; gap:.8rem; margin-bottom:1.25rem; }
+        .ht-icon {
+          width:40px; height:40px; border-radius:10px;
+          background:#0f1e38; display:flex; align-items:center; justify-content:center;
+          flex-shrink:0; box-shadow:0 3px 12px rgba(15,30,56,.22);
+        }
+        .ht-icon svg { color:#c8a96e !important; }
+        .ht-title {
+          font-family:'Plus Jakarta Sans',sans-serif;
+          font-size:1.1rem; font-weight:700; color:#0f1e38; line-height:1.2;
+        }
+        .ht-sub { font-size:.78rem; color:#6b7a96; margin-top:.12rem; }
+
+        /* Panel containers */
+        .ht-card {
+          background:#f7f4ef;
+          border:1px solid rgba(15,30,56,.08);
+          border-radius:14px; padding:1.4rem;
+          margin-bottom:1rem;
+        }
+        .ht-card-white {
+          background:#fff;
+          border:1px solid rgba(15,30,56,.08);
+          border-radius:14px; padding:1.4rem;
+          margin-bottom:1rem;
+          box-shadow:0 2px 10px rgba(15,30,56,.05);
+        }
+
+        /* Stat grid */
+        .ht-stats {
+          display:grid; gap:.75rem;
+          grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+          margin-top:1.1rem;
+        }
+        .ht-stat {
+          background:#fff; border:1px solid rgba(15,30,56,.09);
+          border-radius:12px; padding:1rem .9rem;
+          transition:all .2s;
+        }
+        .ht-stat:hover { box-shadow:0 5px 18px rgba(15,30,56,.09); transform:translateY(-2px); }
+        .ht-stat-ico {
+          width:32px; height:32px; border-radius:8px;
+          background:rgba(200,169,110,.1);
+          border:1px solid rgba(200,169,110,.2);
+          display:flex; align-items:center; justify-content:center;
+          margin-bottom:.4rem;
+        }
+        .ht-stat-ico svg { color:#a88b50 !important; }
+        .ht-stat-lbl { font-size:.7rem; color:#6b7a96; font-weight:500; }
+        .ht-stat-val {
+          font-family:'Plus Jakarta Sans',sans-serif;
+          font-size:1.4rem; font-weight:700; color:#0f1e38; line-height:1.05;
+        }
+
+        /* Badges */
+        .ht-badges { display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:1rem; }
+        .ht-badge {
+          display:inline-flex; align-items:center; gap:.3rem;
+          padding:.28rem .7rem; border-radius:100px;
+          font-size:.7rem; font-weight:600; border:1px solid;
+        }
+        .ht-badge-green { background:rgba(74,222,128,.08); color:#15803d; border-color:rgba(74,222,128,.25); }
+        .ht-badge-red   { background:rgba(239,68,68,.07);  color:#b91c1c; border-color:rgba(239,68,68,.2); }
+        .ht-badge-gold  { background:rgba(200,169,110,.1);  color:#a88b50; border-color:rgba(200,169,110,.28); }
+
+        /* Body text */
+        .ht-prose { font-size:.875rem; line-height:1.7; color:#3d506e; }
+
+        /* Action buttons */
+        .ht-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.2rem; }
+        .ht-btn {
+          display:inline-flex; align-items:center; gap:.38rem;
+          padding:.5rem 1.05rem; border-radius:8px;
+          font-size:.8rem; font-weight:600; cursor:pointer;
+          font-family:'Interstate',sans-serif;
+          transition:all .18s ease;
+        }
+        .ht-btn-navy {
+          background:#0f1e38; color:#c8a96e; border:none;
+          box-shadow:0 3px 12px rgba(15,30,56,.22);
+        }
+        .ht-btn-navy:hover { background:#1a3059; transform:translateY(-1px); }
+        .ht-btn-ghost {
+          background:transparent; color:#3d506e;
+          border:1px solid rgba(15,30,56,.18);
+        }
+        .ht-btn-ghost:hover {
+          border-color:rgba(200,169,110,.45); color:#a88b50;
+          background:rgba(200,169,110,.05);
+        }
+
+        /* Filter bar */
+        .ht-filter {
+          background:#fff; border:1px solid rgba(15,30,56,.09);
+          border-radius:14px; padding:1.1rem 1.35rem;
+          margin-bottom:1.4rem;
+          box-shadow:0 2px 10px rgba(15,30,56,.05);
+        }
+        .ht-filter-grid {
+          display:grid; gap:.6rem;
+          grid-template-columns:repeat(auto-fit, minmax(155px,1fr));
+          margin-top:.75rem;
+        }
+        .ht-select {
+          height:37px; border-radius:8px; padding:0 .7rem;
+          border:1px solid rgba(15,30,56,.14);
+          background:#f7f4ef; font-size:.8rem; color:#0f1e38;
+          outline:none; font-family:'Interstate',sans-serif;
+          transition:border-color .18s;
+        }
+        .ht-select:focus {
+          border-color:rgba(200,169,110,.5);
+          box-shadow:0 0 0 2px rgba(200,169,110,.1);
+        }
+        .ht-filter-foot {
+          display:flex; justify-content:space-between; align-items:center;
+          margin-top:.75rem; padding-top:.75rem;
+          border-top:1px solid rgba(15,30,56,.07);
+        }
+        .ht-check-label {
+          display:flex; align-items:center; gap:.4rem;
+          font-size:.8rem; color:#3d506e; cursor:pointer;
+        }
+        .ht-pill {
+          font-size:.75rem; font-weight:600; color:#a88b50;
+          background:rgba(200,169,110,.1);
+          border:1px solid rgba(200,169,110,.22);
+          border-radius:100px; padding:.18rem .65rem;
+        }
+
+        /* Group header */
+        .ht-group { display:flex; align-items:center; gap:.6rem; margin:1.6rem 0 .75rem; }
+        .ht-group-bar { width:3px; height:20px; border-radius:2px; background:linear-gradient(180deg,#c8a96e,#a88b50); }
+        .ht-group-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:.95rem; font-weight:700; color:#0f1e38; }
+        .ht-group-ct { font-size:.7rem; font-weight:600; color:#a88b50; background:rgba(200,169,110,.1); border:1px solid rgba(200,169,110,.22); border-radius:100px; padding:.18rem .6rem; }
+
+        /* Doc grid */
+        .ht-doc-grid { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill, minmax(275px,1fr)); }
+
+        /* Department cards */
+        .ht-dept-grid { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); }
+        .ht-dept-card {
+          background:#fff; border:1px solid rgba(15,30,56,.09);
+          border-radius:13px; padding:1.15rem; text-align:left; cursor:pointer;
+          transition:all .2s ease; box-shadow:0 2px 7px rgba(15,30,56,.05);
+        }
+        .ht-dept-card:hover { border-color:rgba(200,169,110,.4); box-shadow:0 8px 24px rgba(15,30,56,.11); transform:translateY(-2px); }
+        .ht-dept-ico {
+          width:38px; height:38px; border-radius:9px; background:#0f1e38;
+          display:flex; align-items:center; justify-content:center; margin-bottom:.8rem;
+        }
+        .ht-dept-ico svg { color:#c8a96e !important; }
+        .ht-dept-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:#0f1e38; margin-bottom:.3rem; }
+        .ht-dept-text { font-size:.75rem; color:#6b7a96; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .ht-dept-foot {
+          display:flex; justify-content:space-between; align-items:center;
+          margin-top:.8rem; padding-top:.65rem;
+          border-top:1px solid rgba(15,30,56,.07);
+        }
+        .ht-dept-ct { font-size:.7rem; font-weight:600; color:#a88b50; background:rgba(200,169,110,.1); border:1px solid rgba(200,169,110,.2); border-radius:100px; padding:.17rem .58rem; }
+        .ht-dept-arrow { color:#9aaac0; transition:transform .18s, color .18s; }
+        .ht-dept-card:hover .ht-dept-arrow { transform:translateX(3px); color:#a88b50; }
+
+        /* Back button */
+        .ht-back {
+          display:inline-flex; align-items:center; gap:.38rem;
+          font-size:.8rem; font-weight:600; color:#6b7a96;
+          background:none; border:none; cursor:pointer; padding:0;
+          margin-bottom:.9rem; font-family:'Interstate',sans-serif;
+          transition:color .18s;
+        }
+        .ht-back:hover { color:#a88b50; }
+
+        /* Contact grid */
+        .ht-contact-grid { display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit, minmax(195px,1fr)); }
+        .ht-contact-item {
+          display:flex; align-items:center; gap:.7rem;
+          background:#fff; border:1px solid rgba(15,30,56,.09);
+          border-radius:10px; padding:.85rem .9rem;
+          text-decoration:none; transition:all .18s;
+        }
+        .ht-contact-item.link:hover { border-color:rgba(200,169,110,.4); box-shadow:0 4px 14px rgba(15,30,56,.08); }
+        .ht-contact-ico {
+          width:34px; height:34px; border-radius:8px;
+          background:rgba(200,169,110,.1); border:1px solid rgba(200,169,110,.2);
+          display:flex; align-items:center; justify-content:center; flex-shrink:0;
+        }
+        .ht-contact-ico svg { color:#a88b50 !important; }
+        .ht-contact-key { font-size:.66rem; font-weight:500; color:#9aaac0; text-transform:uppercase; letter-spacing:.1em; }
+        .ht-contact-val { font-size:.8rem; font-weight:600; color:#0f1e38; margin-top:.08rem; }
+        .ht-contact-val.gold { color:#a88b50; }
+
+        /* Info box */
+        .ht-info {
+          display:flex; gap:.8rem; align-items:flex-start;
+          background:rgba(200,169,110,.06);
+          border:1px solid rgba(200,169,110,.2);
+          border-radius:12px; padding:1rem 1.15rem; margin-top:1.1rem;
+        }
+        .ht-info-ico {
+          width:32px; height:32px; border-radius:8px;
+          background:rgba(200,169,110,.14);
+          display:flex; align-items:center; justify-content:center; flex-shrink:0;
+        }
+        .ht-info-ico svg { color:#a88b50 !important; }
+        .ht-info-title { font-size:.83rem; font-weight:600; color:#0f1e38; margin-bottom:.45rem; }
+        .ht-info-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.38rem; }
+        .ht-info-list li { display:flex; gap:.45rem; align-items:flex-start; font-size:.78rem; color:#3d506e; line-height:1.5; }
+        .ht-info-list li svg { color:#a88b50 !important; flex-shrink:0; margin-top:2px; }
+
+        /* Top doctors row */
+        .ht-top-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:.9rem; }
+        .ht-view-all {
+          display:inline-flex; align-items:center; gap:.35rem;
+          font-size:.75rem; font-weight:600; color:#a88b50;
+          background:rgba(200,169,110,.08); border:1px solid rgba(200,169,110,.22);
+          border-radius:100px; padding:.28rem .8rem;
+          cursor:pointer; font-family:'Outfit',sans-serif; transition:all .18s;
+        }
+        .ht-view-all:hover { background:rgba(200,169,110,.16); border-color:rgba(200,169,110,.42); }
+
+        /* Empty state */
+        .ht-empty {
+          display:flex; flex-direction:column; align-items:center;
+          padding:3.5rem 2rem; background:#fff;
+          border:1.5px dashed rgba(15,30,56,.13);
+          border-radius:14px; text-align:center; gap:.6rem;
+          color:#9aaac0;
+        }
+        .ht-empty svg { opacity:.3; }
+        .ht-empty-t { font-size:.92rem; font-weight:600; color:#6b7a96; }
+        .ht-empty-s { font-size:.78rem; color:#9aaac0; }
+      `}</style>
+
+      <div style={{ marginTop: ".25rem" }}>
+
+        {/* ── Tab nav ──────────────────────────────────── */}
+        <nav className="ht-nav">
+          {TABS.map(({ k, label }) => (
+            <button
+              key={k}
+              className={`ht-tab-btn${tab === k ? " active" : ""}`}
+              onClick={() => { setTab(k); if (k !== "departments") setSelectedDeptId(null); }}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+
+        {/* ── OVERVIEW ─────────────────────────────────── */}
         {tab === "overview" && (
-          <div className="space-y-6">
-            <div className="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 rounded-2xl border border-blue-100 p-6 shadow-sm">
-              <div className="flex flex-wrap gap-2 mb-4">
+          <div>
+            <div className="ht-card">
+              <div className="ht-badges">
                 {hospital.verified && (
-                  <Badge className="bg-green-50 text-green-700 hover:bg-green-50 border border-green-200">
-                    <lucideReact.CheckCircle2 className="h-4 w-4 mr-1" /> Verified
-                  </Badge>
+                  <span className="ht-badge ht-badge-green"><lucideReact.CheckCircle2 size={11} /> Verified</span>
                 )}
                 {hospital.emergencyAvailable && (
-                  <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border border-red-200">
-                    <lucideReact.Siren className="h-4 w-4 mr-1" /> Emergency
-                  </Badge>
+                  <span className="ht-badge ht-badge-red"><lucideReact.Siren size={11} /> Emergency</span>
                 )}
                 {hospital.openingHours && (
-                  <Badge className="bg-slate-100 text-slate-900 hover:bg-slate-100 border border-slate-200">
-                    <lucideReact.Clock className="h-4 w-4 mr-1" /> Hours available
-                  </Badge>
+                  <span className="ht-badge ht-badge-gold"><lucideReact.Clock size={11} /> {hospital.openingHours}</span>
                 )}
-                {hospital.tags?.slice(0, 8).map((t) => (
-                  <Badge
-                    key={t}
-                    variant="secondary"
-                    className="bg-white border border-slate-200 text-slate-700 hover:border-slate-300"
-                  >
-                    {t}
-                  </Badge>
+                {hospital.tags?.slice(0, 6).map((t) => (
+                  <span key={t} className="ht-badge ht-badge-gold">{t}</span>
                 ))}
               </div>
 
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <lucideReact.Sparkles className="h-5 w-5 text-blue-600" />
-                Hospital&apos;s Vision
-              </h2>
-              <p className="mt-3 text-slate-700 leading-relaxed">
-                {hospital.servicesSummary || "More details will be added soon."}
-              </p>
+              <div className="ht-head" style={{ marginBottom: ".4rem" }}>
+                <div className="ht-icon"><lucideReact.Sparkles size={17} /></div>
+                <div className="ht-title">Hospital's Vision</div>
+              </div>
+              <p className="ht-prose">{hospital.servicesSummary || "More details will be added soon."}</p>
 
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-5 hover:shadow-lg transition-all duration-300">
-                  <div className="absolute top-0 right-0 h-20 w-20 bg-blue-200 opacity-20 rounded-full blur-2xl"></div>
-                  <lucideReact.DollarSign className="h-6 w-6 text-blue-600 mb-2" />
-                  <p className="text-sm text-slate-600 font-medium">Starting from</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">
-                    {hospital.services?.[0]
-                      ? `${hospital.services[0].currency} ${hospital.services[0].price}`
-                      : "—"}
-                  </p>
+              <div className="ht-stats">
+                <div className="ht-stat">
+                  <div className="ht-stat-ico"><lucideReact.Banknote size={15} /></div>
+                  <div className="ht-stat-lbl">Starting from</div>
+                  <div className="ht-stat-val">
+                    {(() => {
+                      const min = Math.min(...hospital.doctors.map(d => d.feeMin ?? Infinity).filter(f => f !== Infinity));
+                      return min !== Infinity ? `€${Math.round(min / 100)}` : "—";
+                    })()}
+                  </div>
                 </div>
-                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 p-5 hover:shadow-lg transition-all duration-300">
-                  <div className="absolute top-0 right-0 h-20 w-20 bg-green-200 opacity-20 rounded-full blur-2xl"></div>
-                  <lucideReact.Users className="h-6 w-6 text-green-600 mb-2" />
-                  <p className="text-sm text-slate-600 font-medium">Doctors</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{hospital.doctors.length}</p>
+                <div className="ht-stat">
+                  <div className="ht-stat-ico"><lucideReact.Users size={15} /></div>
+                  <div className="ht-stat-lbl">Doctors</div>
+                  <div className="ht-stat-val">{hospital.doctors.length}</div>
                 </div>
-                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 p-5 hover:shadow-lg transition-all duration-300">
-                  <div className="absolute top-0 right-0 h-20 w-20 bg-purple-200 opacity-20 rounded-full blur-2xl"></div>
-                  <lucideReact.Building2 className="h-6 w-6 text-purple-600 mb-2" />
-                  <p className="text-sm text-slate-600 font-medium">Departments</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">
-                    {hospital.departments?.length ?? 0}
-                  </p>
+                <div className="ht-stat">
+                  <div className="ht-stat-ico"><lucideReact.Building2 size={15} /></div>
+                  <div className="ht-stat-lbl">Departments</div>
+                  <div className="ht-stat-val">{hospital.departments?.length ?? 0}</div>
                 </div>
-                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 p-5 hover:shadow-lg transition-all duration-300">
-                  <div className="absolute top-0 right-0 h-20 w-20 bg-orange-200 opacity-20 rounded-full blur-2xl"></div>
-                  <lucideReact.MapPin className="h-6 w-6 text-orange-600 mb-2" />
-                  <p className="text-sm text-slate-600 font-medium">City</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{hospital.location.city}</p>
+                <div className="ht-stat">
+                  <div className="ht-stat-ico"><lucideReact.MapPin size={15} /></div>
+                  <div className="ht-stat-lbl">City</div>
+                  <div className="ht-stat-val" style={{ fontSize:"1rem" }}>{hospital.location.city}</div>
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button 
-                  className="rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/30" 
-                  onClick={() => setTab("services")}
-                >
-                  <lucideReact.Package className="h-4 w-4 mr-2" />
-                  View Packages
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-full hover:bg-slate-50"
-                  onClick={() => setTab("departments")}
-                >
-                  <lucideReact.Building2 className="h-4 w-4 mr-2" />
-                  Browse Departments
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-full hover:bg-slate-50"
-                  onClick={() => setTab("availability")}
-                >
-                  <lucideReact.Calendar className="h-4 w-4 mr-2" />
-                  Check Availability
-                </Button>
+              <div className="ht-actions">
+                <button className="ht-btn ht-btn-navy" onClick={() => setTab("services")}>
+                  <lucideReact.Package size={14} /> View Packages
+                </button>
+                <button className="ht-btn ht-btn-ghost" onClick={() => setTab("departments")}>
+                  <lucideReact.Building2 size={14} /> Departments
+                </button>
               </div>
             </div>
 
-            {/* Preview doctors */}
-            <div className="bg-gradient-to-br from-white via-green-50/30 to-emerald-50/30 rounded-2xl border border-green-100 p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30">
-                    <lucideReact.Star className="h-5 w-5 text-white" />
-                  </div>
+            {/* Top doctors */}
+            <div className="ht-card-white">
+              <div className="ht-top-row">
+                <div className="ht-head" style={{ marginBottom:0 }}>
+                  <div className="ht-icon"><lucideReact.Star size={17} /></div>
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900">Top Doctors</h2>
-                    <p className="text-sm text-slate-600">Our most experienced specialists</p>
+                    <div className="ht-title">Top Doctors</div>
+                    <div className="ht-sub">Most experienced specialists</div>
                   </div>
                 </div>
-                <button
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-blue-600 font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all"
-                  onClick={() => setTab("doctors")}
-                >
-                  View all
-                  <lucideReact.ArrowRight className="h-4 w-4" />
+                <button className="ht-view-all" onClick={() => setTab("doctors")}>
+                  View all <lucideReact.ArrowRight size={11} />
                 </button>
               </div>
-
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">{hospital.doctors.slice(0, 2).map((d) => (
+              <div className="ht-doc-grid" style={{ marginTop:".8rem" }}>
+                {hospital.doctors.slice(0, 2).map((d) => (
                   <DoctorCard
-                    key={d.id}
-                    doctor={d}
+                    key={d.id} doctor={d}
                     slots={hospital.availability}
-                    onSelectSlot={() => onBookDoctor(d.id)}
+                    onSelectSlotAction={() => onBookDoctorAction(d.id)}
                   />
                 ))}
               </div>
@@ -267,170 +472,114 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
           </div>
         )}
 
+        {/* ── SERVICES ─────────────────────────────────── */}
         {tab === "services" && (
           <div>
-            {/* Header Section */}
-            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-8 mb-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <lucideReact.Package className="h-6 w-6 text-white" />
-                </div>
+            <div className="ht-card" style={{ marginBottom:"1.25rem" }}>
+              <div className="ht-head">
+                <div className="ht-icon"><lucideReact.Package size={17} /></div>
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Health Packages</h2>
-                  <p className="text-sm text-slate-600">Choose the perfect plan for your health needs</p>
+                  <div className="ht-title">Health Packages</div>
+                  <div className="ht-sub">Choose the perfect plan for your needs</div>
                 </div>
               </div>
-              <p className="text-slate-700 leading-relaxed mt-4">
-                Our comprehensive health packages are designed to provide complete care at competitive prices. 
-                All packages include consultations with experienced specialists and necessary diagnostic tests.
+              <p className="ht-prose" style={{ marginTop:0 }}>
+                Comprehensive packages providing complete care at competitive prices, including
+                specialist consultations and necessary diagnostic tests.
               </p>
             </div>
 
-            {/* Packages Grid */}
             {packages.length ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {packages.map((pkg, index) => (
-                  <PackageCard
-                    key={pkg.id}
-                    pkg={pkg as any}
-                    hospitalName={hospital.name}
-                    featured={index === 1} // Mark the 2nd package as featured
-                  />
+              <div style={{ display:"grid", gap:".75rem", gridTemplateColumns:"repeat(auto-fill, minmax(255px,1fr))" }}>
+                {packages.map((pkg, i) => (
+                  <PackageCard key={pkg.id} pkg={pkg as any} hospitalName={hospital.name} featured={i === 1} />
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-                <lucideReact.Package className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-500 text-lg">No packages available yet.</p>
-                <p className="text-slate-400 text-sm mt-2">Check back soon for health packages.</p>
+              <div className="ht-empty">
+                <lucideReact.Package size={50} />
+                <div className="ht-empty-t">No packages available yet</div>
+                <div className="ht-empty-s">Check back soon.</div>
               </div>
             )}
 
-            {/* Info Section */}
-            <div className="mt-8 bg-blue-50 border border-blue-100 rounded-2xl p-6">
-              <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <lucideReact.Info className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Package Information</h3>
-                  <ul className="space-y-1.5 text-sm text-slate-700">
-                    <li className="flex items-start gap-2">
-                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <span>All packages are valid for 3 months from the date of booking</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <span>Advance booking required for all consultations and tests</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <span>Reports will be available within 24-48 hours</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <lucideReact.Check className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <span>Free follow-up consultation within 7 days</span>
-                    </li>
-                  </ul>
-                </div>
+            <div className="ht-info">
+              <div className="ht-info-ico"><lucideReact.Info size={15} /></div>
+              <div>
+                <div className="ht-info-title">Package Information</div>
+                <ul className="ht-info-list">
+                  <li><lucideReact.Check size={12} /> Valid for 3 months from booking date</li>
+                  <li><lucideReact.Check size={12} /> Advance booking required for consultations</li>
+                  <li><lucideReact.Check size={12} /> Reports available within 24–48 hours</li>
+                  <li><lucideReact.Check size={12} /> Free follow-up within 7 days</li>
+                </ul>
               </div>
             </div>
           </div>
         )}
 
+        {/* ── DEPARTMENTS ──────────────────────────────── */}
         {tab === "departments" && (
-          <div className="space-y-4">
+          <div>
             {!selectedDept ? (
               <>
-                <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                      <lucideReact.Building2 className="h-6 w-6 text-white" />
-                    </div>
+                <div className="ht-card" style={{ marginBottom:"1.1rem" }}>
+                  <div className="ht-head" style={{ marginBottom:0 }}>
+                    <div className="ht-icon"><lucideReact.Building2 size={17} /></div>
                     <div>
-                      <h2 className="text-xl font-bold text-slate-900">Medical Departments</h2>
-                      <p className="text-sm text-slate-600">Select a department to view its specialist doctors</p>
+                      <div className="ht-title">Medical Departments</div>
+                      <div className="ht-sub">Select a department to view specialists</div>
                     </div>
                   </div>
                 </div>
 
                 {hospital.departments?.length ? (
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="ht-dept-grid">
                     {hospital.departments.map((d) => (
-                      <button
-                        key={d.id}
-                        onClick={() => setSelectedDeptId(d.id)}
-                        className="group text-left bg-white rounded-2xl border border-slate-200 p-6 hover:border-blue-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                      >
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-blue-200 group-hover:border-blue-300 transition-colors">
-                            <lucideReact.Stethoscope className="h-6 w-6 text-blue-600" />
-                          </div>
-                          <div className="shrink-0 rounded-full bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1.5 border border-blue-200 group-hover:bg-blue-100 transition-colors">
-                            {d.doctorCount} doctors
-                          </div>
-                        </div>
-                        <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">{d.name}</h3>
-                        <p className="text-sm text-slate-600 line-clamp-2">
-                          {d.overview || "Department details will be added soon."}
-                        </p>
-                        <div className="mt-4 flex items-center gap-2 text-sm text-blue-600 font-semibold">
-                          View Doctors
-                          <lucideReact.ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      <button key={d.id} className="ht-dept-card" onClick={() => setSelectedDeptId(d.id)}>
+                        <div className="ht-dept-ico"><lucideReact.Stethoscope size={17} /></div>
+                        <div className="ht-dept-name">{d.name}</div>
+                        <div className="ht-dept-text">{d.overview || "Department details coming soon."}</div>
+                        <div className="ht-dept-foot">
+                          <span className="ht-dept-ct">{d.doctorCount} doctors</span>
+                          <lucideReact.ArrowRight size={14} className="ht-dept-arrow" />
                         </div>
                       </button>
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
-                    <lucideReact.Building2 className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-500 text-lg">No departments available yet</p>
+                  <div className="ht-empty">
+                    <lucideReact.Building2 size={50} />
+                    <div className="ht-empty-t">No departments yet</div>
                   </div>
                 )}
               </>
             ) : (
               <>
-                <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
-                  <button
-                    onClick={() => setSelectedDeptId(null)}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors mb-4"
-                  >
-                    <lucideReact.ChevronLeft className="h-4 w-4" />
-                    Back to all departments
-                  </button>
-
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                      <lucideReact.Stethoscope className="h-6 w-6 text-white" />
-                    </div>
+                <button className="ht-back" onClick={() => setSelectedDeptId(null)}>
+                  <lucideReact.ChevronLeft size={14} /> Back to departments
+                </button>
+                <div className="ht-card" style={{ marginBottom:"1.1rem" }}>
+                  <div className="ht-head">
+                    <div className="ht-icon"><lucideReact.Stethoscope size={17} /></div>
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-900">{selectedDept.name}</h2>
-                      <p className="text-sm text-slate-600 flex items-center gap-2">
-                        <lucideReact.Users className="h-4 w-4" />
-                        {deptDoctors.length} specialist doctors available
-                      </p>
+                      <div className="ht-title">{selectedDept.name}</div>
+                      <div className="ht-sub">{deptDoctors.length} specialists available</div>
                     </div>
                   </div>
-
-                  <p className="mt-3 text-slate-700">
-                    {selectedDept.overview || "Department details will be added soon."}
-                  </p>
+                  <p className="ht-prose" style={{ marginTop:0 }}>{selectedDept.overview || "Details coming soon."}</p>
                 </div>
-
                 {deptDoctors.length ? (
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="ht-doc-grid">
                     {deptDoctors.map((d) => (
-                      <DoctorCard
-                        key={d.id}
-                        doctor={d}
-                        slots={hospital.availability}
-                        onSelectSlot={() => onBookDoctor(d.id)}
-                      />
+                      <DoctorCard key={d.id} doctor={d} slots={hospital.availability}
+                        onSelectSlotAction={() => onBookDoctorAction(d.id)} />
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-slate-500">
-                    No doctors found for this department.
+                  <div className="ht-empty">
+                    <lucideReact.Users size={44} />
+                    <div className="ht-empty-t">No doctors in this department</div>
                   </div>
                 )}
               </>
@@ -438,198 +587,138 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
           </div>
         )}
 
+        {/* ── DOCTORS ──────────────────────────────────── */}
         {tab === "doctors" && (
-          <div className="space-y-6">
-            {/* Filters */}
-            <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50/30 rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <lucideReact.Filter className="h-5 w-5 text-white" />
+          <div>
+            <div className="ht-filter">
+              <div className="ht-head" style={{ marginBottom:".6rem" }}>
+                <div className="ht-icon" style={{ width:35, height:35, borderRadius:8 }}>
+                  <lucideReact.Filter size={14} />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">Find Your Doctor</h3>
+                <div className="ht-title" style={{ fontSize:".9rem" }}>Find Your Doctor</div>
               </div>
-              
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="relative">
-                  <lucideReact.Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+
+              <div className="ht-filter-grid">
+                <div style={{ position:"relative" }}>
+                  <lucideReact.Search size={13} style={{ position:"absolute", left:9, top:12, color:"#9aaac0" }} />
                   <Input
                     value={doctorQuery}
                     onChange={(e) => setDoctorQuery(e.target.value)}
-                    placeholder="Search doctor name..."
-                    className="pl-10 h-10 rounded-xl border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Search by name…"
+                    style={{
+                      paddingLeft:"1.9rem", height:37, borderRadius:8, fontSize:".8rem",
+                      border:"1px solid rgba(15,30,56,.14)", background:"#f7f4ef",
+                      fontFamily:"'Outfit',sans-serif", color:"#0f1e38",
+                    }}
                   />
                 </div>
-
-                <select
-                  className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                  value={specialty}
-                  onChange={(e) => setSpecialty(e.target.value)}
-                >
+                <select className="ht-select" value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
                   <option value="ALL">All Specialties</option>
-                  {allSpecialties.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
+                  {allSpecialties.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-
-                <select
-                  className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                  value={mode}
-                  onChange={(e) => setMode(e.target.value as any)}
-                >
+                <select className="ht-select" value={mode} onChange={(e) => setMode(e.target.value as any)}>
                   <option value="ALL">All Modes</option>
                   <option value="PHYSICAL">Physical</option>
                   <option value="ONLINE">Online</option>
                 </select>
-
-                <select
-                  className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as any)}
-                >
-                  <option value="EXP_DESC">Sort: Experience</option>
-                  <option value="FEE_ASC">Sort: Fee (Low → High)</option>
+                <select className="ht-select" value={sort} onChange={(e) => setSort(e.target.value as any)}>
+                  <option value="EXP_DESC">Sort: Experience ↓</option>
+                  <option value="FEE_ASC">Sort: Fee ↑</option>
                 </select>
               </div>
 
-              <div className="mt-4 flex items-center justify-between gap-3 pt-3 border-t border-slate-200">
-                <label className="text-sm text-slate-700 flex items-center gap-2 cursor-pointer hover:text-slate-900 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={verifiedOnly}
+              <div className="ht-filter-foot">
+                <label className="ht-check-label">
+                  <input type="checkbox" checked={verifiedOnly}
                     onChange={(e) => setVerifiedOnly(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <lucideReact.CheckCircle2 className="h-4 w-4 text-green-600" />
+                    style={{ accentColor:"#c8a96e" }} />
+                  <lucideReact.CheckCircle2 size={12} style={{ color:"#15803d" }} />
                   Verified only
                 </label>
-
-                <div className="flex items-center gap-2 text-sm">
-                  <lucideReact.Users className="h-4 w-4 text-slate-400" />
-                  <span className="text-slate-600">
-                    Showing <span className="font-bold text-blue-600">{filteredDoctors.length}</span> doctors
-                  </span>
-                </div>
+                <span className="ht-pill">{filteredDoctors.length} doctors</span>
               </div>
             </div>
 
-            {/* Grouped doctors */}
             {groupedDoctors.length ? (
-              <div className="space-y-8">
+              <div>
                 {groupedDoctors.map(([groupName, docs]) => (
                   <div key={groupName}>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="h-8 w-1 rounded-full bg-gradient-to-b from-blue-500 to-indigo-600"></div>
-                      <h3 className="text-xl font-bold text-slate-900">
-                        {groupName}
-                      </h3>
-                      <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-semibold border border-blue-200">
-                        {docs.length}
-                      </span>
+                    <div className="ht-group">
+                      <div className="ht-group-bar" />
+                      <span className="ht-group-name">{groupName}</span>
+                      <span className="ht-group-ct">{docs.length}</span>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="ht-doc-grid">
                       {docs.map((d) => (
-                        <DoctorCard
-                          key={d.id}
-                          doctor={d}
-                          slots={hospital.availability}
-                          onSelectSlot={() => onBookDoctor(d.id)}
-                        />
+                        <DoctorCard key={d.id} doctor={d} slots={hospital.availability}
+                          onSelectSlotAction={() => onBookDoctorAction(d.id)} />
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
-                <lucideReact.UserX className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-600 text-lg font-medium">No doctors match your filters</p>
-                <p className="text-slate-500 text-sm mt-2">Try adjusting your search criteria</p>
+              <div className="ht-empty">
+                <lucideReact.UserX size={50} />
+                <div className="ht-empty-t">No doctors match your filters</div>
+                <div className="ht-empty-s">Try adjusting your search criteria</div>
               </div>
             )}
           </div>
         )}
 
-        {tab === "availability" && (
-          <div id="availability">
-            <HospitalAvailability hospital={hospital} />
-          </div>
-        )}
-
+        {/* ── CONTACT ──────────────────────────────────── */}
         {tab === "contact" && (
-          <div className="space-y-4">
-            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl border border-blue-100 p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <lucideReact.Phone className="h-6 w-6 text-white" />
-                </div>
+          <div>
+            <div className="ht-card" style={{ marginBottom:"1.1rem" }}>
+              <div className="ht-head">
+                <div className="ht-icon"><lucideReact.Phone size={17} /></div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">Contact Information</h2>
-                  <p className="text-sm text-slate-600">Get in touch with us</p>
+                  <div className="ht-title">Contact Information</div>
+                  <div className="ht-sub">Get in touch with us</div>
                 </div>
               </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <a
-                  href={hospital.phone ? `tel:${hospital.phone}` : undefined}
-                  className={`bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3 ${
-                    hospital.phone ? "hover:border-blue-300 hover:shadow-md transition-all cursor-pointer" : ""
-                  }`}
-                >
-                  <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <lucideReact.Phone className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-slate-500">Phone</p>
-                    <p className={`text-sm font-semibold truncate ${
-                      hospital.phone ? "text-blue-600" : "text-slate-600"
-                    }`}>
+              <div className="ht-contact-grid">
+                <a href={hospital.phone ? `tel:${hospital.phone}` : undefined}
+                  className={`ht-contact-item${hospital.phone ? " link" : ""}`}>
+                  <div className="ht-contact-ico"><lucideReact.Phone size={15} /></div>
+                  <div>
+                    <div className="ht-contact-key">Phone</div>
+                    <div className={`ht-contact-val${hospital.phone ? " gold" : ""}`}>
                       {hospital.phone || "Will be added soon"}
-                    </p>
+                    </div>
                   </div>
                 </a>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-                    <lucideReact.Mail className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-slate-500">Email</p>
-                    <p className="text-sm font-semibold text-slate-700 truncate">{hospital.email || "Will be added soon"}</p>
+                <div className="ht-contact-item">
+                  <div className="ht-contact-ico"><lucideReact.Mail size={15} /></div>
+                  <div>
+                    <div className="ht-contact-key">Email</div>
+                    <div className="ht-contact-val">{hospital.email || "Will be added soon"}</div>
                   </div>
                 </div>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-                    <lucideReact.Globe className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-slate-500">Website</p>
-                    <p className="text-sm font-semibold text-slate-700 truncate">{hospital.website || "Will be added soon"}</p>
+                <div className="ht-contact-item">
+                  <div className="ht-contact-ico"><lucideReact.Globe size={15} /></div>
+                  <div>
+                    <div className="ht-contact-key">Website</div>
+                    <div className="ht-contact-val">{hospital.website || "Will be added soon"}</div>
                   </div>
                 </div>
-
-                <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
-                    <lucideReact.Clock className="h-5 w-5 text-orange-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-slate-500">Opening Hours</p>
-                    <p className="text-sm font-semibold text-slate-700 truncate">{hospital.openingHours || "Will be added soon"}</p>
+                <div className="ht-contact-item">
+                  <div className="ht-contact-ico"><lucideReact.Clock size={15} /></div>
+                  <div>
+                    <div className="ht-contact-key">Hours</div>
+                    <div className="ht-contact-val">{hospital.openingHours || "Will be added soon"}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-lg bg-red-50 flex items-center justify-center">
-                  <lucideReact.MapPin className="h-5 w-5 text-red-600" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">Address & Location</h3>
+            <div className="ht-card-white">
+              <div className="ht-head">
+                <div className="ht-icon"><lucideReact.MapPin size={17} /></div>
+                <div className="ht-title">Address</div>
               </div>
-              <p className="text-slate-700 leading-relaxed">
+              <p className="ht-prose" style={{ marginTop:0 }}>
                 {[
                   hospital.location.addressLine,
                   hospital.location.area,
@@ -637,19 +726,22 @@ export function HospitalTabs({ hospital, packages, onBookDoctor }: Props) {
                   hospital.location.district,
                   hospital.location.country,
                   hospital.location.postalCode,
-                ]
-                  .filter(Boolean)
-                  .join(", ") || "Will be added soon"}
+                ].filter(Boolean).join(", ") || "Will be added soon"}
               </p>
-
-              <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-4 flex items-center gap-3">
-                <lucideReact.Map className="h-5 w-5 text-slate-400" />
-                <p className="text-sm text-slate-600">Interactive map will be added soon.</p>
+              <div style={{
+                marginTop:".9rem", background:"#f7f4ef",
+                border:"1px solid rgba(15,30,56,.09)",
+                borderRadius:9, padding:".8rem .95rem",
+                display:"flex", alignItems:"center", gap:".45rem",
+                fontSize:".78rem", color:"#9aaac0",
+              }}>
+                <lucideReact.Map size={14} />
+                Interactive map coming soon.
               </div>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
