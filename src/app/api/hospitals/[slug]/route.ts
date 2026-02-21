@@ -131,7 +131,9 @@ export async function GET(
     price: p.price ?? 0,
     currency: p.currency ?? "NPR",
     description: p.description ?? "",
-    features: p.description ? [p.description] : [],
+    features: p.description
+      ? p.description.split("\n").map((l) => l.trim()).filter(Boolean)
+      : [],
   }));
 
   // Departments payload: only what UI needs right now
