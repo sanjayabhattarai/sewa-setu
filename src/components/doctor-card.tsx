@@ -30,6 +30,20 @@ function cleanEducation(raw?: string | null) {
   let s = raw.replace(/\s+/g, " ").trim();
   if (!s) return null;
 
+  // Truncate at scraper-injected biography / section-header markers
+  const breakIdx = s.search(
+    /\b(Professional Summary|Academic Background|Areas of Expertise|Profile\s*:|At Grande|Consultant\s*[–\-]|Memberships?(\s*&|\s*:)|\bTrainings?\s*(&|and)\s*Certifications?|Languages\s*Spoken|\b(He|She)\s+(is|was|has|completed|serves)\b)/i
+  );
+  if (breakIdx > 0) {
+    s = s.slice(0, breakIdx).trim();
+  }
+
+  // Strip trailing name patterns e.g. "Assoc. Prof. Dr. Firstname Lastname"
+  s = s
+    .replace(/\s+(Assoc\.?\s*Prof\.?|Prof\.?|Dr\.?)\s+[A-Z][a-z]+(\s+[A-Z][a-z]+){1,4}\s*$/g, "")
+    .trim();
+
+  // Remove council / registration noise
   s = s
     .replace(
       /\b(nepal\s*medical\s*council|medical\s*council|council|nmc|registration)\b\s*(number|no\.?)?\s*[:\-]?\s*\d+\b/gi,
