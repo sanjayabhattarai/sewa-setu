@@ -42,13 +42,13 @@ const benefits = [
 
 export function WhyChooseUsSection() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-[#f7f4ef]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl font-bold text-[#0f1e38] mb-4">
             Why Choose Sewa-Setu?
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-[#6b7a96] max-w-2xl mx-auto">
             We simplify healthcare management for families abroad, making it easy to
             ensure your loved ones get the best care back home.
           </p>
@@ -58,15 +58,15 @@ export function WhyChooseUsSection() {
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className="group p-8 rounded-xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+              className="group p-8 rounded-xl border border-[rgba(15,30,56,0.09)] bg-white hover:border-[rgba(200,169,110,0.45)] hover:shadow-lg hover:shadow-[rgba(15,30,56,0.07)] transition-all duration-300"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                <benefit.icon className="h-6 w-6 text-blue-600 group-hover:text-white" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[rgba(200,169,110,0.1)] border border-[rgba(200,169,110,0.2)] mb-4 group-hover:bg-[#0f1e38] transition-all">
+                <benefit.icon className="h-6 w-6 text-[#a88b50] group-hover:text-[#c8a96e]" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+              <h3 className="text-xl font-semibold text-[#0f1e38] mb-2">
                 {benefit.title}
               </h3>
-              <p className="text-slate-600 leading-relaxed">
+              <p className="text-[#6b7a96] leading-relaxed">
                 {benefit.description}
               </p>
             </div>
