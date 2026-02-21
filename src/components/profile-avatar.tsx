@@ -47,13 +47,13 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
               </div>
             </div>
           ) : (
-            <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full shadow-lg ring-2 ring-offset-2 ring-blue-100 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold text-3xl sm:text-4xl md:text-5xl group-hover:shadow-xl transition-all duration-300">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full shadow-lg ring-2 ring-offset-2 ring-[#c8a96e]/30 bg-gradient-to-br from-[#0f1e38] via-[#1a3059] to-[#0f1e38] flex items-center justify-center text-[#c8a96e] font-bold text-3xl sm:text-4xl md:text-5xl group-hover:shadow-xl transition-all duration-300">
               {initials}
             </div>
           )}
           
           {/* Edit Camera Badge */}
-          <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white p-2 rounded-full shadow-md ring-2 ring-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110 transition-transform">
+          <div className="absolute -bottom-1 -right-1 bg-[#c8a96e] text-[#0f1e38] p-2 rounded-full shadow-md ring-2 ring-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110 transition-transform">
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5z"/>
             </svg>
@@ -83,7 +83,7 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
           )}
           
           <ProfileEditModal>
-            <button className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-blue-600 text-white font-semibold text-xs sm:text-sm hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg">
+            <button className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[#0f1e38] text-[#c8a96e] font-semibold text-xs sm:text-sm hover:bg-[#1a3059] transition-colors duration-200 shadow-md hover:shadow-lg">
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5z"/>
               </svg>

@@ -14,14 +14,14 @@ export default async function ManageProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-100">
+    <div className="min-h-screen bg-[#f7f4ef]">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link 
               href="/profile" 
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              className="inline-flex items-center gap-2 text-[#a88b50] hover:text-[#0f1e38] font-medium transition-colors"
             >
               <ArrowLeft size={20} />
               <span>Back to Profile</span>

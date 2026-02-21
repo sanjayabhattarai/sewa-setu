@@ -33,11 +33,11 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-100 p-4 pt-20 pb-12">
+    <div className="min-h-screen bg-[#f7f4ef] p-4 pt-20 pb-12">
       <div className="max-w-5xl mx-auto">
         {/* Back Navigation */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors">
+          <Link href="/" className="inline-flex items-center gap-2 text-[#a88b50] hover:text-[#0f1e38] font-medium transition-colors">
             <ArrowLeft size={18} />
             <span>Back to home</span>
           </Link>
@@ -53,20 +53,20 @@ export default async function ProfilePage() {
             </div>
 
             {/* Divider */}
-            <div className="h-px bg-gradient-to-r from-blue-200 via-indigo-200 to-transparent mb-8"></div>
+            <div className="h-px bg-gradient-to-r from-[#c8a96e]/40 via-[#c8a96e]/20 to-transparent mb-8"></div>
 
             {/* Stats Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 text-center border border-blue-200 hover:shadow-lg transition-shadow">
-                <div className="text-4xl font-bold text-blue-600 mb-2">∞</div>
-                <p className="text-gray-700 font-medium">Total Bookings</p>
-                <p className="text-xs text-gray-500 mt-1">All your appointments</p>
+              <div className="bg-gradient-to-br from-[#0f1e38] to-[#1a3059] rounded-2xl p-6 text-center border border-[#0f1e38] hover:shadow-lg transition-shadow">
+                <div className="text-4xl font-bold text-[#c8a96e] mb-2">∞</div>
+                <p className="text-white/80 font-medium">Total Bookings</p>
+                <p className="text-xs text-white/50 mt-1">All your appointments</p>
               </div>
               
-              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-6 text-center border border-indigo-200 hover:shadow-lg transition-shadow">
-                <div className="text-4xl font-bold text-indigo-600 mb-2">0</div>
-                <p className="text-gray-700 font-medium">Saved Hospitals</p>
-                <p className="text-xs text-gray-500 mt-1">Your favorites</p>
+              <div className="bg-gradient-to-br from-[#0f1e38] to-[#1a3059] rounded-2xl p-6 text-center border border-[#0f1e38] hover:shadow-lg transition-shadow">
+                <div className="text-4xl font-bold text-[#c8a96e] mb-2">0</div>
+                <p className="text-white/80 font-medium">Saved Hospitals</p>
+                <p className="text-xs text-white/50 mt-1">Your favorites</p>
               </div>
               
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 text-center border border-purple-200 hover:shadow-lg transition-shadow flex flex-col items-center justify-center min-h-[180px]">
@@ -80,17 +80,17 @@ export default async function ProfilePage() {
             {/* Account Information Section */}
             <div className="mb-10">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Shield size={24} className="text-blue-600" />
+                <Shield size={24} className="text-[#c8a96e]" />
                 Account Information
               </h2>
               <div className="grid md:grid-cols-2 gap-5">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 hover:border-blue-300 transition-colors">
-                  <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wide mb-2">Email Address</h3>
+                <div className="bg-gradient-to-br from-[#c8a96e]/10 to-[#c8a96e]/20 rounded-2xl p-6 border border-[#c8a96e]/25 hover:border-[#c8a96e]/50 transition-colors">
+                  <h3 className="text-xs font-bold text-[#0f1e38] uppercase tracking-wide mb-2">Email Address</h3>
                   <p className="text-gray-900 font-medium break-all text-sm">{userDataForClient.primaryEmailAddress?.emailAddress || "-"}</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-6 border border-indigo-200 hover:border-indigo-300 transition-colors">
-                  <h3 className="text-xs font-bold text-indigo-900 uppercase tracking-wide mb-2">User ID</h3>
+                <div className="bg-gradient-to-br from-[#c8a96e]/10 to-[#c8a96e]/20 rounded-2xl p-6 border border-[#c8a96e]/25 hover:border-[#c8a96e]/50 transition-colors">
+                  <h3 className="text-xs font-bold text-[#0f1e38] uppercase tracking-wide mb-2">User ID</h3>
                   <p className="text-gray-900 font-mono text-xs break-all">{userDataForClient.id}</p>
                 </div>
 
@@ -118,19 +118,19 @@ export default async function ProfilePage() {
             {/* Quick Actions Section */}
             <div className="mb-10">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Calendar size={24} className="text-blue-600" />
+                <Calendar size={24} className="text-[#c8a96e]" />
                 Quick Actions
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Link href="/search" className="group">
-                  <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 px-6 rounded-2xl hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all active:scale-95">
+                  <button className="w-full flex items-center justify-center gap-3 bg-[#0f1e38] text-[#c8a96e] font-semibold py-4 px-6 rounded-2xl hover:bg-[#1a3059] hover:shadow-lg transition-all active:scale-95">
                     <MapPin size={20} />
                     Find Hospitals
                   </button>
                 </Link>
                 
                 <Link href="/book" className="group">
-                  <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold py-4 px-6 rounded-2xl hover:shadow-lg hover:from-indigo-700 hover:to-indigo-800 transition-all active:scale-95">
+                  <button className="w-full flex items-center justify-center gap-3 bg-[#c8a96e] text-[#0f1e38] font-semibold py-4 px-6 rounded-2xl hover:bg-[#a88b50] hover:shadow-lg transition-all active:scale-95">
                     <Clock size={20} />
                     Book Appointment
                   </button>
@@ -165,26 +165,26 @@ export default async function ProfilePage() {
         </div>
 
         {/* Helpful Tips Section */}
-        <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 border border-blue-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+        <div className="mt-8 p-6 bg-gradient-to-r from-[#0f1e38] via-[#1a3059] to-[#0f1e38] border border-[#0f1e38] rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <span>💡</span>
             Quick Tips
           </h3>
-          <ul className="text-blue-800 text-sm space-y-2.5 grid md:grid-cols-2 gap-3">
+          <ul className="text-white/70 text-sm space-y-2.5 grid md:grid-cols-2 gap-3">
             <li className="flex items-start gap-3">
-              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span className="text-[#c8a96e] font-bold mt-0.5">•</span>
               <span>Search and compare hospitals near you with ease</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span className="text-[#c8a96e] font-bold mt-0.5">•</span>
               <span>Save your favorite hospitals for quick access</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span className="text-[#c8a96e] font-bold mt-0.5">•</span>
               <span>Book appointments and manage your health</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-600 font-bold mt-0.5">•</span>
+              <span className="text-[#c8a96e] font-bold mt-0.5">•</span>
               <span>Your data is secure and fully encrypted</span>
             </li>
           </ul>
