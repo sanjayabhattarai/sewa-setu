@@ -23,7 +23,7 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
   return (
     <>
       <div
-        className={`group relative bg-white rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden ${
+        className={`group relative bg-white rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden flex flex-col ${
           featured
             ? "border-[#c8a96e] shadow-lg shadow-[#c8a96e]/20"
             : "border-[#0f1e38]/10 hover:border-[#c8a96e]"
@@ -49,7 +49,7 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
         />
 
         {/* Card Content */}
-        <div className="relative p-6">
+        <div className="relative p-6 flex flex-col flex-1">
           {/* Package Name */}
           <div className="mb-4">
             <h3 className="text-xl font-bold text-slate-900 mb-1">{pkg.name}</h3>
@@ -72,23 +72,36 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
           </div>
 
           {/* Features List */}
-          <div className="space-y-3 mb-6 min-h-[200px]">
-            {pkg.features.map((feature, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <div className="h-5 w-5 rounded-full bg-[#c8a96e]/15 flex items-center justify-center">
-                    <Check className="h-3 w-3 text-[#a88b50]" />
+          <div className="flex-1 mb-6">
+            {pkg.features
+              // defensive: if any element still contains \n, split it now
+              .flatMap((f) => f.split("\n").map((l) => l.trim()).filter(Boolean))
+              .map((line, i) =>
+                line.startsWith("- ") ? (
+                  <div key={i} className="flex items-start gap-2.5 py-1">
+                    <div className="flex-shrink-0 mt-1">
+                      <div className="h-4 w-4 rounded-full bg-[#c8a96e]/15 flex items-center justify-center">
+                        <Check className="h-2.5 w-2.5 text-[#a88b50]" />
+                      </div>
+                    </div>
+                    <span className="text-sm text-slate-700 leading-relaxed">{line.slice(2)}</span>
                   </div>
-                </div>
-                <span className="text-sm text-slate-700 leading-relaxed">{feature}</span>
-              </div>
-            ))}
+                ) : (
+                  <div key={i} className="flex items-center gap-2 pt-4 pb-1 first:pt-1">
+                    <div className="h-px flex-1 bg-[#0f1e38]/10" />
+                    <span className="text-[0.68rem] font-bold tracking-widest uppercase text-[#a88b50] whitespace-nowrap">
+                      {line}
+                    </span>
+                    <div className="h-px flex-1 bg-[#0f1e38]/10" />
+                  </div>
+                )
+              )}
           </div>
 
           {/* Book Button */}
           <button
             onClick={() => setShowModal(true)}
-            className={`w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-300 shadow-md ${
+            className={`mt-auto w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-300 shadow-md text-center ${
               featured
                 ? "bg-[#c8a96e] text-[#0f1e38] hover:bg-[#a88b50] hover:shadow-lg hover:shadow-[#c8a96e]/30 hover:scale-105"
                 : "bg-[#0f1e38] text-[#c8a96e] hover:bg-[#1a3059] hover:shadow-lg"

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -130,315 +129,620 @@ export function AvailabilityModal({
   // ✅ render conditional AFTER hooks
   if (!isOpen || !isMounted) return null;
 
+  /* ── helpers ────────────────────────────────── */
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const weekLabel = (() => {
+    const start = rolling.dates[0];
+    const end   = rolling.dates[rolling.dates.length - 1];
+    if (!start || !end) return "";
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+    return `${fmt(start)} – ${fmt(end)}, ${end.getFullYear()}`;
+  })();
+
   const modalContent = (
-    <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-[9999]"
-      onClick={(e) => {
-        // Close when clicking the overlay (backdrop)
-        if (e.target === e.currentTarget) close();
-      }}
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4"
+      style={{ background: "rgba(10,18,35,0.72)", backdropFilter: "blur(6px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) close(); }}
     >
-      <div 
-        className="bg-white rounded-2xl border border-slate-200 w-full max-w-7xl max-h-[95vh] flex flex-col shadow-2xl overflow-hidden"
+      <div
+        className="w-full flex flex-col overflow-hidden"
+        style={{
+          maxWidth: 1290,
+          maxHeight: "95vh",
+          background: "#fff",
+          borderRadius: 20,
+          boxShadow: "0 32px 80px rgba(10,18,35,.45)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header - Fixed, never scrolls */}
-        <div className="flex items-center justify-between border-b border-[#0f1e38] px-4 py-4 sm:px-6 sm:py-5 bg-gradient-to-r from-[#0f1e38] to-[#1a3059] flex-shrink-0">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-xl sm:text-2xl font-bold text-white truncate">{doctor.fullName}</h2>
-            <p className="text-sm text-white/70 mt-1">
-              {bookingStep === "slots" 
-                ? `Select your preferred time slot (${daysToShow} days view)`
-                : "Enter your details to complete booking"
-              }
+
+        {/* ── HEADER ─────────────────────────────────────────── */}
+        <div
+          className="flex-shrink-0 flex items-center gap-3 px-6 py-4"
+          style={{
+            background: "linear-gradient(135deg,#0f1e38 0%,#1a3059 100%)",
+            borderBottom: "1px solid rgba(200,169,110,.18)",
+          }}
+        >
+          {/* doctor info */}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium tracking-widest uppercase" style={{ color: "#c8a96e", letterSpacing: "0.12em" }}>
+              {bookingStep === "slots" ? "Choose a Time Slot" : "Complete Your Booking"}
             </p>
+            <h2 className="text-lg font-bold text-white truncate mt-0.5">{doctor.fullName}</h2>
           </div>
 
+          {/* week nav */}
           {bookingStep === "slots" && (
-            <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-              <Button size="sm" variant="outline" className="rounded-full text-xs sm:text-sm" onClick={goPrev}>
-                <ChevronLeft className="h-4 w-4 mr-1" /> Prev
-              </Button>
-              <Button size="sm" variant="outline" className="rounded-full text-xs sm:text-sm" onClick={goNext}>
-                Next <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={goPrev}
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all"
+                style={{ background: "rgba(255,255,255,.1)", color: "#c8a96e", border: "1px solid rgba(200,169,110,.25)" }}
+              >
+                <ChevronLeft className="h-3.5 w-3.5" /> Prev
+              </button>
+              <span
+                className="text-xs font-medium px-3 py-1.5 rounded-lg hidden sm:block"
+                style={{ background: "rgba(200,169,110,.12)", color: "#c8a96e", border: "1px solid rgba(200,169,110,.2)" }}
+              >
+                {weekLabel}
+              </span>
+              <button
+                onClick={goNext}
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all"
+                style={{ background: "rgba(255,255,255,.1)", color: "#c8a96e", border: "1px solid rgba(200,169,110,.25)" }}
+              >
+                Next <ChevronRight className="h-3.5 w-3.5" />
+              </button>
             </div>
           )}
 
+          {/* close */}
           <button
             onClick={close}
-            className="h-10 w-10 rounded-full bg-white/10 hover:bg-red-500 border border-white/20 hover:border-red-400 flex items-center justify-center transition-all ml-2 group flex-shrink-0"
-            aria-label="Close availability modal"
-            title="Close (Esc)"
+            aria-label="Close"
+            className="flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center transition-all"
+            style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", color: "rgba(255,255,255,.7)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#e53e3e"; (e.currentTarget as HTMLButtonElement).style.color = "#fff"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,.08)"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,.7)"; }}
           >
-            <X className="h-5 w-5 text-white/80 group-hover:text-white" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Body - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+        {/* ── BODY ───────────────────────────────────────────── */}
+        <div className="flex-1 overflow-y-auto" style={{ background: "#f5f3ef" }}>
           {bookingStep === "details" && selectedOcc ? (
-            <div className="max-w-2xl mx-auto space-y-6">
-              {/* Selected Slot Summary */}
-              <div className="rounded-xl bg-[#c8a96e]/10 p-4 border border-[#c8a96e]/20 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-[#0f1e38]/70">Doctor:</span>
-                  <span className="font-semibold text-[#0f1e38]">{doctor.fullName}</span>
+            <div style={{ display: "flex", minHeight: "100%", height: "100%" }}>
+
+              {/* ── LEFT: Summary panel ─────────────────────── */}
+              <div
+                style={{
+                  width: "38%",
+                  flexShrink: 0,
+                  background: "linear-gradient(160deg,#0f1e38 0%,#1a3059 100%)",
+                  padding: "40px 36px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0,
+                  borderRight: "1px solid rgba(200,169,110,.15)",
+                }}
+              >
+                {/* doctor avatar placeholder */}
+                <div style={{
+                  width: 56, height: 56, borderRadius: 14,
+                  background: "rgba(200,169,110,.15)",
+                  border: "1.5px solid rgba(200,169,110,.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "1.5rem", marginBottom: 20,
+                }}>
+                  🩺
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[#0f1e38]/70">Mode:</span>
-                  <span className="font-semibold text-[#0f1e38]">{selectedOcc.mode}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#0f1e38]/70">Date & Time:</span>
-                  <span className="font-semibold text-[#0f1e38]">
-                    {selectedOcc.date}, {selectedOcc.startTime}–{selectedOcc.endTime}
+
+                <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(200,169,110,.65)", marginBottom: 6 }}>
+                  Booking Summary
+                </p>
+                <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>
+                  {doctor.fullName}
+                </p>
+                {(() => {
+                  const spec = doctor.specialties.find(s => s.isPrimary) ?? doctor.specialties[0];
+                  return spec ? (
+                    <p style={{ fontSize: "0.88rem", fontWeight: 600, color: "#c8a96e", marginTop: 6, marginBottom: 28 }}>
+                      {spec.name}
+                    </p>
+                  ) : <div style={{ marginBottom: 28 }} />;
+                })()}
+
+                {/* detail rows */}
+                {[
+                  { label: "Mode",  value: selectedOcc.mode === "ONLINE" ? "🌐  Online" : "🏥  Physical" },
+                  { label: "Date",  value: selectedOcc.date },
+                  { label: "Time",  value: `${selectedOcc.startTime} – ${selectedOcc.endTime}` },
+                ].map(({ label, value }) => (
+                  <div key={label} style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "13px 0",
+                    borderBottom: "1px solid rgba(255,255,255,.07)",
+                  }}>
+                    <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,.45)" }}>{label}</span>
+                    <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#fff" }}>{value}</span>
+                  </div>
+                ))}
+
+                {/* fee highlight */}
+                <div
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLDivElement;
+                    el.style.background = "rgba(200,169,110,.2)";
+                    el.style.borderColor = "#c8a96e";
+                    el.style.transform = "translateY(-2px)";
+                    el.style.boxShadow = "0 8px 28px rgba(200,169,110,.22)";
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLDivElement;
+                    el.style.background = "rgba(200,169,110,.12)";
+                    el.style.borderColor = "rgba(200,169,110,.35)";
+                    el.style.transform = "translateY(0)";
+                    el.style.boxShadow = "none";
+                  }}
+                  style={{
+                    marginTop: 28,
+                    background: "rgba(200,169,110,.12)",
+                    border: "1.5px solid rgba(200,169,110,.35)",
+                    borderRadius: 14,
+                    padding: "18px 20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "default",
+                    transition: "all .2s ease",
+                  }}
+                >
+                  <div>
+                    <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#c8a96e", marginBottom: 4 }}>
+                      Consultation Fee
+                    </p>
+                    <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,.35)" }}>One-time payment</p>
+                  </div>
+                  <span style={{ fontSize: "2.4rem", fontWeight: 800, color: "#c8a96e", lineHeight: 1 }}>
+                    {doctor.feeMin != null ? `€${Math.round(doctor.feeMin / 100)}` : "—"}
                   </span>
                 </div>
-                <div className="h-px bg-[#c8a96e]/30 my-2" />
-                <div className="flex justify-between">
-                  <span className="text-[#a88b50] font-medium">Consultation Fee:</span>
-                  <span className="text-2xl font-bold text-[#a88b50]">
-                    {doctor.feeMin != null ? `€${Math.round(doctor.feeMin / 100)}` : "—"}
+
+                {/* security note */}
+                <div style={{ marginTop: "auto", paddingTop: 32, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: "0.9rem" }}>🔒</span>
+                  <span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,.3)", lineHeight: 1.5 }}>
+                    Payments are processed securely via Stripe. Your card details are never stored.
                   </span>
                 </div>
               </div>
 
-              {/* Booking Form */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-slate-900">Your Details</h3>
-                <div className="space-y-3">
+              {/* ── RIGHT: Form ─────────────────────────────── */}
+              <div style={{
+                flex: 1,
+                padding: "40px 44px",
+                display: "flex",
+                flexDirection: "column",
+                background: "#f5f3ef",
+              }}>
+                <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#c8a96e", marginBottom: 6 }}>
+                  Step 2 of 2
+                </p>
+                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f1e38", marginBottom: 28, lineHeight: 1.3 }}>
+                  Your Details
+                </h3>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 520 }}>
                   <div>
-                    <label className="text-sm font-medium text-slate-700">Full Name</label>
+                    <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#4a5568", marginBottom: 6 }}>
+                      Full Name
+                    </label>
                     <Input
                       value={formData.patientName}
                       onChange={(e) => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
-                      placeholder="Your name"
+                      placeholder="Your full name"
                       required
-                      className="mt-1"
+                      style={{ background: "#fff", border: "1.5px solid rgba(15,30,56,.14)", borderRadius: 10, height: 44 }}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                     <div>
-                      <label className="text-sm font-medium text-slate-700">Age</label>
+                      <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#4a5568", marginBottom: 6 }}>
+                        Age
+                      </label>
                       <Input
                         type="number"
                         value={formData.patientAge}
                         onChange={(e) => setFormData(prev => ({ ...prev, patientAge: e.target.value }))}
                         placeholder="30"
                         required
-                        className="mt-1"
+                        style={{ background: "#fff", border: "1.5px solid rgba(15,30,56,.14)", borderRadius: 10, height: 44 }}
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-slate-700">Phone</label>
+                      <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#4a5568", marginBottom: 6 }}>
+                        Phone
+                      </label>
                       <Input
                         value={formData.patientPhone}
                         onChange={(e) => setFormData(prev => ({ ...prev, patientPhone: e.target.value }))}
                         placeholder="98XXXXXXXX"
                         required
-                        className="mt-1"
+                        style={{ background: "#fff", border: "1.5px solid rgba(15,30,56,.14)", borderRadius: 10, height: 44 }}
                       />
                     </div>
                   </div>
+
                   <div>
-                    <label className="text-sm font-medium text-slate-700">Email</label>
+                    <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#4a5568", marginBottom: 6 }}>
+                      Email Address
+                    </label>
                     <Input
                       type="email"
                       value={formData.buyerEmail}
                       onChange={(e) => setFormData(prev => ({ ...prev, buyerEmail: e.target.value }))}
                       placeholder="you@example.com"
                       required
-                      className="mt-1"
+                      style={{ background: "#fff", border: "1.5px solid rgba(15,30,56,.14)", borderRadius: 10, height: 44 }}
                     />
                   </div>
+
+                  {/* Pay button */}
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!selectedOcc || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail) return;
+                      const slot = slots.find(s => s.id === selectedOcc.windowId);
+                      if (!slot) { alert("Slot not found."); return; }
+                      setIsLoading(true);
+                      try {
+                        const response = await fetch("/api/checkout", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            doctorId: doctor.id,
+                            patientName: formData.patientName,
+                            patientAge: formData.patientAge,
+                            patientPhone: formData.patientPhone,
+                            buyerEmail: formData.buyerEmail,
+                            consultationMode: selectedOcc.mode,
+                            slotId: slot.id,
+                            slotTime: `${selectedOcc.startTime}-${selectedOcc.endTime}`,
+                            bookingDate: new Date(selectedOcc.date).toISOString(),
+                            hospitalId: slot.hospitalId,
+                          }),
+                        });
+                        const data = await response.json();
+                        if (data.url) { window.location.href = data.url; }
+                        else { alert("Booking failed to initialize."); setIsLoading(false); }
+                      } catch (error) {
+                        console.error(error);
+                        alert("Something went wrong.");
+                        setIsLoading(false);
+                      }
+                    }}
+                    disabled={isLoading || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail}
+                    style={{
+                      marginTop: 8,
+                      width: "100%",
+                      padding: "13px 24px",
+                      borderRadius: 10,
+                      border: "none",
+                      cursor: isLoading || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail ? "not-allowed" : "pointer",
+                      background: isLoading || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail
+                        ? "#e8e4de"
+                        : "linear-gradient(135deg,#0f1e38 0%,#1a3059 100%)",
+                      color: isLoading || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail
+                        ? "#a0a8b4"
+                        : "#c8a96e",
+                      fontSize: "0.9rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.02em",
+                      boxShadow: isLoading || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail
+                        ? "none"
+                        : "0 4px 18px rgba(15,30,56,.25)",
+                      transition: "all .16s ease",
+                    }}
+                  >
+                    {isLoading ? "Processing…" : "🔒  Pay Securely"}
+                  </button>
                 </div>
               </div>
             </div>
           ) : !hasAny ? (
-            <div className="bg-slate-50 rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-              <div className="text-slate-400 text-6xl mb-4">📅</div>
-              <p className="text-slate-600 text-lg font-medium">No availability scheduled</p>
-              <p className="text-slate-500 text-sm mt-2">Try selecting a different date range</p>
+            <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+                style={{ background: "rgba(15,30,56,.07)" }}
+              >
+                <span className="text-3xl">📅</span>
+              </div>
+              <p className="text-base font-semibold" style={{ color: "#0f1e38" }}>No availability scheduled</p>
+              <p className="text-sm mt-1" style={{ color: "#6b7a96" }}>Try a different week using Prev / Next</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {rolling.dates.map((d) => {
-                const key = formatDate(d);
-                const occ = rolling.occurrencesByDate[key] ?? [];
-
-                return (
-                  <div key={key} className="rounded-2xl border-2 border-[#0f1e38]/10 bg-white overflow-hidden hover:border-[#c8a96e] transition-colors">
-                    <div className="px-4 py-3 border-b border-[#0f1e38]/10 bg-gradient-to-r from-[#f7f4ef] to-[#c8a96e]/5">
-                      <div className="flex items-center justify-between">
-                        <div className="font-bold text-[#0f1e38]">
-                          {DAYS[d.getDay()]}
+            /* ── CALENDAR GRID ──────────────────────────────── */
+            <div style={{ overflowX: "auto", overflowY: "hidden" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${daysToShow}, minmax(160px, 1fr))`,
+                  gap: 0,
+                  minWidth: daysToShow * 160,
+                }}
+              >
+                {/* ── Day header row ── */}
+                {rolling.dates.map((d) => {
+                  const key = formatDate(d);
+                  const occ = rolling.occurrencesByDate[key] ?? [];
+                  const isToday = d.getTime() === today.getTime();
+                  return (
+                    <div
+                      key={`hdr-${key}`}
+                      style={{
+                        padding: "18px 20px 14px",
+                        borderBottom: `2px solid ${isToday ? "#c8a96e" : "rgba(15,30,56,.08)"}`,
+                        borderRight: "1px solid rgba(15,30,56,.07)",
+                        background: isToday
+                          ? "linear-gradient(160deg,#0f1e38 0%,#1a3059 100%)"
+                          : "#fff",
+                      }}
+                    >
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <p style={{
+                            fontSize: "0.7rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: isToday ? "rgba(200,169,110,.7)" : "#9aa3b0",
+                            marginBottom: 4,
+                          }}>
+                            {DAYS[d.getDay()]}
+                          </p>
+                          <p style={{
+                            fontSize: "2rem",
+                            fontWeight: 800,
+                            lineHeight: 1,
+                            color: isToday ? "#c8a96e" : "#0f1e38",
+                          }}>
+                            {d.getDate()}
+                          </p>
                         </div>
-                        <div className="text-xs font-medium text-[#0f1e38]/50 bg-white px-2 py-1 rounded-full">
-                          {key}
+                        <div style={{ textAlign: "right" }}>
+                          {isToday && (
+                            <span style={{
+                              display: "inline-block",
+                              fontSize: "0.62rem",
+                              fontWeight: 700,
+                              padding: "3px 8px",
+                              borderRadius: 20,
+                              background: "rgba(200,169,110,.22)",
+                              color: "#c8a96e",
+                              marginBottom: 4,
+                              letterSpacing: "0.06em",
+                              textTransform: "uppercase",
+                            }}>
+                              Today
+                            </span>
+                          )}
+                          <p style={{
+                            fontSize: "0.72rem",
+                            color: isToday ? "rgba(255,255,255,.4)" : "#b0b8c6",
+                          }}>
+                            {occ.length} slot{occ.length !== 1 ? "s" : ""}
+                          </p>
                         </div>
                       </div>
-                      <div className="text-xs text-[#0f1e38]/60 mt-1">{occ.length} available slot{occ.length !== 1 ? 's' : ''}</div>
                     </div>
+                  );
+                })}
 
-                    <div className="p-3 space-y-2 min-h-[100px]">
+                {/* ── Slot columns ── */}
+                {rolling.dates.map((d) => {
+                  const key = formatDate(d);
+                  const occ = rolling.occurrencesByDate[key] ?? [];
+                  const isToday = d.getTime() === today.getTime();
+
+                  return (
+                    <div
+                      key={`col-${key}`}
+                      style={{
+                        padding: "14px 12px",
+                        borderRight: "1px solid rgba(15,30,56,.07)",
+                        background: isToday ? "rgba(200,169,110,.03)" : "transparent",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                        minHeight: 350,
+                      }}
+                    >
                       {occ.length === 0 ? (
-                        <div className="text-sm text-slate-400 text-center py-6 flex flex-col items-center gap-2">
-                          <span className="text-2xl">—</span>
+                        <div style={{
+                          flex: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#d0d5de",
+                          fontSize: "0.78rem",
+                          gap: 6,
+                          paddingTop: 20,
+                        }}>
+                          <span style={{ fontSize: "1.4rem", opacity: 0.5 }}>—</span>
                           <span>No slots</span>
                         </div>
                       ) : (
                         occ.map((o) => {
-                          const isSelected = selectedOcc?.date === o.date && selectedOcc?.startTime === o.startTime && selectedOcc?.mode === o.mode;
+                          const isSel = selectedOcc?.date === o.date && selectedOcc?.startTime === o.startTime && selectedOcc?.mode === o.mode;
                           const isOnline = o.mode === "ONLINE";
 
                           return (
                             <button
                               key={`${o.date}-${o.startTime}-${o.mode}`}
-                              onClick={() => setSelectedOcc(o)}
-                              className={`w-full text-left rounded-xl border-2 p-3 transition-all hover:shadow-md ${
-                                isSelected
-                                  ? isOnline
-                                    ? "border-[#c8a96e] bg-[#c8a96e]/10 shadow-lg shadow-[#c8a96e]/20"
-                                    : "border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-500/20"
-                                  : isOnline
-                                  ? "border-[#c8a96e]/30 bg-white hover:bg-[#c8a96e]/10 hover:border-[#c8a96e]"
-                                  : "border-emerald-200 bg-white hover:bg-emerald-50 hover:border-emerald-400"
-                              }`}
+                              onClick={() => setSelectedOcc(isSel ? null : o)}
+                              style={{
+                                width: "100%",
+                                padding: "10px 12px",
+                                borderRadius: 10,
+                                cursor: "pointer",
+                                transition: "all .15s ease",
+                                textAlign: "left",
+                                border: isSel
+                                  ? `2px solid ${isOnline ? "#c8a96e" : "#10b981"}`
+                                  : `1.5px solid ${isOnline ? "rgba(200,169,110,.28)" : "rgba(16,185,129,.25)"}`,
+                                background: isSel
+                                  ? isOnline ? "rgba(200,169,110,.11)" : "rgba(16,185,129,.09)"
+                                  : "#fff",
+                                boxShadow: isSel
+                                  ? `0 3px 14px ${isOnline ? "rgba(200,169,110,.2)" : "rgba(16,185,129,.18)"}`
+                                  : "0 1px 4px rgba(15,30,56,.06)",
+                              }}
                             >
-                              <div className="flex items-center justify-between gap-2">
-                                <Badge
-                                  className={
-                                    isOnline
-                                      ? "bg-[#c8a96e]/20 text-[#a88b50] hover:bg-[#c8a96e]/20 border border-[#c8a96e]/40"
-                                      : "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border border-emerald-300"
-                                  }
-                                >
-                                  {isOnline ? "🌐 Online" : "🏥 Physical"}
-                                </Badge>
-                                <div className="text-sm font-bold text-slate-900">
-                                  {o.startTime}–{o.endTime}
-                                </div>
+                              <div style={{
+                                fontSize: "0.7rem",
+                                fontWeight: 600,
+                                color: isOnline ? "#a88b50" : "#059669",
+                                marginBottom: 5,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 4,
+                              }}>
+                                <span>{isOnline ? "🌐" : "🏥"}</span>
+                                <span>{isOnline ? "Online" : "Physical"}</span>
+                              </div>
+                              <div style={{
+                                fontSize: "0.9rem",
+                                fontWeight: 700,
+                                color: "#0f1e38",
+                                letterSpacing: "-0.01em",
+                              }}>
+                                {o.startTime} – {o.endTime}
                               </div>
                             </button>
                           );
                         })
                       )}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
 
-        {/* Footer - Fixed, never scrolls */}
-        <div className="border-t border-[#0f1e38]/10 px-4 py-4 sm:px-6 sm:py-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#f7f4ef] flex-shrink-0">
+        {/* ── FOOTER ─────────────────────────────────────────── */}
+        <div
+          className="flex-shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 px-5 py-4"
+          style={{
+            borderTop: "1px solid rgba(15,30,56,.09)",
+            background: "#fff",
+          }}
+        >
           {bookingStep === "slots" ? (
             <>
-              <div className="text-sm text-[#0f1e38]/70">
+              <div className="text-sm" style={{ color: "#6b7a96" }}>
                 {selectedOcc ? (
-                  <div className="bg-white border border-[#c8a96e]/30 rounded-xl px-3 sm:px-4 py-2 text-center sm:text-left">
-                    <span className="font-semibold text-[#0f1e38]">Selected:</span>{" "}
-                    <span className="text-[#a88b50] font-bold">{selectedOcc.date}</span>{" "}
-                    <span className="hidden sm:inline">at</span>
-                    <br className="sm:hidden" />
-                    <span className="text-[#a88b50] font-bold">{selectedOcc.startTime}</span>
-                    {" "}({selectedOcc.mode === "ONLINE" ? "🌐 Online" : "🏥 Physical"})
+                  <div
+                    className="flex items-center gap-2 flex-wrap"
+                    style={{
+                      background: "rgba(200,169,110,.08)",
+                      border: "1px solid rgba(200,169,110,.25)",
+                      borderRadius: 10,
+                      padding: "6px 12px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.65rem",
+                        fontWeight: 700,
+                        padding: "2px 8px",
+                        borderRadius: 20,
+                        background: "rgba(200,169,110,.2)",
+                        color: "#a88b50",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                      }}
+                    >
+                      Selected
+                    </span>
+                    <span className="font-semibold" style={{ color: "#0f1e38" }}>{selectedOcc.date}</span>
+                    <span style={{ color: "#9aa3b0" }}>·</span>
+                    <span className="font-bold" style={{ color: "#a88b50" }}>{selectedOcc.startTime} – {selectedOcc.endTime}</span>
+                    <span style={{ color: "#9aa3b0" }}>·</span>
+                    <span style={{ color: "#6b7a96" }}>{selectedOcc.mode === "ONLINE" ? "🌐 Online" : "🏥 Physical"}</span>
                   </div>
                 ) : (
-                  <span className="text-slate-500 text-center sm:text-left block">Select a time slot to continue</span>
+                  <span className="text-slate-400 text-xs">Select a time slot to continue</span>
                 )}
               </div>
 
               <div className="flex gap-2 flex-shrink-0">
-                <Button 
-                  onClick={close} 
-                  size="sm" 
-                  variant="outline" 
-                  className="rounded-full flex-1 sm:flex-none"
+                <Button
+                  onClick={close}
+                  size="sm"
+                  variant="outline"
+                  className="rounded-lg"
                 >
                   Cancel
                 </Button>
-
                 <Button
-                  onClick={() => {
-                    if (selectedOcc) {
-                      setBookingStep("details");
-                    }
-                  }}
+                  onClick={() => { if (selectedOcc) setBookingStep("details"); }}
                   size="sm"
-                  className="rounded-full bg-[#0f1e38] hover:bg-[#1a3059] text-[#c8a96e] font-semibold flex-1 sm:flex-none"
+                  className="rounded-lg font-semibold"
+                  style={selectedOcc
+                    ? { background: "#0f1e38", color: "#c8a96e" }
+                    : { background: "#0f1e38", color: "#c8a96e", opacity: 0.45, cursor: "not-allowed" }
+                  }
                   disabled={!selectedOcc}
-                  title={!selectedOcc ? "Select a time first" : "Continue"}
                 >
-                  {selectedOcc ? "Continue" : "Select Slot"}
+                  {selectedOcc ? "Continue →" : "Select Slot"}
                 </Button>
               </div>
             </>
           ) : (
-            <div className="flex gap-2 w-full">
-              <Button 
+            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+              <button
                 type="button"
-                onClick={() => setBookingStep("slots")} 
-                size="sm" 
-                variant="outline" 
-                className="rounded-full flex-1 sm:flex-none"
-              >
-                Back
-              </Button>
-
-              <Button
-                type="button"
-                onClick={async () => {
-                  if (!selectedOcc || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail) return;
-                  
-                  // Find the slot from windowId
-                  const slot = slots.find(s => s.id === selectedOcc.windowId);
-                  if (!slot) {
-                    alert("Slot not found.");
-                    return;
-                  }
-                  
-                  setIsLoading(true);
-                  try {
-                    const response = await fetch("/api/checkout", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        doctorId: doctor.id,
-                        patientName: formData.patientName,
-                        patientAge: formData.patientAge,
-                        patientPhone: formData.patientPhone,
-                        buyerEmail: formData.buyerEmail,
-                        consultationMode: selectedOcc.mode,
-                        slotId: slot.id,
-                        slotTime: `${selectedOcc.startTime}-${selectedOcc.endTime}`,
-                        bookingDate: new Date(selectedOcc.date).toISOString(),
-                        hospitalId: slot.hospitalId,
-                      }),
-                    });
-
-                    const data = await response.json();
-                    
-                    if (data.url) {
-                      window.location.href = data.url;
-                    } else {
-                      alert("Booking failed to initialize.");
-                      setIsLoading(false);
-                    }
-                  } catch (error) {
-                    console.error(error);
-                    alert("Something went wrong.");
-                    setIsLoading(false);
-                  }
+                onClick={() => setBookingStep("slots")}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "10px 28px",
+                  borderRadius: 10,
+                  border: "1.5px solid rgba(15,30,56,.18)",
+                  background: "#fff",
+                  color: "#0f1e38",
+                  fontSize: "0.9rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  boxShadow: "0 2px 8px rgba(15,30,56,.08)",
+                  transition: "all .15s ease",
+                  letterSpacing: "0.01em",
                 }}
-                size="sm"
-                className="rounded-full bg-[#0f1e38] hover:bg-[#1a3059] text-[#c8a96e] font-semibold flex-1 sm:flex-none"
-                disabled={isLoading || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "#0f1e38";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#c8a96e";
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "#0f1e38";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "#fff";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#0f1e38";
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(15,30,56,.18)";
+                }}
               >
-                {isLoading ? "Processing..." : "Pay Securely"}
-              </Button>
+                <ChevronLeft className="h-4 w-4" />
+                Back to Time Slots
+              </button>
             </div>
           )}
         </div>
