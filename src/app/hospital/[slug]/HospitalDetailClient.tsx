@@ -47,21 +47,23 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           --r:            20px;
           --r-sm:         12px;
           --r-xs:         8px;
+          --page-max:     1280px;
+          --page-pad:     clamp(1rem, 4vw, 3rem);
 
           font-family: 'Inter', sans-serif;
           color: var(--ink);
           background: var(--cream);
           -webkit-font-smoothing: antialiased;
+
+          /* Fill the full page */
+          min-height: 100vh;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
-        /* ── Page shell ─────────────────────────────────── */
-        .hdc-shell {
-          max-width: 980px;
-          margin: 0 auto;
-          padding: 2rem 1.25rem 5rem;
-          position: relative;
-        }
-        .hdc-shell::before {
+        /* ── Ambient background ─────────────────────────── */
+        .hdc-root::before {
           content: '';
           position: fixed; inset: 0;
           background:
@@ -70,29 +72,49 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           pointer-events: none; z-index: 0;
         }
 
-        /* ── Card ───────────────────────────────────────── */
-        .hdc-card {
-          position: relative; z-index: 1;
-          border-radius: var(--r);
-          border: 1px solid var(--border);
-          overflow: hidden;
-          box-shadow: var(--sh-lg), 0 1px 0 rgba(200,169,110,.12) inset;
-          animation: hdc-rise .6s cubic-bezier(.22,1,.36,1) both;
+        /* ── Page shell — full width, centered content ──── */
+        .hdc-shell {
+          flex: 1;
+          width: 100%;
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
         }
-        @keyframes hdc-rise {
-          from { opacity:0; transform:translateY(20px) scale(.997); }
-          to   { opacity:1; transform:translateY(0) scale(1); }
+
+        /* ── Card — fills shell, no floating ───────────── */
+        .hdc-card {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          /* Subtle elevation so it reads as a surface */
+          box-shadow: var(--sh-lg);
         }
 
         /* ── CTA bar ────────────────────────────────────── */
         .hdc-cta {
           position: relative; overflow: hidden;
           background: linear-gradient(118deg, var(--navy) 0%, var(--navy-mid) 48%, var(--navy-soft) 100%);
-          padding: 1.75rem 2.5rem;
+          padding: 1.75rem var(--page-pad);
           display: flex; align-items: center;
           justify-content: space-between;
           gap: 1.5rem; flex-wrap: wrap;
+          /* Make inner content respect max-width */
         }
+        .hdc-cta-inner {
+          width: 100%;
+          max-width: var(--page-max);
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+          position: relative;
+          z-index: 1;
+        }
+
         /* Mesh grid texture */
         .hdc-cta::before {
           content: ''; position: absolute; inset: 0;
@@ -123,7 +145,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
         }
         /* Identity block */
         .hdc-cta-id {
-          position: relative; z-index:1;
           display:flex; flex-direction:column; gap:.3rem;
         }
         .hdc-eyebrow {
@@ -143,9 +164,7 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           line-height:1.25; letter-spacing:-.01em;
         }
 
-        /* ─── CTA button overrides ───────────────────────
-           Works regardless of whether HospitalCTA renders
-           <button>, <a> or shadcn Button components.      */
+        /* ─── CTA button overrides ──────────────────────── */
         .hdc-cta button,
         .hdc-cta a[role="button"] {
           font-family:'DM Sans', sans-serif !important;
@@ -180,8 +199,9 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           transform: translateY(-1px) !important;
         }
 
-        /* ── Body ───────────────────────────────────────── */
+        /* ── Body — fills remainder, white surface ──────── */
         .hdc-body {
+          flex: 1;
           position: relative;
           background: var(--white);
         }
@@ -200,8 +220,11 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           pointer-events:none;
         }
         .hdc-body-inner {
-          position:relative; z-index:1;
-          padding: 2.5rem 2.75rem 3.5rem;
+          position: relative; z-index: 1;
+          max-width: var(--page-max);
+          margin: 0 auto;
+          padding: 2.5rem var(--page-pad) 4rem;
+          width: 100%;
         }
 
         /* ── Section divider ────────────────────────────── */
@@ -232,9 +255,7 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
 
         /* ── Responsive ─────────────────────────────────── */
         @media (max-width:660px) {
-          .hdc-cta       { padding:1.5rem 1.25rem; }
-          .hdc-body-inner{ padding:1.75rem 1.25rem 2.5rem; }
-          .hdc-shell     { padding:1.25rem .75rem 4rem; }
+          .hdc-body-inner { padding: 1.75rem 1.25rem 3rem; }
         }
       `}</style>
 
@@ -249,33 +270,25 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
                 <span className="hdc-g1" aria-hidden />
                 <span className="hdc-g2" aria-hidden />
 
-                <div className="hdc-cta-id">
-                  <span className="hdc-eyebrow">Healthcare Facility</span>
-                  <span className="hdc-hospname">{hospital.name}</span>
-                </div>
+                <div className="hdc-cta-inner">
+                  <div className="hdc-cta-id">
+                    <span className="hdc-eyebrow">Healthcare Facility</span>
+                    <span className="hdc-hospname">{hospital.name}</span>
+                  </div>
 
-                <HospitalCTA
-                  hospitalPhone={hospital.phone}
-                  onBookAction={() => {
-                    document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                />
+                  <HospitalCTA
+                    hospitalPhone={hospital.phone}
+                    onBookAction={() => {
+                      document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  />
+                </div>
               </div>
             )}
 
             {/* Body */}
             <div className="hdc-body">
               <div className="hdc-body-inner" id="services-section">
-
-                <div className="hdc-divider" aria-hidden>
-                  <div className="hdc-div-l" />
-                  <div className="hdc-div-mid">
-                    <span className="hdc-div-label">Services &amp; Information</span>
-                    <span className="hdc-div-gem" />
-                  </div>
-                  <div className="hdc-div-r" />
-                </div>
-
                 <HospitalTabs
                   hospital={hospital}
                   packages={packages}

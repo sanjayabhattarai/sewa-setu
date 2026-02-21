@@ -4,6 +4,7 @@ import { ArrowLeft, MapPin, Star, Building2, Stethoscope, Beaker } from "lucide-
 import Link from "next/link";
 import { ApiHospitalDetails } from "@/types/hospital-details";
 import { HospitalDetailClient } from "./HospitalDetailClient";
+import { Navbar } from "@/components/navbar";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,19 +35,12 @@ export default async function HospitalDetails({ params }: PageProps) {
   }));
 
   return (
-    <main className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl">
-        {/* Back Button */}
-        <Link
-          href="/search"
-          className="inline-flex items-center text-sm text-slate-500 hover:text-slate-800 mb-6 transition-colors"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to hospitals
-        </Link>
-
-        {/* Main Card Container */}
-        <div className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+    <>
+      <Navbar />
+      <main style={{ minHeight: "100vh", background: "#f7f4ef", padding: "calc(80px + 1.25rem) 0 3rem" }}>
+      <div style={{ padding: "0 10%" }}>
+        {/* Main Card Container — hero flush under navbar */}
+        <div className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100" style={{ marginBottom: "2rem" }}>
           {/* Hero */}
           <div className="relative h-80 sm:h-96 lg:h-[450px] w-full">
             <img
@@ -55,6 +49,17 @@ export default async function HospitalDetails({ params }: PageProps) {
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+            {/* Back button — top left over hero */}
+            <div className="absolute top-4 left-6">
+              <Link
+                href="/search"
+                className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-all bg-black/25 backdrop-blur-md text-white border border-white/30 hover:border-[#c8a96e] hover:text-white"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Back To Hospitals
+              </Link>
+            </div>
 
             <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 text-white">
               {/* Type Badge */}
@@ -105,5 +110,6 @@ export default async function HospitalDetails({ params }: PageProps) {
         </div>
       </div>
     </main>
+    </>
   );
 }

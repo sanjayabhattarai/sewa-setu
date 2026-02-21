@@ -103,11 +103,11 @@ export function DoctorCard({ doctor, slots = [], onSelectSlotAction }: Props) {
   const feeText = formatFeeWholeEUR(doctor.feeMin ?? null, doctor.currency ?? "eur");
 
   return (
-    <div className="group bg-white rounded-2xl border border-[#0f1e38]/10 shadow-sm hover:shadow-xl hover:border-[#c8a96e] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-[#0f1e38]/10 shadow-sm hover:shadow-xl hover:border-[#c8a96e] transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col">
       {/* Subtle gradient decoration */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-[#c8a96e]/10 via-[#c8a96e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
       
-      <div className="relative p-5 flex gap-4">
+      <div className="relative p-5 flex gap-4 flex-1 items-stretch">
         {/* Photo */}
         <div className="relative">
           <img
@@ -122,7 +122,7 @@ export function DoctorCard({ doctor, slots = [], onSelectSlotAction }: Props) {
           )}
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col">
           {/* Top row */}
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -168,7 +168,7 @@ export function DoctorCard({ doctor, slots = [], onSelectSlotAction }: Props) {
           </div>
 
           {/* Action */}
-          <div className="mt-4 flex justify-end">
+          <div className="mt-auto pt-4 flex justify-end">
             <Button
               onClick={() => setShowAvailability(true)}
               size="sm"
