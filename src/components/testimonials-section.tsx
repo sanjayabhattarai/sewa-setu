@@ -36,39 +36,40 @@ export function TestimonialsSection() {
   const testimonial = testimonials[current];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-[#f7f4ef]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl font-bold text-[#0f1e38] mb-4">
             What Families Say
           </h2>
-          <p className="text-lg text-slate-600">
-            Real stories from people who trust Sewa-Setu for their family's health
+          <p className="text-lg text-[#0f1e38]/70">
+            Real stories from people who trust Sewa-Setu for their family&apos;s{" "}
+            <span className="text-[#c8a96e]">health</span>
           </p>
         </div>
 
         <div className="max-w-2xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 md:p-12 mb-8">
+          <div className="bg-gradient-to-br from-[#0f1e38] to-[#1a3059] rounded-2xl p-8 md:p-12 mb-8 shadow-lg">
             <div className="flex gap-1 mb-6">
               {[...Array(testimonial.rating)].map((_, i) => (
                 <Star
                   key={i}
-                  className="h-5 w-5 fill-yellow-400 text-yellow-400"
+                  className="h-5 w-5 fill-[#c8a96e] text-[#c8a96e]"
                 />
               ))}
             </div>
 
-            <p className="text-lg md:text-xl text-slate-700 mb-8 leading-relaxed italic">
-              "{testimonial.text}"
+            <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed italic">
+              &ldquo;{testimonial.text}&rdquo;
             </p>
 
             <div className="flex items-center gap-4">
               <div className="text-4xl">{testimonial.image}</div>
               <div>
-                <p className="font-semibold text-slate-900 text-lg">
+                <p className="font-semibold text-white text-lg">
                   {testimonial.name}
                 </p>
-                <p className="text-slate-600">{testimonial.location}</p>
+                <p className="text-[#c8a96e]">{testimonial.location}</p>
               </div>
             </div>
           </div>
@@ -77,7 +78,7 @@ export function TestimonialsSection() {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={prev}
-              className="p-2 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white transition-all"
+              className="p-2 rounded-full bg-white border border-[#0f1e38]/10 hover:bg-[#c8a96e] hover:text-white hover:border-[#c8a96e] transition-all text-[#0f1e38]"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="h-6 w-6" />
@@ -88,8 +89,8 @@ export function TestimonialsSection() {
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`h-2 w-2 rounded-full transition-all ${
-                    i === current ? "bg-blue-600 w-8" : "bg-slate-300"
+                  className={`h-2 rounded-full transition-all ${
+                    i === current ? "bg-[#c8a96e] w-8" : "bg-[#0f1e38]/20 w-2"
                   }`}
                   aria-label={`Go to testimonial ${i + 1}`}
                 />
@@ -98,7 +99,7 @@ export function TestimonialsSection() {
 
             <button
               onClick={next}
-              className="p-2 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white transition-all"
+              className="p-2 rounded-full bg-white border border-[#0f1e38]/10 hover:bg-[#c8a96e] hover:text-white hover:border-[#c8a96e] transition-all text-[#0f1e38]"
               aria-label="Next testimonial"
             >
               <ChevronRight className="h-6 w-6" />

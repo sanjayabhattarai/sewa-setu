@@ -97,13 +97,13 @@ export default function SearchPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#f7f4ef]">
       <Navbar />
 
       {/* Header & Search Section */}
-      <div className="bg-white pt-24 pb-6 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+      <div className="bg-[#0f1e38] pt-24 pb-6 border-b border-[rgba(200,169,110,0.15)] sticky top-0 z-10 shadow-lg">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-slate-900 text-center mb-6">
+          <h1 className="text-3xl font-bold text-white text-center mb-6">
             Find the Best Care
           </h1>
 
@@ -111,10 +111,10 @@ export default function SearchPage() {
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 mb-4">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-[#6b7a96]" />
               <Input
                 placeholder="Search by hospital name..."
-                className="pl-10 h-12 text-base rounded-xl border-slate-200 bg-slate-50 focus:bg-white transition-all"
+                className="pl-10 h-12 text-base rounded-xl border-[rgba(200,169,110,0.2)] bg-[rgba(255,255,255,0.08)] text-white placeholder:text-slate-400 focus:bg-[rgba(255,255,255,0.12)] transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -122,23 +122,22 @@ export default function SearchPage() {
 
             {/* City Dropdown */}
             <div className="relative sm:w-48">
-              <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
+              <MapPin className="absolute left-3 top-3 h-4 w-4 text-[#c8a96e] z-10" />
               <select
-                className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-8 text-sm outline-none focus:border-blue-600 focus:bg-white transition-all cursor-pointer"
+                className="h-12 w-full appearance-none rounded-xl border border-[rgba(200,169,110,0.25)] bg-[rgba(255,255,255,0.08)] text-white pl-10 pr-8 text-sm outline-none focus:border-[#c8a96e] transition-all cursor-pointer"
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
                 aria-label="Filter hospitals by city"
               >
-                <option value="All Cities">All Cities</option>
+                <option value="All Cities" className="bg-[#0f1e38]">All Cities</option>
                 {cities.map((city) => (
-                  <option key={city} value={city}>
+                  <option key={city} value={city} className="bg-[#0f1e38]">
                     {city}
                   </option>
                 ))}
               </select>
-
               <div className="absolute right-3 top-4 pointer-events-none">
-                <ChevronDown className="h-4 w-4 text-slate-400" />
+                <ChevronDown className="h-4 w-4 text-[#c8a96e]" />
               </div>
             </div>
           </div>
@@ -150,14 +149,14 @@ export default function SearchPage() {
               onClick={() => setShowAdvanced(!showAdvanced)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
                 showAdvanced || activeFilterCount > 0
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                  ? "border-[#c8a96e] bg-[rgba(200,169,110,0.15)] text-[#c8a96e]"
+                  : "border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.08)] text-slate-300 hover:border-[rgba(200,169,110,0.4)]"
               }`}
             >
               <Filter className="h-4 w-4" />
               Filters
               {activeFilterCount > 0 && (
-                <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
+                <span className="bg-[#c8a96e] text-[#0f1e38] text-xs px-2 py-0.5 rounded-full font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -166,14 +165,14 @@ export default function SearchPage() {
             {/* Sort Dropdown */}
             <div className="relative">
               <select
-                className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-sm outline-none focus:border-blue-600 transition-all cursor-pointer"
+                className="h-9 appearance-none rounded-lg border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.08)] text-slate-300 pl-3 pr-8 text-sm outline-none focus:border-[#c8a96e] transition-all cursor-pointer"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
-                <option value="recent">Most Recent</option>
-                <option value="name">Name (A-Z)</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
+                <option value="recent" className="bg-[#0f1e38]">Most Recent</option>
+                <option value="name" className="bg-[#0f1e38]">Name (A-Z)</option>
+                <option value="price-low" className="bg-[#0f1e38]">Price: Low to High</option>
+                <option value="price-high" className="bg-[#0f1e38]">Price: High to Low</option>
               </select>
               <div className="absolute right-2 top-2.5 pointer-events-none">
                 <ChevronDown className="h-4 w-4 text-slate-400" />
@@ -193,11 +192,11 @@ export default function SearchPage() {
 
           {/* Advanced Filters Panel */}
           {showAdvanced && (
-            <div className="max-w-3xl mx-auto mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <div className="max-w-3xl mx-auto mt-4 p-4 bg-[rgba(255,255,255,0.07)] rounded-xl border border-[rgba(200,169,110,0.2)]">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Hospital Type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-[#c8a96e] mb-2">
                     Type
                   </label>
                   <div className="flex gap-2">
@@ -207,8 +206,8 @@ export default function SearchPage() {
                         onClick={() => setSelectedType(type)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                           selectedType === type
-                            ? "bg-blue-600 text-white"
-                            : "bg-white text-slate-700 border border-slate-200 hover:border-slate-300"
+                            ? "bg-[#c8a96e] text-[#0f1e38] font-bold"
+                            : "bg-[rgba(255,255,255,0.08)] text-slate-300 border border-[rgba(255,255,255,0.15)] hover:border-[rgba(200,169,110,0.4)]"
                         }`}
                       >
                         {type === "ALL" ? "All" : type.charAt(0) + type.slice(1).toLowerCase()}
@@ -219,7 +218,7 @@ export default function SearchPage() {
 
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-[#c8a96e] mb-2">
                     Price Range (NPR)
                   </label>
                   <div className="flex gap-2">
@@ -242,7 +241,7 @@ export default function SearchPage() {
 
                 {/* Emergency Services */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-[#c8a96e] mb-2">
                     Services
                   </label>
                   <button
@@ -250,7 +249,7 @@ export default function SearchPage() {
                     className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                       emergencyOnly
                         ? "bg-red-600 text-white"
-                        : "bg-white text-slate-700 border border-slate-200 hover:border-slate-300"
+                        : "bg-[rgba(255,255,255,0.08)] text-slate-300 border border-[rgba(255,255,255,0.15)] hover:border-[rgba(200,169,110,0.4)]"
                     }`}
                   >
                     <Siren className="h-4 w-4" />
@@ -268,8 +267,8 @@ export default function SearchPage() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-              <p className="mt-4 text-slate-500 font-medium">Loading hospitals...</p>
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#c8a96e] border-r-transparent"></div>
+              <p className="mt-4 text-[#6b7a96] font-medium">Loading hospitals...</p>
             </div>
           </div>
         ) : error ? (
@@ -288,8 +287,8 @@ export default function SearchPage() {
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
-              <p className="text-slate-600 font-medium">
-                Showing <span className="text-slate-900 font-bold">{hospitals.length}</span> {hospitals.length === 1 ? 'hospital' : 'hospitals'}
+              <p className="text-[#6b7a96] font-medium">
+                Showing <span className="text-[#0f1e38] font-bold">{hospitals.length}</span> {hospitals.length === 1 ? 'hospital' : 'hospitals'}
                 {selectedCity !== "All Cities" && ` in ${selectedCity}`}
                 {selectedType !== "ALL" && ` (${selectedType.charAt(0) + selectedType.slice(1).toLowerCase()})`}
               </p>
@@ -302,12 +301,12 @@ export default function SearchPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-                <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-8 w-8 text-slate-400" />
+              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-[rgba(200,169,110,0.3)]">
+                <div className="bg-[rgba(200,169,110,0.08)] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="h-8 w-8 text-[#a88b50]" />
                 </div>
-                <h3 className="text-lg font-medium text-slate-900">No hospitals found</h3>
-                <p className="text-slate-500 mt-2">
+                <h3 className="text-lg font-medium text-[#0f1e38]">No hospitals found</h3>
+                <p className="text-[#6b7a96] mt-2">
                   {searchQuery || activeFilterCount > 0 
                     ? "Try adjusting your search or filters."
                     : "Start searching to find hospitals near you."}
@@ -315,7 +314,7 @@ export default function SearchPage() {
                 {(searchQuery || activeFilterCount > 0) && (
                   <button
                     onClick={clearAllFilters}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                    className="mt-4 px-4 py-2 bg-[#0f1e38] text-[#c8a96e] rounded-lg font-medium hover:bg-[#1a3059] transition-colors"
                   >
                     Clear all filters
                   </button>

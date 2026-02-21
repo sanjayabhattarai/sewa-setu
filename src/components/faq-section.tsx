@@ -40,13 +40,13 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-24 bg-slate-50">
+    <section className="py-24 bg-white">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl font-bold text-[#0f1e38] mb-4">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-[#0f1e38]/70">
             Find answers to common questions about Sewa-Setu
           </p>
         </div>
@@ -55,27 +55,27 @@ export function FAQSection() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-blue-300 transition-all"
+              className="bg-[#f7f4ef] rounded-xl border border-[#0f1e38]/10 overflow-hidden hover:border-[#c8a96e] transition-all"
             >
               <button
                 onClick={() =>
                   setOpenIndex(openIndex === index ? null : index)
                 }
-                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-blue-50 transition-colors"
+                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-[#c8a96e]/10 transition-colors"
               >
-                <h3 className="font-semibold text-slate-900 text-lg">
+                <h3 className="font-semibold text-[#0f1e38] text-lg">
                   {faq.question}
                 </h3>
                 <ChevronDown
-                  className={`h-5 w-5 text-blue-600 flex-shrink-0 transition-transform duration-300 ${
+                  className={`h-5 w-5 text-[#c8a96e] flex-shrink-0 transition-transform duration-300 ${
                     openIndex === index ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               {openIndex === index && (
-                <div className="px-6 py-4 border-t border-slate-100 bg-blue-50">
-                  <p className="text-slate-700 leading-relaxed">
+                <div className="px-6 py-4 border-t border-[#c8a96e]/20 bg-[#c8a96e]/10">
+                  <p className="text-[#0f1e38]/80 leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
@@ -85,10 +85,10 @@ export function FAQSection() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-slate-600 mb-4">Still have questions?</p>
+          <p className="text-[#0f1e38]/60 mb-4">Still have questions?</p>
           <a
             href="mailto:support@sewasetu.com"
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-[#0f1e38] text-[#c8a96e] font-semibold rounded-lg hover:bg-[#1a3059] transition-colors shadow-md"
           >
             Contact Support
           </a>

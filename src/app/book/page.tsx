@@ -95,7 +95,7 @@ export default function BookingPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-blue-600 py-4 font-semibold text-white hover:bg-blue-700 flex items-center justify-center"
+              className="w-full rounded-md bg-[#0f1e38] py-4 font-semibold text-[#c8a96e] hover:bg-[#1a3059] flex items-center justify-center"
             >
               {loading ? <Loader2 className="animate-spin mr-2" /> : null}
               {loading ? "Initializing Secure Payment..." : "Confirm & Pay Now"}

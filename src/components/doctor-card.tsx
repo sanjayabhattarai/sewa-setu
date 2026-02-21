@@ -12,7 +12,7 @@ import type { Occurrence } from "@/lib/availability";
 type Props = {
   doctor: ApiDoctor;
   slots?: ApiAvailabilitySlot[];
-  onSelectSlot?: (occ: Occurrence) => void;
+  onSelectSlotAction?: (occ: Occurrence) => void;
 };
 
 /**
@@ -67,7 +67,7 @@ function formatFeeWholeEUR(amountCents?: number | null, currency?: string | null
   return `${symbol}${whole}`;
 }
 
-export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
+export function DoctorCard({ doctor, slots = [], onSelectSlotAction }: Props) {
   const [showAvailability, setShowAvailability] = useState(false);
 
   const doctorSlots = useMemo(() => {
@@ -89,9 +89,9 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
   const feeText = formatFeeWholeEUR(doctor.feeMin ?? null, doctor.currency ?? "eur");
 
   return (
-    <div className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-[#0f1e38]/10 shadow-sm hover:shadow-xl hover:border-[#c8a96e] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
       {/* Subtle gradient decoration */}
-      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-[#c8a96e]/10 via-[#c8a96e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
       
       <div className="relative p-5 flex gap-4">
         {/* Photo */}
@@ -99,7 +99,7 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
           <img
             src={doctor.image ?? "https://picsum.photos/seed/doctor/200/200"}
             alt={doctor.fullName}
-            className="h-16 w-16 rounded-xl object-cover border-2 border-slate-100 group-hover:border-blue-200 transition-colors"
+            className="h-16 w-16 rounded-xl object-cover border-2 border-[#0f1e38]/10 group-hover:border-[#c8a96e] transition-colors"
           />
           {doctor.verified && (
             <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-white shadow-lg">
@@ -114,20 +114,20 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
             <div className="min-w-0">
               {/* Name */}
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                <h3 className="font-bold text-[#0f1e38] truncate group-hover:text-[#a88b50] transition-colors">
                   {withDrPrefix(doctor.fullName)}
                 </h3>
               </div>
 
               {/* Specialty (+ experience only if present) */}
               <div className="flex items-center gap-2 mt-1">
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-[#0f1e38]/70">
                   {primarySpecialty}
                 </p>
                 {hasExperience && (
                   <>
-                    <span className="text-slate-300">•</span>
-                    <span className="text-sm font-semibold text-blue-600">
+                    <span className="text-[#0f1e38]/20">•</span>
+                    <span className="text-sm font-semibold text-[#a88b50]">
                       {doctor.experienceYears} yrs
                     </span>
                   </>
@@ -149,7 +149,7 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
             {/* Fee */}
             <div className="text-right shrink-0">
               <p className="text-xs text-slate-500 font-medium">Fee</p>
-              <p className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{feeText}</p>
+              <p className="text-lg font-bold text-[#a88b50]">{feeText}</p>
             </div>
           </div>
 
@@ -158,7 +158,7 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
             <Button
               onClick={() => setShowAvailability(true)}
               size="sm"
-              className="rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-md hover:shadow-lg"
+              className="rounded-full bg-[#0f1e38] hover:bg-[#1a3059] text-[#c8a96e] shadow-md hover:shadow-lg"
               disabled={doctorSlots.length === 0}
               title={doctorSlots.length === 0 ? "No availability available" : "Check Availability"}
             >
@@ -173,10 +173,10 @@ export function DoctorCard({ doctor, slots = [], onSelectSlot }: Props) {
         doctor={doctor}
         slots={doctorSlots}
         isOpen={showAvailability}
-        onClose={() => setShowAvailability(false)}
+        onCloseAction={() => setShowAvailability(false)}
         daysToShow={7}
-        onBook={(occ) => {
-          onSelectSlot?.(occ);
+        onBookAction={(occ) => {
+          onSelectSlotAction?.(occ);
           setShowAvailability(false);
         }}
       />

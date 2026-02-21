@@ -47,7 +47,7 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100"
+      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-[rgba(15,30,56,0.1)] transition-all duration-300 border border-[rgba(15,30,56,0.07)] hover:border-[rgba(200,169,110,0.4)]"
     >
       <div className="relative h-48 overflow-hidden">
         <img
@@ -69,31 +69,31 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
 
       <div className="p-5">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-lg text-slate-900 line-clamp-1">
+          <h3 className="font-semibold text-lg text-[#0f1e38] line-clamp-1">
             {hospital.name}
           </h3>
           <div className="flex items-center gap-1 text-yellow-500 shrink-0">
             <Star className="w-4 h-4 fill-current" />
-            <span className="text-sm font-medium text-slate-700">{hospital.rating}</span>
+            <span className="text-sm font-medium text-[#0f1e38]">{hospital.rating}</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-slate-500 mb-2">
+        <div className="flex items-center gap-1.5 text-[#6b7a96] mb-2">
           <MapPin className="w-4 h-4" />
           <span className="text-sm">{location}</span>
         </div>
 
-        <p className="text-sm text-slate-500 mb-4 line-clamp-1">
+        <p className="text-sm text-[#6b7a96] mb-4 line-clamp-1">
           {hospital.specialty}
         </p>
 
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-          <span className="text-sm text-slate-500">
-            From <span className="text-blue-600 font-bold text-lg">{formattedPrice}</span>
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-[rgba(15,30,56,0.07)]">
+          <span className="text-sm text-[#6b7a96]">
+            From <span className="text-[#a88b50] font-bold text-lg">{formattedPrice}</span>
           </span>
 
           <Link href={`/hospital/${hospital.slug}`}>
-            <Button size="sm" className="gap-2 rounded-full">
+            <Button size="sm" className="gap-2 rounded-full bg-[#0f1e38] text-[#c8a96e] hover:bg-[#1a3059] border-none">
               View Packages
               <ArrowRight className="w-4 h-4" />
             </Button>

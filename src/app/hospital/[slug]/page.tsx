@@ -72,8 +72,8 @@ export default async function HospitalDetails({ params }: PageProps) {
                 {hospital.tags?.slice(0, 4).map((tag, i) => (
                   <span
                     key={tag}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      i === 0 ? "bg-blue-500" : "bg-sky-600"
+                    className={`px-3 py-1 rounded-full text-xs font-semibold text-[#0f1e38] ${
+                      i === 0 ? "bg-[#c8a96e]" : "bg-[#c8a96e]/70"
                     }`}
                   >
                     {tag}

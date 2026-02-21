@@ -12,10 +12,12 @@ const features = [
 
 export function HeroSection() {
   return (
-    <section className="bg-gradient-to-b from-blue-50 via-indigo-50 to-white pt-32 pb-20 px-4 md:pt-40 md:pb-24 relative overflow-hidden">
+    <section className="bg-[#0f1e38] pt-32 pb-20 px-4 md:pt-40 md:pb-24 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-20 right-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute bottom-0 left-10 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-20 right-10 w-96 h-96 rounded-full blur-3xl opacity-10" style={{background:'radial-gradient(circle, #c8a96e, transparent)'}}></div>
+      <div className="absolute bottom-0 left-10 w-72 h-72 rounded-full blur-3xl opacity-8" style={{background:'radial-gradient(circle, #c8a96e, transparent)'}}></div>
+      {/* Mesh grid */}
+      <div className="absolute inset-0 opacity-5" style={{backgroundImage:'linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)', backgroundSize:'48px 48px'}}></div>
 
       <div className="container max-w-5xl mx-auto text-center relative z-10">
         <motion.div
@@ -23,20 +25,20 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
-            <Heart className="w-4 h-4 fill-blue-700" />
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(200,169,110,0.15)] text-[#c8a96e] border border-[rgba(200,169,110,0.3)] text-sm font-medium mb-6">
+            <Heart className="w-4 h-4 fill-[#c8a96e]" />
             For Nepalese families abroad
           </span>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight mb-6">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
             Care for your family in Nepal,
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c8a96e] to-[#dfc08a]">
               from miles away.
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 leading-relaxed">
             Book prepaid whole-body checkups and lab tests for your parents at
             Nepal&apos;s top hospitals. Priority service guaranteed.
           </p>
@@ -45,7 +47,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link
               href="/search"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#c8a96e] to-[#a88b50] text-[#0f1e38] font-bold rounded-xl hover:shadow-xl hover:shadow-[rgba(200,169,110,0.4)] transition-all transform hover:scale-105"
             >
               <Search className="w-5 h-5" />
               Find Hospitals
@@ -53,7 +55,7 @@ export function HeroSection() {
             </Link>
             <motion.a
               href="#how-it-works"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl border-2 border-blue-200 hover:border-blue-600 hover:bg-blue-50 transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-[#c8a96e] font-semibold rounded-xl border-2 border-[rgba(200,169,110,0.4)] hover:border-[#c8a96e] hover:bg-[rgba(200,169,110,0.08)] transition-all"
               whileHover={{ scale: 1.05 }}
             >
               Learn More
@@ -69,9 +71,9 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-                className="flex items-center gap-2 text-slate-600 bg-white px-4 py-2 rounded-full shadow-md border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all"
+                className="flex items-center gap-2 text-slate-300 bg-[rgba(255,255,255,0.06)] px-4 py-2 rounded-full border border-[rgba(200,169,110,0.2)] hover:border-[rgba(200,169,110,0.5)] hover:text-[#c8a96e] transition-all"
               >
-                <feature.icon className="w-5 h-5 text-blue-600" />
+                <feature.icon className="w-5 h-5 text-[#c8a96e]" />
                 <span className="text-sm font-medium">{feature.text}</span>
               </motion.div>
             ))}

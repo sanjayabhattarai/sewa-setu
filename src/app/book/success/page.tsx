@@ -52,7 +52,7 @@ function SuccessContent() {
   if (status === "loading") {
     return (
       <div className="flex flex-col items-center pt-20">
-        <Loader2 className="h-16 w-16 text-blue-600 animate-spin mb-4" />
+        <Loader2 className="h-16 w-16 text-[#c8a96e] animate-spin mb-4" />
         <h2 className="text-2xl font-bold text-slate-900">Verifying Payment...</h2>
       </div>
     );
@@ -81,7 +81,7 @@ function SuccessContent() {
             <p className="text-xl font-mono font-bold text-slate-900">{bookingData?.id}</p>
           </div>
           <div className="text-right">
-             <h3 className="text-lg font-bold text-blue-600">Sewa-Setu</h3>
+             <h3 className="text-lg font-bold text-[#a88b50]">Sewa-Setu</h3>
              <p className="text-xs text-slate-400">Health Verification Ticket</p>
           </div>
         </div>
