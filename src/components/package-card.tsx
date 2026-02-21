@@ -25,14 +25,14 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
       <div
         className={`group relative bg-white rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden ${
           featured
-            ? "border-blue-500 shadow-lg shadow-blue-100/50"
-            : "border-slate-200 hover:border-blue-300"
+            ? "border-[#c8a96e] shadow-lg shadow-[#c8a96e]/20"
+            : "border-[#0f1e38]/10 hover:border-[#c8a96e]"
         }`}
       >
         {/* Featured Badge */}
         {featured && (
           <div className="absolute top-0 right-0 z-10">
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-4 py-1.5 rounded-bl-2xl flex items-center gap-1 shadow-lg">
+            <div className="bg-gradient-to-br from-[#c8a96e] to-[#a88b50] text-[#0f1e38] px-4 py-1.5 rounded-bl-2xl flex items-center gap-1 shadow-lg">
               <Sparkles className="h-4 w-4" />
               <span className="text-xs font-bold">POPULAR</span>
             </div>
@@ -43,8 +43,8 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
         <div
           className={`absolute top-0 left-0 right-0 h-32 bg-gradient-to-br opacity-5 ${
             featured
-              ? "from-blue-500 via-indigo-500 to-purple-500"
-              : "from-blue-400 to-cyan-400"
+              ? "from-[#c8a96e] via-[#a88b50] to-[#c8a96e]/40"
+              : "from-[#0f1e38] to-[#c8a96e]/30"
           }`}
         />
 
@@ -53,13 +53,13 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
           {/* Package Name */}
           <div className="mb-4">
             <h3 className="text-xl font-bold text-slate-900 mb-1">{pkg.name}</h3>
-            <div className="h-1 w-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" />
+            <div className="h-1 w-12 rounded-full bg-gradient-to-r from-[#c8a96e] to-[#a88b50]" />
           </div>
 
           {/* Price Section */}
           <div className="mb-6">
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-4xl font-bold text-[#c8a96e]">
                 {priceText}
               </span>
               {pkg.discount && (
@@ -76,8 +76,8 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
             {pkg.features.map((feature, i) => (
               <div key={i} className="flex items-start gap-3">
                 <div className="flex-shrink-0 mt-0.5">
-                  <div className="h-5 w-5 rounded-full bg-blue-50 flex items-center justify-center">
-                    <Check className="h-3 w-3 text-blue-600" />
+                  <div className="h-5 w-5 rounded-full bg-[#c8a96e]/15 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-[#a88b50]" />
                   </div>
                 </div>
                 <span className="text-sm text-slate-700 leading-relaxed">{feature}</span>
@@ -90,8 +90,8 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
             onClick={() => setShowModal(true)}
             className={`w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-300 shadow-md ${
               featured
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:scale-105"
-                : "bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg"
+                ? "bg-[#c8a96e] text-[#0f1e38] hover:bg-[#a88b50] hover:shadow-lg hover:shadow-[#c8a96e]/30 hover:scale-105"
+                : "bg-[#0f1e38] text-[#c8a96e] hover:bg-[#1a3059] hover:shadow-lg"
             }`}
           >
             Book Now — {priceText}
@@ -99,7 +99,7 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
         </div>
 
         {/* Hover Effect Border */}
-        <div className="absolute inset-0 rounded-2xl border-2 border-blue-500 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl border-2 border-[#c8a96e] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
       </div>
 
       <BookingModal

@@ -56,12 +56,12 @@ export function AvailabilitySchedule({ slots, doctors }: Props) {
                 key={i}
                 className={`px-3 py-3 text-center rounded-t-xl border-b-2 ${
                   hasSlots
-                    ? "bg-blue-50 border-blue-200"
-                    : "bg-slate-50 border-slate-200"
+                    ? "bg-[#c8a96e]/15 border-[#c8a96e]/30"
+                    : "bg-[#0f1e38]/5 border-[#0f1e38]/10"
                 }`}
               >
                 <div className="text-sm font-semibold text-slate-900">{DAY_SHORT[i]}</div>
-                <div className={`text-xs ${hasSlots ? "text-blue-600" : "text-slate-500"}`}>
+                <div className={`text-xs ${hasSlots ? "text-[#a88b50]" : "text-[#0f1e38]/40"}`}>
                   {daySlots.length} slot{daySlots.length !== 1 ? "s" : ""}
                 </div>
               </div>
@@ -105,7 +105,7 @@ export function AvailabilitySchedule({ slots, doctors }: Props) {
                         key={slot.id}
                         className={`rounded-lg border-2 p-2 text-xs space-y-1 ${
                           isOnline
-                            ? "border-blue-200 bg-blue-50"
+                            ? "border-[#c8a96e]/30 bg-[#c8a96e]/10"
                             : "border-emerald-200 bg-emerald-50"
                         }`}
                       >
@@ -113,20 +113,20 @@ export function AvailabilitySchedule({ slots, doctors }: Props) {
                           <Badge
                             className={
                               isOnline
-                                ? "bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs py-0 px-1.5"
+                                ? "bg-[#c8a96e]/20 text-[#a88b50] hover:bg-[#c8a96e]/20 text-xs py-0 px-1.5"
                                 : "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-xs py-0 px-1.5"
                             }
                           >
                             {slot.mode === "ONLINE" ? "Online" : "Physical"}
                           </Badge>
                         </div>
-                        <div className={`font-semibold ${isOnline ? "text-blue-900" : "text-emerald-900"}`}>
+                        <div className={`font-semibold ${isOnline ? "text-[#0f1e38]" : "text-emerald-900"}`}>
                           {slot.startTime}–{slot.endTime}
                         </div>
-                        <div className={`text-xs ${isOnline ? "text-blue-700" : "text-emerald-700"}`}>
+                        <div className={`text-xs ${isOnline ? "text-[#a88b50]" : "text-emerald-700"}`}>
                           {doctorNameById.get(slot.doctorId) ?? "Doctor"}
                         </div>
-                        <div className={`text-xs ${isOnline ? "text-blue-600" : "text-emerald-600"}`}>
+                        <div className={`text-xs ${isOnline ? "text-[#a88b50]/80" : "text-emerald-600"}`}>
                           {slot.slotDurationMinutes}m
                         </div>
                       </div>

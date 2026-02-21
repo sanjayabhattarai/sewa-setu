@@ -83,9 +83,9 @@ export function BookingModal({ isOpen, onClose, hospitalName, selectedPackage, p
         </div>
 
         {/* Summary Card */}
-        <div className="mb-6 rounded-xl bg-blue-50 p-4 border border-blue-100 flex justify-between items-center">
-          <span className="text-blue-700 font-medium">Total to pay</span>
-          <span className="text-2xl font-bold text-blue-700">₨ {selectedPackage.price}</span>
+        <div className="mb-6 rounded-xl bg-[#c8a96e]/10 p-4 border border-[#c8a96e]/20 flex justify-between items-center">
+          <span className="text-[#a88b50] font-medium">Total to pay</span>
+          <span className="text-2xl font-bold text-[#a88b50]">₨ {selectedPackage.price}</span>
         </div>
 
         {/* Form */}
@@ -134,7 +134,7 @@ export function BookingModal({ isOpen, onClose, hospitalName, selectedPackage, p
 
           <Button 
             type="submit" 
-            className="w-full h-12 text-lg mt-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"
+            className="w-full h-12 text-lg mt-4 bg-[#0f1e38] hover:bg-[#1a3059] text-[#c8a96e] shadow-lg"
             disabled={isLoading}
           >
             {isLoading ? (
