@@ -27,7 +27,7 @@ async function main() {
   const jsonPath = path.join(
     process.cwd(),
     "prisma",
-    "grande_hospital.json"
+    "grande_departments_clean.json"
   );
 
   const raw = fs.readFileSync(jsonPath, "utf-8");
