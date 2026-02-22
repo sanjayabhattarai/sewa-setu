@@ -1,6 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
-import { MEDICAL_PACKAGES, PackageId } from "@/lib/packages";
 import { db } from "@/lib/db";
 
 /* -----------------------------------------------------
@@ -16,6 +15,29 @@ if (API_KEY) {
 } else {
   console.warn("[AI API] ⚠️ GOOGLE_GENERATIVE_AI_API_KEY is missing - AI features will be unavailable");
 }
+
+// Department synonyms mapping
+const DEPARTMENT_SYNONYMS: Record<string, string[]> = {
+  "cardiology": ["heart", "cardiac", "cardiovascular", "chest pain", "bp", "blood pressure", "hypertension"],
+  "neurology": ["brain", "nerve", "headache", "migraine", "stroke", "paralysis", "seizure", "neuro"],
+  "orthopedics": ["bone", "joint", "spine", "back pain", "knee", "hip", "fracture", "arthritis", "ortho"],
+  "pediatrics": ["child", "children", "infant", "baby", "adolescent", "paediatric", "pediatric"],
+  "gynecology": ["women", "pregnancy", "menstrual", "fertility", "obstetrics", "gynae", "gynaecology"],
+  "dermatology": ["skin", "hair", "rash", "acne", "allergy", "derma", "psoriasis", "eczema"],
+  "gastroenterology": ["stomach", "digestive", "liver", "intestine", "abdomen", "gastro", "hepatology"],
+  "pulmonology": ["lung", "breathing", "asthma", "cough", "respiratory", "chest infection", "pneumonia"],
+  "nephrology": ["kidney", "renal", "dialysis", "urine", "nephro"],
+  "urology": ["urinary", "bladder", "prostate", "stone", "urethra", "urologist"],
+  "endocrinology": ["diabetes", "thyroid", "hormone", "endocrine", "sugar"],
+  "ophthalmology": ["eye", "vision", "sight", "cataract", "glaucoma", "retina"],
+  "ent": ["ear", "nose", "throat", "hearing", "sinus", "tonsil", "otolaryngology"],
+  "psychiatry": ["mental", "depression", "anxiety", "stress", "psychological", "psychiatric"],
+  "oncology": ["cancer", "tumor", "chemotherapy", "onco", "malignancy"],
+  "rheumatology": ["arthritis", "autoimmune", "joint pain", "rheumatoid", "lupus"],
+  "dentistry": ["teeth", "dental", "oral", "tooth", "gum", "root canal"],
+  "emergency": ["accident", "trauma", "urgent", "emergency", "critical"],
+  "general medicine": ["fever", "infection", "viral", "bacterial", "general physician", "internal medicine"],
+};
 
 /* -----------------------------------------------------
    Helpers
@@ -37,28 +59,99 @@ function detectBookingIntent(text: string): boolean {
   return bookingKeywords.some((k) => text.toLowerCase().includes(k));
 }
 
-// Suggest a package based on user's symptoms/needs
-function suggestPackage(
-  userText: string
-): { packageId: PackageId; name: string } {
-  const text = userText.toLowerCase();
+async function matchSymptomsToDepartments(symptoms: string) {
+  const text = symptoms.toLowerCase();
+  const matches: Array<{ department: string; confidence: number; matchedKeywords: string[] }> = [];
 
-  if (text.includes("consultation")) {
-    return { packageId: "consultation_physical", name: "Physical Consultation" };
-  }
-  if (
-    text.includes("fever") ||
-    text.includes("cold") ||
-    text.includes("cough") ||
-    text.includes("sick")
-  ) {
-    return { packageId: "general_checkup", name: "General Checkup" };
-  }
-  if (text.includes("appointment")) {
-    return { packageId: "appointment", name: "Doctor Appointment" };
+  for (const [dept, keywords] of Object.entries(DEPARTMENT_SYNONYMS)) {
+    const matchedKeywords = keywords.filter(keyword => text.includes(keyword.toLowerCase()));
+    if (matchedKeywords.length > 0) {
+      const confidence = matchedKeywords.length / keywords.length;
+      matches.push({
+        department: dept,
+        confidence: Math.min(confidence + 0.3, 1),
+        matchedKeywords,
+      });
+    }
   }
 
-  return { packageId: "general_checkup", name: "General Checkup" };
+  return matches.sort((a, b) => b.confidence - a.confidence);
+}
+
+async function findHospitalsWithDepartments(matchedDepartments: string[], limit: number = 5) {
+  // Find all departments that match the specialties
+  const departments = await db.hospitalDepartment.findMany({
+    where: {
+      OR: matchedDepartments.map(dept => ({
+        name: {
+          contains: dept,
+          mode: "insensitive",
+        },
+      })),
+      isActive: true,
+    },
+    include: {
+      hospital: {
+        include: {
+          location: true,
+          packages: {
+            where: { isActive: true },
+            take: 1,
+          },
+        },
+      },
+      doctors: {
+        where: { isActive: true },
+        take: 3,
+        include: {
+          doctor: {
+            include: {
+              specialties: { include: { specialty: true } },
+            },
+          },
+        },
+      },
+    },
+    take: limit * 3,
+  });
+
+  // Group by hospital
+  const hospitalMap = new Map();
+  
+  for (const dept of departments) {
+    if (!hospitalMap.has(dept.hospital.id)) {
+      hospitalMap.set(dept.hospital.id, {
+        id: dept.hospital.id,
+        name: dept.hospital.name,
+        slug: dept.hospital.slug,
+        type: dept.hospital.type,
+        location: `${dept.hospital.location.area || dept.hospital.location.addressLine || ""}, ${dept.hospital.location.city}`.trim(),
+        departments: [],
+        minPrice: dept.hospital.packages[0]?.price ?? null,
+        specialties: [],
+        services: dept.hospital.packages.map((p: any) => p.title),
+      });
+    }
+    
+    const hospitalData = hospitalMap.get(dept.hospital.id);
+    hospitalData.departments.push({
+      id: dept.id,
+      name: dept.name,
+      slug: dept.slug,
+      doctorCount: dept.doctors.length,
+    });
+    
+    // Add specialties from doctors
+    dept.doctors.forEach((dd: any) => {
+      dd.doctor.specialties.forEach((s: any) => {
+        if (!hospitalData.specialties.includes(s.specialty.name)) {
+          hospitalData.specialties.push(s.specialty.name);
+        }
+      });
+    });
+  }
+
+  return Array.from(hospitalMap.values()).slice(0, limit);
 }
 
 /* -----------------------------------------------------
@@ -71,6 +164,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     userText = body.prompt || "";
     const action = body.action || "chat";
+    const conversationId = body.conversationId;
 
     if (!userText) {
       return NextResponse.json({ text: "Please enter a message." });
@@ -81,124 +175,88 @@ export async function POST(req: Request) {
     );
 
     const isBooking = detectBookingIntent(userText);
-    const suggestedPackage = suggestPackage(userText);
 
     console.log(`[AI API] Intent detected: ${isBooking ? "BOOKING" : "CHAT"}`);
 
     /* ---------------- Booking Intent ---------------- */
     if (isBooking && action === "chat") {
       return NextResponse.json({
-        text:
-          "Great! I can help you book a consultation. " +
-          "Please tell me about the health concern or symptoms.",
+        text: "I'll help you book a consultation. Please describe your symptoms or health concern in detail so I can recommend the right specialist.",
         type: "booking_intent",
         nextStep: "collect_symptoms",
+        conversationId: conversationId || "",
       });
     }
 
     /* ---------------- Symptom Analysis ---------------- */
     if (action === "analyze_symptoms") {
-      if (!ai) {
-        return NextResponse.json(
-          { error: "AI service is not available. Please try again later." },
-          { status: 503 }
-        );
-      }
-
-      const analysisPrompt = `
+      // Match symptoms to departments
+      const matches = await matchSymptomsToDepartments(userText);
+      
+      let analysisText = "";
+      let matchedDepts = matches.map(m => m.department);
+      
+      if (ai) {
+        const analysisPrompt = `
 You are a medical assistant for Sewa-Setu, a hospital booking platform in Nepal.
 
-User's health concern:
+User's symptoms:
 "${userText}"
 
-Provide a short, professional analysis (2–3 sentences) explaining
-what type of consultation or checkup may be needed.
+Based on these symptoms, provide:
+1. A brief analysis (2-3 sentences) explaining what might be wrong
+2. The top 2-3 medical specialties that should be consulted
+
+Keep the response professional, empathetic, and clear.
 `;
 
-      console.log("[AI API] Calling Gemini for symptom analysis...");
-      
-      const result = await ai.models.generateContent({
-        model: "gemini-2.5-pro",
-        contents: analysisPrompt,
-      });
-      
-      const analysisText = result.text;
+        const result = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: analysisPrompt,
+        });
+        
+        analysisText = result.text || "Based on your symptoms, you should consult a specialist.";
+      } else {
+        analysisText = `Based on your symptoms, you may need to consult a specialist. I recommend seeing a doctor specializing in: ${matchedDepts.slice(0, 3).join(", ")}.`;
+      }
 
-      console.log("[AI API] Symptom analysis successful");
-
-      /* ---- Fetch hospitals ---- */
-      const hospitals = await db.hospital.findMany({
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          type: true,
-          phone: true,
-          email: true,
-          location: {
-            select: {
-              city: true,
-              district: true,
-              area: true,
-              addressLine: true,
-            },
-          },
-          packages: { // <-- Fixed schema name
-            select: {
-              id: true,
-              title: true,
-              price: true,
-              currency: true,
-            },
-          },
-        },
-        take: 10,
-      });
-
-      const cheapestHospitals = hospitals
-        .map((h) => ({
-          ...h,
-          minPrice:
-            h.packages.length > 0 // <-- Fixed schema name
-              ? Math.min(...h.packages.map((p) => p.price ?? 999999).filter((p): p is number => typeof p === 'number'))
-              : 999999,
-        }))
-        .sort((a, b) => a.minPrice - b.minPrice)
-        .slice(0, 3);
+      // Find hospitals with matching departments
+      const hospitals = await findHospitalsWithDepartments(matchedDepts);
 
       return NextResponse.json({
         text: analysisText,
         type: "symptoms_analyzed",
-        hospitals: cheapestHospitals.map((h) => ({
+        hospitals: hospitals.map(h => ({
           id: h.id,
           name: h.name,
           slug: h.slug,
           type: h.type,
-          location: `${h.location.area || h.location.addressLine || ""}, ${
-            h.location.city
-          }`,
+          location: h.location,
           minPrice: h.minPrice,
-          services: h.packages.map((p) => p.title), // Mapping packages to 'services' so frontend doesn't break
+          services: h.services,
+          specialties: h.specialties.slice(0, 5),
+          departments: h.departments,
+          matchedDepartment: h.departments[0]?.name,
         })),
+        matchedDepartments: matches.slice(0, 5),
         nextStep: "select_hospital",
+        conversationId: conversationId || "",
       });
     }
 
     /* ---------------- Regular Chat ---------------- */
     if (!ai) {
-      return NextResponse.json(
-        { error: "AI service is not available. Please try again later." },
-        { status: 503 }
-      );
+      return NextResponse.json({
+        text: "Namaste! 🙏 I'm here to help you find the right doctor. You can tell me your symptoms, and I'll recommend the best hospital and specialist for you.",
+        type: "chat",
+        conversationId,
+      });
     }
 
-    console.log("[AI API] Calling Gemini for chat...");
-    
     const chatResult = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: `
-You are the Sewa-Setu Medical Assistant.
-Help users find the best health checkup packages for their parents in Nepal.
+You are the Sewa-Setu Medical Assistant. Help users find the right doctors and hospitals in Nepal.
 
 User says:
 "${userText}"
@@ -206,71 +264,24 @@ User says:
 Rules:
 - Be polite and helpful
 - Keep answers short (max 3 sentences)
-- If booking is needed, suggest saying "I want to book"
+- If they mention symptoms, suggest they describe them in detail
+- If they want to book, ask about their symptoms
 `
     });
 
     return NextResponse.json({
       text: chatResult.text,
       type: "chat",
+      conversationId,
     });
+
   } catch (error: any) {
     console.error("[AI API ERROR]", error);
-
-    /* -------- Rate limit -------- */
-    if (error?.status === 429 || error?.message?.includes("429")) {
-      return NextResponse.json(
-        {
-          text: "⏳ Too many requests right now. Please try again in a minute.",
-          type: "error",
-          error: "RATE_LIMITED",
-        },
-        { status: 429 }
-      );
-    }
-
-    /* -------- Auth error -------- */
-    if (error?.status === 403) {
-      return NextResponse.json(
-        {
-          text: "🔑 AI authentication failed. Please check API key.",
-          type: "error",
-          error: "AUTH_FAILED",
-        },
-        { status: 403 }
-      );
-    }
-
-    /* -------- Safe fallback (no retry storm) -------- */
-    if (!ai) {
-      return NextResponse.json(
-        {
-          text: "⚠️ AI service temporarily unavailable. Please try again later.",
-          type: "error",
-        },
-        { status: 503 }
-      );
-    }
-
-    try {
-      console.log("[AI API] Trying fallback model...");
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: userText || "Hello",
-      });
-      return NextResponse.json({
-        text: res.text,
-        type: "chat",
-      });
-    } catch {
-      return NextResponse.json(
-        {
-          text: "⚠️ AI service temporarily unavailable. Please try again later.",
-          type: "error",
-        },
-        { status: 503 }
-      );
-    }
+    
+    return NextResponse.json({
+      text: "I'm having trouble right now. Please try again in a moment.",
+      type: "error",
+    }, { status: 500 });
   }
 }
 
@@ -287,7 +298,9 @@ export async function PUT(req: Request) {
       patientPhone,
       buyerEmail,
       problemDescription,
-      hospitalServiceId, 
+      hospitalServiceId,
+      departmentId,
+      conversationId,
     } = body;
 
     if (!hospitalId || !patientName || !patientAge || !patientPhone || !buyerEmail) {
@@ -328,7 +341,7 @@ export async function PUT(req: Request) {
 
     const hospital = await db.hospital.findUnique({
       where: { id: hospitalId },
-      include: { packages: true }, // <-- Fixed schema name
+      include: { packages: true },
     });
 
     if (!hospital) {
@@ -339,7 +352,7 @@ export async function PUT(req: Request) {
     let snapshotServiceName = "";
 
     if (hospitalServiceId) {
-      const selectedPackage = hospital.packages.find((p) => p.id === hospitalServiceId); // <-- Fixed schema name
+      const selectedPackage = hospital.packages.find((p) => p.id === hospitalServiceId);
       if (selectedPackage) {
         snapshotPrice = selectedPackage.price ?? 0;
         snapshotServiceName = selectedPackage.title;
@@ -353,7 +366,7 @@ export async function PUT(req: Request) {
         hospitalId: hospital.id,
         mode: "PHYSICAL",
         scheduledAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        notes: `Problem: ${problemDescription}\nService: ${snapshotServiceName}\nPrice: ${snapshotPrice}`,
+        notes: `Problem: ${problemDescription}\nService: ${snapshotServiceName}\nPrice: ${snapshotPrice}\nDepartment ID: ${departmentId || "none"}`,
         status: "REQUESTED",
       },
       include: {
@@ -371,7 +384,9 @@ export async function PUT(req: Request) {
         currency: snapshotPrice > 0 ? "NPR" : "EUR",
         patientName: patient.fullName,
         status: booking.status,
+        departmentId,
       },
+      conversationId,
     });
   } catch (error: any) {
     console.error("Booking error:", error);
