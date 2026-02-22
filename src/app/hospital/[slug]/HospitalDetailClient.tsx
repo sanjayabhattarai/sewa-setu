@@ -1,15 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { HospitalCTA } from "./hospital-cta";
 import { HospitalTabs } from "./HospitalTabs";
+import { Sparkles } from "lucide-react";
 
 type UiPackage = {
   id: string;
   name: string;
   price: number;
+  currency: string;
   discount?: string;
   features: string[];
+  description?: string;
 };
 
 type Props = {
@@ -18,12 +23,41 @@ type Props = {
 };
 
 export function HospitalDetailClient({ hospital, packages }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | null>(null);
+  const [showAIBadge, setShowAIBadge] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
+  // Handle deep linking from AI chatbot
+  useEffect(() => {
+    const deptId = searchParams.get("department");
+    const fromAI = searchParams.get("from") === "ai";
+    const convId = searchParams.get("conversationId");
+    
+    if (deptId) {
+      setSelectedDepartmentId(deptId);
+      setShowAIBadge(fromAI);
+      
+      if (convId) {
+        setConversationId(convId);
+      }
+      
+      // Scroll to departments section after a short delay
+      setTimeout(() => {
+        const deptSection = document.getElementById("departments-section");
+        if (deptSection) {
+          deptSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 500);
+    }
+  }, [searchParams]);
+
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
-        /* ── Design tokens ──────────────────────────────── */
         .hdc-root {
           --navy:         #0f1e38;
           --navy-mid:     #1a3059;
@@ -55,14 +89,12 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           background: var(--cream);
           -webkit-font-smoothing: antialiased;
 
-          /* Fill the full page */
           min-height: 100vh;
           width: 100%;
           display: flex;
           flex-direction: column;
         }
 
-        /* ── Ambient background ─────────────────────────── */
         .hdc-root::before {
           content: '';
           position: fixed; inset: 0;
@@ -72,7 +104,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           pointer-events: none; z-index: 0;
         }
 
-        /* ── Page shell — full width, centered content ──── */
         .hdc-shell {
           flex: 1;
           width: 100%;
@@ -82,17 +113,49 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           flex-direction: column;
         }
 
-        /* ── Card — fills shell, no floating ───────────── */
         .hdc-card {
           flex: 1;
           display: flex;
           flex-direction: column;
           width: 100%;
-          /* Subtle elevation so it reads as a surface */
           box-shadow: var(--sh-lg);
         }
 
-        /* ── CTA bar ────────────────────────────────────── */
+        /* AI Recommendation Badge */
+        .hdc-ai-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: linear-gradient(135deg, rgba(200,169,110,0.15), rgba(15,30,56,0.05));
+          border: 1px solid var(--gold-border);
+          border-radius: 100px;
+          padding: 8px 16px;
+          margin-bottom: 20px;
+          font-size: 14px;
+          color: var(--gold-dim);
+          animation: fadeIn 0.5s ease-out;
+        }
+
+        .hdc-ai-badge svg {
+          color: var(--gold);
+        }
+
+        .hdc-ai-badge span {
+          font-weight: 600;
+          color: var(--gold);
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         .hdc-cta {
           position: relative; overflow: hidden;
           background: linear-gradient(118deg, var(--navy) 0%, var(--navy-mid) 48%, var(--navy-soft) 100%);
@@ -100,7 +163,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           display: flex; align-items: center;
           justify-content: space-between;
           gap: 1.5rem; flex-wrap: wrap;
-          /* Make inner content respect max-width */
         }
         .hdc-cta-inner {
           width: 100%;
@@ -115,7 +177,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           z-index: 1;
         }
 
-        /* Mesh grid texture */
         .hdc-cta::before {
           content: ''; position: absolute; inset: 0;
           background-image:
@@ -124,7 +185,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           background-size: 36px 36px;
           pointer-events: none;
         }
-        /* Glow orbs */
         .hdc-g1, .hdc-g2 {
           position: absolute; border-radius: 50%; pointer-events: none;
         }
@@ -136,14 +196,12 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           width:160px; height:160px; bottom:-90px; left:12%;
           background: radial-gradient(circle, rgba(200,169,110,.09) 0%, transparent 65%);
         }
-        /* Top gold rule */
         .hdc-cta-rule {
           position: absolute; top:0; left:0; right:0; height:1px;
           background: linear-gradient(90deg,
             transparent 0%, rgba(200,169,110,.7) 35%,
             rgba(200,169,110,.7) 65%, transparent 100%);
         }
-        /* Identity block */
         .hdc-cta-id {
           display:flex; flex-direction:column; gap:.3rem;
         }
@@ -164,7 +222,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           line-height:1.25; letter-spacing:-.01em;
         }
 
-        /* ─── CTA button overrides ──────────────────────── */
         .hdc-cta button,
         .hdc-cta a[role="button"] {
           font-family:'DM Sans', sans-serif !important;
@@ -174,7 +231,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           position: relative !important;
           z-index: 1 !important;
         }
-        /* Primary – gold fill */
         .hdc-cta button:first-of-type {
           background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%) !important;
           color: var(--navy) !important;
@@ -186,7 +242,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           box-shadow: 0 6px 24px rgba(200,169,110,.52) !important;
           transform: translateY(-1px) !important;
         }
-        /* Secondary – ghost gold */
         .hdc-cta button:last-of-type {
           background: rgba(200,169,110,.08) !important;
           color: var(--gold-lt) !important;
@@ -199,20 +254,17 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           transform: translateY(-1px) !important;
         }
 
-        /* ── Body — fills remainder, white surface ──────── */
         .hdc-body {
           flex: 1;
           position: relative;
           background: var(--white);
         }
-        /* Gold left accent bar */
         .hdc-body::before {
           content:''; position:absolute;
           top:0; left:0; bottom:0; width:3px;
           background: linear-gradient(180deg, var(--gold) 0%, rgba(200,169,110,.18) 55%, transparent 100%);
           pointer-events:none; z-index:1;
         }
-        /* Subtle inner shadow from CTA */
         .hdc-body::after {
           content:''; position:absolute;
           top:0; left:0; right:0; height:52px;
@@ -227,7 +279,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           width: 100%;
         }
 
-        /* ── Section divider ────────────────────────────── */
         .hdc-divider {
           display:flex; align-items:center; gap:1rem;
           margin-bottom:2rem;
@@ -253,7 +304,6 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
           background:var(--gold); transform:rotate(45deg); opacity:.5;
         }
 
-        /* ── Responsive ─────────────────────────────────── */
         @media (max-width:660px) {
           .hdc-body-inner { padding: 1.75rem 1.25rem 3rem; }
         }
@@ -262,6 +312,14 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
       <div className="hdc-root">
         <div className="hdc-shell">
           <div className="hdc-card">
+
+            {/* AI Recommendation Badge */}
+            {showAIBadge && (
+              <div className="hdc-ai-badge">
+                <Sparkles size={16} />
+                <span>Recommended by Sewa-Setu AI</span>
+              </div>
+            )}
 
             {/* CTA bar */}
             {hospital.phone && (
@@ -293,6 +351,8 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
                   hospital={hospital}
                   packages={packages}
                   onBookDoctorAction={() => {}}
+                  initialDepartmentId={selectedDepartmentId}
+                  showAIBadge={showAIBadge}
                 />
               </div>
             </div>

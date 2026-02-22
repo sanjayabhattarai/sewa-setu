@@ -30,6 +30,7 @@ export default async function HospitalDetails({ params }: PageProps) {
     id: s.id,
     name: s.name,
     price: s.price,
+    currency: s.currency ?? "NPR",
     discount: undefined as string | undefined,
     features: s.features?.length ? s.features : s.description ? [s.description] : [],
   }));

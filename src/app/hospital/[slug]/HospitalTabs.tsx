@@ -1,7 +1,6 @@
-// src/app/hospital/[slug]/HospitalTabs.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { ApiDoctor } from "@/types/hospital";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { PackageAccordion } from "@/components/package-accordion";
@@ -25,12 +24,35 @@ type Props = {
   hospital: ApiHospitalDetails;
   packages: UiPackage[];
   onBookDoctorAction: (doctorId: string) => void;
+  initialDepartmentId?: string | null;
+  showAIBadge?: boolean;
 };
 
-export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) {
+export function HospitalTabs({ 
+  hospital, 
+  packages, 
+  onBookDoctorAction, 
+  initialDepartmentId,
+  showAIBadge = false 
+}: Props) {
   const [tab, setTab] = useState<TabKey>("overview");
+  const [selectedDeptId, setSelectedDeptId] = useState<string | null>(initialDepartmentId || null);
+  const [highlightedDeptId, setHighlightedDeptId] = useState<string | null>(initialDepartmentId || null);
 
-  const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
+  // Handle initial department selection
+  useEffect(() => {
+    if (initialDepartmentId) {
+      setTab("departments");
+      setSelectedDeptId(initialDepartmentId);
+      setHighlightedDeptId(initialDepartmentId);
+      
+      const timer = setTimeout(() => {
+        setHighlightedDeptId(null);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [initialDepartmentId]);
 
   const selectedDept = useMemo(() => {
     if (!selectedDeptId) return null;
@@ -93,12 +115,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Interstate:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
-        /* ───────────────────────────────────────────────
-           HospitalTabs — Navy + Gold theme
-           Inherits --navy, --gold, etc. from .hdc-root
-        ─────────────────────────────────────────────── */
-
-        /* Tab navigation */
         .ht-nav {
           display: flex; flex-wrap: nowrap; gap: .45rem;
           padding-bottom: 1.4rem;
@@ -129,7 +145,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           box-shadow: 0 2px 12px rgba(15,30,56,.2);
         }
 
-        /* Section header */
         .ht-head { display:flex; align-items:center; gap:.8rem; margin-bottom:1.25rem; }
         .ht-icon {
           width:40px; height:40px; border-radius:10px;
@@ -143,7 +158,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         }
         .ht-sub { font-size:.78rem; color:#6b7a96; margin-top:.12rem; }
 
-        /* Panel containers */
         .ht-card {
           background:#f7f4ef;
           border:1px solid rgba(15,30,56,.08);
@@ -158,7 +172,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           box-shadow:0 2px 10px rgba(15,30,56,.05);
         }
 
-        /* Stat grid */
         .ht-stats {
           display:grid; gap:.75rem;
           grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
@@ -184,7 +197,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           font-size:1.4rem; font-weight:700; color:#0f1e38; line-height:1.05;
         }
 
-        /* Badges */
         .ht-badges { display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:1rem; }
         .ht-badge {
           display:inline-flex; align-items:center; gap:.3rem;
@@ -195,10 +207,8 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         .ht-badge-red   { background:rgba(239,68,68,.07);  color:#b91c1c; border-color:rgba(239,68,68,.2); }
         .ht-badge-gold  { background:rgba(200,169,110,.1);  color:#a88b50; border-color:rgba(200,169,110,.28); }
 
-        /* Body text */
         .ht-prose { font-size:.875rem; line-height:1.7; color:#3d506e; }
 
-        /* Action buttons */
         .ht-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.2rem; }
         .ht-btn {
           display:inline-flex; align-items:center; gap:.38rem;
@@ -221,7 +231,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           background:rgba(200,169,110,.05);
         }
 
-        /* Filter bar */
         .ht-filter {
           background:#fff; border:1px solid rgba(15,30,56,.09);
           border-radius:14px; padding:1.1rem 1.35rem;
@@ -261,16 +270,13 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           border-radius:100px; padding:.18rem .65rem;
         }
 
-        /* Group header */
         .ht-group { display:flex; align-items:center; gap:.6rem; margin:1.6rem 0 .75rem; }
         .ht-group-bar { width:3px; height:20px; border-radius:2px; background:linear-gradient(180deg,#c8a96e,#a88b50); }
         .ht-group-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:.95rem; font-weight:700; color:#0f1e38; }
         .ht-group-ct { font-size:.7rem; font-weight:600; color:#a88b50; background:rgba(200,169,110,.1); border:1px solid rgba(200,169,110,.22); border-radius:100px; padding:.18rem .6rem; }
 
-        /* Doc grid */
         .ht-doc-grid { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill, minmax(275px,1fr)); }
 
-        /* Department cards */
         .ht-dept-grid { display:grid; gap:.85rem; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); }
         .ht-dept-card {
           background:#fff; border:1px solid rgba(15,30,56,.09);
@@ -280,6 +286,34 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           position:relative; overflow:hidden;
         }
         .ht-dept-card:hover { border-color:#c8a96e; box-shadow:0 16px 40px rgba(15,30,56,.13); transform:translateY(-3px); }
+        .ht-dept-card.highlighted {
+          border-color: #c8a96e;
+          box-shadow: 0 0 0 2px #c8a96e, 0 16px 40px rgba(200,169,110,0.2);
+          animation: pulseHighlight 2s ease-in-out;
+        }
+        
+        @keyframes pulseHighlight {
+          0%, 100% { box-shadow: 0 0 0 2px #c8a96e, 0 16px 40px rgba(200,169,110,0.2); }
+          50% { box-shadow: 0 0 0 4px #c8a96e, 0 20px 48px rgba(200,169,110,0.3); }
+        }
+
+        .ht-recommended-badge {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: #c8a96e;
+          color: #0f1e38;
+          font-size: 0.7rem;
+          font-weight: 600;
+          padding: 0.25rem 0.75rem;
+          border-radius: 100px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          z-index: 2;
+          box-shadow: 0 2px 8px rgba(200,169,110,0.3);
+        }
+
         .ht-dept-overlay {
           position:absolute; top:0; left:0; right:0; height:80px;
           background:linear-gradient(135deg, rgba(200,169,110,.12), rgba(200,169,110,.05) 60%, transparent);
@@ -306,7 +340,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         .ht-dept-arrow { color:#9aaac0; transition:transform .2s, color .2s; }
         .ht-dept-card:hover .ht-dept-arrow { transform:translateX(4px); color:#c8a96e; }
 
-        /* Back button */
         .ht-back {
           display:inline-flex; align-items:center; gap:.38rem;
           font-size:.8rem; font-weight:600; color:#6b7a96;
@@ -316,7 +349,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         }
         .ht-back:hover { color:#a88b50; }
 
-        /* Contact grid */
         .ht-contact-grid { display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit, minmax(195px,1fr)); }
         .ht-contact-item {
           display:flex; align-items:center; gap:.7rem;
@@ -335,7 +367,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         .ht-contact-val { font-size:.8rem; font-weight:600; color:#0f1e38; margin-top:.08rem; }
         .ht-contact-val.gold { color:#a88b50; }
 
-        /* Info box */
         .ht-info {
           display:flex; gap:.8rem; align-items:flex-start;
           background:rgba(200,169,110,.06);
@@ -353,7 +384,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         .ht-info-list li { display:flex; gap:.45rem; align-items:flex-start; font-size:.78rem; color:#3d506e; line-height:1.5; }
         .ht-info-list li svg { color:#a88b50 !important; flex-shrink:0; margin-top:2px; }
 
-        /* Top doctors row */
         .ht-top-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:.9rem; }
         .ht-view-all {
           display:inline-flex; align-items:center; gap:.35rem;
@@ -364,7 +394,6 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
         }
         .ht-view-all:hover { background:rgba(200,169,110,.16); border-color:rgba(200,169,110,.42); }
 
-        /* Empty state */
         .ht-empty {
           display:flex; flex-direction:column; align-items:center;
           padding:3.5rem 2rem; background:#fff;
@@ -379,7 +408,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
 
       <div style={{ marginTop: ".25rem" }}>
 
-        {/* ── Tab nav ──────────────────────────────────── */}
+        {/* Tab nav */}
         <nav className="ht-nav">
           {TABS.map(({ k, label }) => (
             <button
@@ -392,7 +421,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           ))}
         </nav>
 
-        {/* ── OVERVIEW ─────────────────────────────────── */}
+        {/* OVERVIEW */}
         {tab === "overview" && (
           <div>
             <div className="ht-card">
@@ -482,7 +511,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           </div>
         )}
 
-        {/* ── SERVICES ─────────────────────────────────── */}
+        {/* SERVICES */}
         {tab === "services" && (
           <div>
             <div className="ht-card" style={{ marginBottom:"1.25rem" }}>
@@ -528,9 +557,9 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           </div>
         )}
 
-        {/* ── DEPARTMENTS ──────────────────────────────── */}
+        {/* DEPARTMENTS */}
         {tab === "departments" && (
-          <div>
+          <div id="departments-section">
             {!selectedDept ? (
               <>
                 <div className="ht-card" style={{ marginBottom:"1.1rem" }}>
@@ -546,8 +575,18 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
                 {hospital.departments?.length ? (
                   <div className="ht-dept-grid">
                     {hospital.departments.map((d) => (
-                      <button key={d.id} className="ht-dept-card" onClick={() => setSelectedDeptId(d.id)}>
+                      <button 
+                        key={d.id} 
+                        className={`ht-dept-card ${d.id === highlightedDeptId ? 'highlighted' : ''}`} 
+                        onClick={() => setSelectedDeptId(d.id)}
+                      >
                         <div className="ht-dept-overlay" />
+                        {d.id === initialDepartmentId && showAIBadge && (
+                          <div className="ht-recommended-badge">
+                            <lucideReact.Sparkles size={12} />
+                            <span>AI Recommended</span>
+                          </div>
+                        )}
                         <div className="ht-dept-ico"><lucideReact.Stethoscope size={17} /></div>
                         <div className="ht-dept-name">{d.name}</div>
                         <div className="ht-dept-text">{d.overview || "Department details coming soon."}</div>
@@ -598,7 +637,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           </div>
         )}
 
-        {/* ── DOCTORS ──────────────────────────────────── */}
+        {/* DOCTORS */}
         {tab === "doctors" && (
           <div>
             <div className="ht-filter">
@@ -607,12 +646,10 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
                   <lucideReact.Filter size={14} />
                 </div>
                 <div className="ht-title" style={{ fontSize:".9rem" }}>Find Your Doctor</div>
-                {/* Count pill — lives in the header row */}
                 <span className="ht-pill" style={{ whiteSpace:"nowrap", marginLeft:"auto" }}>{filteredDoctors.length} doctors</span>
               </div>
 
               <div style={{ display:"flex", gap:"0.5rem", alignItems:"center" }}>
-                {/* Search — 50% width */}
                 <div style={{ flex:"0 0 50%", position:"relative", minWidth:0 }}>
                   <lucideReact.Search size={13} style={{ position:"absolute", left:9, top:"50%", transform:"translateY(-50%)", color:"#9aaac0", pointerEvents:"none" }} />
                   <Input
@@ -626,12 +663,10 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
                     }}
                   />
                 </div>
-                {/* Specialty */}
                 <select className="ht-select" style={{ flex:1 }} value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
                   <option value="ALL">All Specialties</option>
                   {allSpecialties.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                {/* Sort by fee */}
                 <select className="ht-select" style={{ flex:1 }} value={sort} onChange={(e) => setSort(e.target.value as any)}>
                   <option value="FEE_ASC">Fee: Low → High</option>
                   <option value="FEE_DESC">Fee: High → Low</option>
@@ -667,7 +702,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction }: Props) 
           </div>
         )}
 
-        {/* ── CONTACT ──────────────────────────────────── */}
+        {/* CONTACT */}
         {tab === "contact" && (
           <div>
             <div className="ht-card" style={{ marginBottom:"1.1rem" }}>
