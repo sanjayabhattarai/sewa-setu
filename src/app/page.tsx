@@ -9,7 +9,6 @@ import { TestimonialsSection } from "@/components/testimonials-section";
 import { FAQSection } from "@/components/faq-section";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { RecentBooking } from "@/components/recent-booking";
 import { FloatingAI } from "@/components/floating-ai";
 import type { ApiHospital } from "@/types/hospital";
 
@@ -33,10 +32,6 @@ export default async function Home() {
     <main className="min-h-screen bg-white">
       <Navbar />
       <FloatingAI />
-
-      <div className="pt-20">
-        <RecentBooking />
-      </div>
 
       <HeroSection />
       
