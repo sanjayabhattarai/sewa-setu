@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
-import { MEDICAL_PACKAGES, PackageId } from "@/lib/packages";
+import { auth } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    // TODO: Add rate limiting here (e.g., @upstash/ratelimit) to prevent abuse
-    
-    // Check for required environment variable
+    // ── AUTH CHECK ───────────────────────────────────────────────────
+    const { userId: clerkUserId } = await auth();
+    if (!clerkUserId) {
+      return NextResponse.json({ error: "You must be signed in to book" }, { status: 401 });
+    }
+
     if (!process.env.STRIPE_SECRET_KEY) {
-      console.error("Missing STRIPE_SECRET_KEY environment variable");
       return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
     }
 
@@ -17,60 +20,61 @@ export async function POST(req: Request) {
     const Stripe = StripeModule.default;
 
     const body = await req.json();
-    const { packageId, buyerEmail, patientName, patientAge, patientPhone, bookingDate } = body;
+    const {
+      packageId,
+      doctorId,
+      buyerEmail,
+      patientName,
+      patientAge,
+      patientPhone,
+      bookingDate,
+      consultationMode,
+      slotId,
+      slotTime,
+      hospitalId,
+    } = body;
 
-    console.log("Checkout request:", { packageId, buyerEmail, patientName });
+    if (!packageId && !doctorId) {
+      return NextResponse.json({ error: "packageId or doctorId is required" }, { status: 400 });
+    }
 
-    // INPUT VALIDATION (Security Layer)
-    
-    // Validate email
-    if (!buyerEmail || typeof buyerEmail !== 'string' || !buyerEmail.includes('@') || buyerEmail.length > 254) {
+    // ── INPUT VALIDATION ────────────────────────────────────────────
+    if (!buyerEmail || typeof buyerEmail !== "string" || !buyerEmail.includes("@") || buyerEmail.length > 254) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(buyerEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyerEmail)) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
     }
-
-    // Validate patient name
-    if (!patientName || typeof patientName !== 'string') {
+    if (!patientName || typeof patientName !== "string") {
       return NextResponse.json({ error: "Patient name is required" }, { status: 400 });
     }
     const trimmedName = patientName.trim();
     if (trimmedName.length < 2 || trimmedName.length > 100) {
       return NextResponse.json({ error: "Name must be between 2-100 characters" }, { status: 400 });
     }
-    // Only allow letters, spaces, hyphens, and apostrophes
-    if (!/^[a-zA-Z\s\-']+$/.test(trimmedName)) {
+    if (!/^[a-zA-Z\s\-'.]+$/.test(trimmedName)) {
       return NextResponse.json({ error: "Name contains invalid characters" }, { status: 400 });
     }
-
-    // Validate phone number
-    if (!patientPhone || typeof patientPhone !== 'string') {
+    if (!patientPhone || typeof patientPhone !== "string") {
       return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
     }
-    const cleanPhone = patientPhone.replace(/[\s\-()]/g, '');
-    // Nepal phone numbers are typically 10 digits starting with 9
-    if (!/^\d{10}$/.test(cleanPhone)) {
+    const cleanPhone = patientPhone.replace(/[\s\-()]/g, "");
+    const normalizedPhone = cleanPhone.replace(/^(\+977|977)/, "");
+    if (!/^\d{10}$/.test(normalizedPhone)) {
       return NextResponse.json({ error: "Phone number must be 10 digits" }, { status: 400 });
     }
-
-    // Validate age
     if (patientAge === undefined || patientAge === null) {
       return NextResponse.json({ error: "Patient age is required" }, { status: 400 });
     }
     const age = Number(patientAge);
     if (isNaN(age) || age < 0 || age > 150 || !Number.isInteger(age)) {
-      return NextResponse.json({ error: "Age must be a valid number between 0-150" }, { status: 400 });
+      return NextResponse.json({ error: "Age must be a valid integer between 0-150" }, { status: 400 });
     }
-
-    // Validate booking date
     if (bookingDate) {
       const date = new Date(bookingDate);
       if (isNaN(date.getTime())) {
         return NextResponse.json({ error: "Invalid booking date" }, { status: 400 });
       }
-      // Ensure date is not in the past (allow same day)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (date < today) {
@@ -78,78 +82,84 @@ export async function POST(req: Request) {
       }
     }
 
-    // Validate package ID exists
-    if (!packageId || typeof packageId !== 'string') {
-      return NextResponse.json({ error: "Package ID is required" }, { status: 400 });
-    }
-
-    // SANITIZE INPUTS: Remove any HTML/script tags and excess whitespace
-    const sanitizedName = trimmedName.replace(/<[^>]*>/g, '').trim();
+    // ── SANITIZE ─────────────────────────────────────────────────────
+    const sanitizedName = trimmedName.replace(/<[^>]*>/g, "").trim();
     const sanitizedEmail = buyerEmail.toLowerCase().trim();
-    const sanitizedPhone = cleanPhone;
+    const sanitizedPhone = normalizedPhone;
 
-    // 1. SERVER-SIDE LOOKUP (The Security Part)
-    const selectedPackage = MEDICAL_PACKAGES[packageId as PackageId];
+    // ── SERVER-SIDE PRICE LOOKUP ──────────────────────────────────────
+    let itemName: string;
+    let priceCents: number;
+    let itemHospitalId: string;
 
-    if (!selectedPackage) {
-      return NextResponse.json({ error: "Package not found" }, { status: 404 });
+    const metadata: Record<string, string> = {
+      clerkUserId,                                          // ← key addition
+      patientName: sanitizedName,
+      patientAge: String(age),
+      patientPhone: sanitizedPhone,
+      buyerEmail: sanitizedEmail,
+      bookingDate: String(bookingDate || new Date().toISOString()),
+    };
+
+    if (packageId) {
+      const pkg = await db.hospitalPackage.findUnique({ where: { id: packageId } });
+      if (!pkg) return NextResponse.json({ error: "Package not found" }, { status: 404 });
+      if (!pkg.price || pkg.price <= 0) return NextResponse.json({ error: "Package has no valid price" }, { status: 400 });
+      itemName = pkg.title;
+      priceCents = pkg.price;
+      itemHospitalId = pkg.hospitalId;
+      metadata.type = "package";
+      metadata.packageId = pkg.id;
+      metadata.packageName = pkg.title;
+      metadata.hospitalId = pkg.hospitalId;
+      if (slotId) metadata.slotId = String(slotId);
+      if (slotTime) metadata.slotTime = String(slotTime);
+    } else {
+      const doctor = await db.doctor.findUnique({ where: { id: doctorId } });
+      if (!doctor) return NextResponse.json({ error: "Doctor not found" }, { status: 404 });
+      if (!doctor.feeMin || doctor.feeMin <= 0) return NextResponse.json({ error: "Doctor has no valid consultation fee" }, { status: 400 });
+      itemName = `Consultation — ${doctor.fullName}`;
+      priceCents = doctor.feeMin;
+      itemHospitalId = hospitalId ?? "";
+      metadata.type = "doctor";
+      metadata.doctorId = doctor.id;
+      metadata.doctorName = doctor.fullName;
+      if (consultationMode) metadata.consultationMode = String(consultationMode);
+      if (slotId) metadata.slotId = String(slotId);
+      if (slotTime) metadata.slotTime = String(slotTime);
+      if (hospitalId) metadata.hospitalId = String(hospitalId);
     }
 
-    // We use the price from OUR file, NOT from the user's request
-    const validatedPrice = selectedPackage.price;
-
+    // ── CREATE STRIPE SESSION ────────────────────────────────────────
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
-
-    // SESSION EXPIRY: Prevent stale checkout sessions (Security Enhancement)
-    const expiresAt = Math.floor(Date.now() / 1000) + (30 * 60); // 30 minutes from now
 
     const session = await stripe.checkout.sessions.create({
       customer_email: sanitizedEmail,
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
-          currency: "npr",
-          product_data: { name: selectedPackage.name },
-          unit_amount: Math.round(validatedPrice * 100), // Secure price
+          currency: "eur",
+          product_data: { name: itemName },
+          unit_amount: priceCents,
         },
         quantity: 1,
       }],
       mode: "payment",
-      expires_at: expiresAt, // Auto-expire after 30 minutes
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
       success_url: `${baseUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/`,
-      metadata: {
-        packageName: selectedPackage.name,
-        patientName: sanitizedName,
-        patientAge: String(patientAge),
-        patientPhone: sanitizedPhone,
-        bookingDate: String(bookingDate || new Date().toISOString()),
-        price: String(validatedPrice),
-        buyerEmail: sanitizedEmail,
-      },
+      cancel_url: `${baseUrl}/search`,
+      metadata,
     });
 
-    // SECURITY LOGGING: Track successful checkout attempts
-    console.log(`✅ Checkout session created: ${session.id} | Email: ${sanitizedEmail} | Package: ${packageId} | Price: €${validatedPrice}`);
-
+    console.log(`✅ Checkout: ${session.id} | ${clerkUserId} | ${itemName} | €${(priceCents / 100).toFixed(2)}`);
     return NextResponse.json({ url: session.url });
+
   } catch (error: any) {
-    // SECURITY LOGGING: Track failed checkout attempts for monitoring
-    const errorDetails = {
-      message: error.message,
-      type: error.type || 'unknown',
-      timestamp: new Date().toISOString(),
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    };
-    console.error("❌ Checkout error:", errorDetails);
-    
-    // Don't expose internal errors to client
-    const clientMessage = error.type === 'StripeInvalidRequestError' 
-      ? 'Invalid payment request' 
-      : 'Payment processing error. Please try again.';
-    
+    console.error("❌ Checkout error:", error.message);
+    const clientMessage = error.type === "StripeInvalidRequestError"
+      ? "Invalid payment request"
+      : "Payment processing error. Please try again.";
     return NextResponse.json({ error: clientMessage }, { status: 500 });
   }
 }

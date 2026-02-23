@@ -10,10 +10,11 @@ import { formatMoneyCents } from "@/lib/money";
 interface PackageCardProps {
   pkg: UiPackage;
   hospitalName: string;
+  hospitalId?: string;
   featured?: boolean;
 }
 
-export function PackageCard({ pkg, hospitalName, featured = false }: PackageCardProps) {
+export function PackageCard({ pkg, hospitalName, hospitalId, featured = false }: PackageCardProps) {
   const [showModal, setShowModal] = useState(false);
 
   const priceText = useMemo(() => {
@@ -119,6 +120,7 @@ export function PackageCard({ pkg, hospitalName, featured = false }: PackageCard
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         hospitalName={hospitalName}
+        hospitalId={hospitalId}
         selectedPackage={pkg}
         packageId={pkg.id}
       />

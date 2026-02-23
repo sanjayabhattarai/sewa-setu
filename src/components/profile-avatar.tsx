@@ -63,31 +63,31 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
 
       {/* User Info */}
       <div className="flex-1 min-w-0 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-0.5 break-words">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight mb-1 break-words">
           {user.fullName || "User"}
         </h1>
-        
-        <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-2 break-all font-medium">
+
+        <p className="text-sm sm:text-base text-[#c8a96e] mb-3 break-all font-medium">
           {user.primaryEmailAddress?.emailAddress || "No email"}
         </p>
 
         {/* Status Badges */}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
           {user.primaryEmailAddressVerificationStatus === "verified" && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-green-100 border border-green-300 ring-1 ring-green-200">
-              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-500 text-white text-xs font-bold flex-shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30">
+              <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-400 text-[#0f1e38] text-xs font-bold flex-shrink-0">
                 ✓
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-green-700">Verified</span>
+              <span className="text-xs font-semibold text-emerald-300">Verified</span>
             </span>
           )}
-          
+
           <ProfileEditModal>
-            <button className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[#0f1e38] text-[#c8a96e] font-semibold text-xs sm:text-sm hover:bg-[#1a3059] transition-colors duration-200 shadow-md hover:shadow-lg">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5z"/>
+            <button className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white/80 border border-white/20 font-semibold text-xs hover:bg-white/20 transition-colors duration-200">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
               </svg>
-              Edit
+              Edit Profile
             </button>
           </ProfileEditModal>
         </div>

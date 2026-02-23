@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import type { ApiAvailabilitySlot, ApiDoctor } from "@/types/hospital";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { Button } from "@/components/ui/button";
@@ -26,9 +27,13 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
     buyerEmail: "",
   });
 
+  const { isSignedIn } = useUser();
   const [selectedDoctor, setSelectedDoctor] = useState<ApiDoctor | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<ApiAvailabilitySlot | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // booked slot sets: keys are `${slotId}::${date}`
+  const [bookedSet, setBookedSet] = useState<Set<string>>(new Set());
+  const [yourSet, setYourSet] = useState<Set<string>>(new Set());
 
   // ✅ Clean reset helper (used by close + modal unmount)
   const resetAll = () => {
@@ -62,6 +67,28 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
       setStep("availability");
     }
   }, [isOpen, preselectedDoctor]);
+
+  // Fetch booked slots for selected doctor
+  useEffect(() => {
+    if (!isOpen || !selectedDoctor) return;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    fetch(`/api/availability/booked?doctorId=${selectedDoctor.id}`)
+      .then((r) => r.json())
+      .then((data: { booked?: { slotId: string; date: string; isYours: boolean }[] }) => {
+        const booked = new Set<string>();
+        const yours = new Set<string>();
+        for (const b of data.booked ?? []) {
+          if (b.date === todayStr) { // this modal always books for today
+            const key = `${b.slotId}::${b.date}`;
+            booked.add(key);
+            if (b.isYours) yours.add(key);
+          }
+        }
+        setBookedSet(booked);
+        setYourSet(yours);
+      })
+      .catch(() => {/* fail silently */});
+  }, [isOpen, selectedDoctor]);
 
   const closeModal = () => {
     resetAll();
@@ -137,6 +164,12 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isSignedIn) {
+      window.location.href = `/sign-in?redirect_url=${encodeURIComponent(window.location.href)}`;
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -347,26 +380,57 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
 
                         return (
                           <div key={`${dayOfWeek}-${time}`} className="px-2 py-2 space-y-1">
-                            {slotsAtTime.map((slot) => (
-                              <button
-                                key={slot.id}
-                                onClick={() => setSelectedSlot(slot)}
-                                className={`w-full text-xs p-1.5 rounded-lg border-2 transition-all ${
-                                  selectedSlot?.id === slot.id
-                                    ? slot.mode === "ONLINE"
-                                      ? "border-[#c8a96e] bg-[#c8a96e]/15"
-                                      : "border-emerald-500 bg-emerald-100"
-                                    : slot.mode === "ONLINE"
-                                    ? "border-[#c8a96e]/30 bg-white hover:bg-[#c8a96e]/10"
-                                    : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
-                                }`}
-                              >
-                                <div className="font-semibold">
-                                  {slot.startTime}–{slot.endTime}
-                                </div>
-                                <div className="text-xs opacity-75">{slot.mode}</div>
-                              </button>
-                            ))}
+                            {slotsAtTime.map((slot) => {
+                              const todayStr = new Date().toISOString().slice(0, 10);
+                              const bookedKey = `${slot.id}::${todayStr}`;
+                              const isBooked = bookedSet.has(bookedKey);
+                              const isYours = yourSet.has(bookedKey);
+
+                              if (isYours) {
+                                return (
+                                  <div
+                                    key={slot.id}
+                                    className="w-full text-xs p-1.5 rounded-lg border-2 border-[#c8a96e] bg-[#c8a96e]/10"
+                                  >
+                                    <div className="font-bold text-[#a88b50]">✓ Booked</div>
+                                    <div className="opacity-75">{slot.startTime}–{slot.endTime}</div>
+                                  </div>
+                                );
+                              }
+
+                              if (isBooked) {
+                                return (
+                                  <div
+                                    key={slot.id}
+                                    className="w-full text-xs p-1.5 rounded-lg border-2 border-slate-200 bg-slate-100 opacity-50"
+                                  >
+                                    <div className="font-semibold text-slate-400">Unavailable</div>
+                                    <div className="opacity-75 text-slate-400">{slot.startTime}–{slot.endTime}</div>
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <button
+                                  key={slot.id}
+                                  onClick={() => setSelectedSlot(slot)}
+                                  className={`w-full text-xs p-1.5 rounded-lg border-2 transition-all ${
+                                    selectedSlot?.id === slot.id
+                                      ? slot.mode === "ONLINE"
+                                        ? "border-[#c8a96e] bg-[#c8a96e]/15"
+                                        : "border-emerald-500 bg-emerald-100"
+                                      : slot.mode === "ONLINE"
+                                      ? "border-[#c8a96e]/30 bg-white hover:bg-[#c8a96e]/10"
+                                      : "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
+                                  }`}
+                                >
+                                  <div className="font-semibold">
+                                    {slot.startTime}–{slot.endTime}
+                                  </div>
+                                  <div className="text-xs opacity-75">{slot.mode}</div>
+                                </button>
+                              );
+                            })}
                           </div>
                         );
                       })}

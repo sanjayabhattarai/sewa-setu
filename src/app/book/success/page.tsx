@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { Navbar } from "@/components/navbar";
 import { CheckCircle, Loader2, AlertCircle, Printer, Download } from "lucide-react";
 import Link from "next/link";
@@ -10,9 +11,12 @@ import { Button } from "@/components/ui/button";
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const { user } = useUser();
   const [status, setStatus] = useState("loading"); 
-  const [bookingData, setBookingData] = useState<any>(null); // To store the ticket details
+  const [bookingData, setBookingData] = useState<any>(null);
+  const [pendingBooking, setPendingBooking] = useState<any>(null);
 
+  // Step 1: fetch booking data when sessionId is ready
   useEffect(() => {
     if (!sessionId) return;
 
@@ -26,18 +30,14 @@ function SuccessContent() {
           const data = await res.json();
           setStatus("success");
           setBookingData(data.booking);
-          
-          // --- MAGIC: Save to "My Last Booking" in Browser ---
-          const recentBooking = {
+          // Stage the booking — save to localStorage once user.id is ready
+          setPendingBooking({
             id: data.booking.id,
             hospital: data.booking.hospitalName,
             package: data.booking.packageName,
             date: data.booking.bookingDate,
-            patient: data.booking.patientName
-          };
-          localStorage.setItem("sewa_last_booking", JSON.stringify(recentBooking));
-          // --------------------------------------------------
-          
+            patient: data.booking.patientName,
+          });
         } else {
           setStatus("error");
         }
@@ -45,8 +45,15 @@ function SuccessContent() {
       .catch(() => setStatus("error"));
   }, [sessionId]);
 
+  // Step 2: as soon as we have BOTH booking data AND user.id, persist to localStorage
+  useEffect(() => {
+    if (!pendingBooking || !user?.id) return;
+    localStorage.setItem(`sewa_last_booking_${user.id}`, JSON.stringify(pendingBooking));
+    setPendingBooking(null); // clear so we don't re-save
+  }, [pendingBooking, user?.id]);
+
   const handlePrint = () => {
-    window.print(); // Opens the browser print/save as PDF dialog
+    window.print();
   };
 
   if (status === "loading") {
@@ -109,7 +116,7 @@ function SuccessContent() {
         {/* Status Badge */}
         <div className="bg-green-50 border border-green-100 rounded-lg p-4 flex justify-between items-center">
           <span className="text-green-800 font-bold text-sm">PAYMENT SUCCESSFUL</span>
-          <span className="text-slate-900 font-bold">₨ {bookingData?.price}</span>
+          <span className="text-slate-900 font-bold">{bookingData?.amountPaid}</span>
         </div>
         
         <div className="mt-6 text-center text-xs text-slate-400 print:block hidden">

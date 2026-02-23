@@ -1,17 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { Ticket, CheckCircle } from "lucide-react";
 
 export function RecentBooking() {
+  const { isSignedIn, user } = useUser();
   const [booking, setBooking] = useState<any>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("sewa_last_booking");
+    if (!isSignedIn || !user?.id) {
+      setBooking(null);
+      return;
+    }
+    const saved = localStorage.getItem(`sewa_last_booking_${user.id}`);
     if (saved) {
       setBooking(JSON.parse(saved));
     }
-  }, []);
+  }, [isSignedIn, user?.id]);
 
   if (!booking) return null;
 
