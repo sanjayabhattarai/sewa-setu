@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { HospitalCard } from "@/components/hospital-card";
-import { Input } from "@/components/ui/input";
-import { Search, MapPin, Filter, X, Building2, Siren, ChevronDown } from "lucide-react";
+import { Search, MapPin, Filter, X, Siren, ChevronDown } from "lucide-react";
 import type { ApiHospital } from "@/types/hospital";
 
 type HospitalType = "ALL" | "HOSPITAL" | "CLINIC" | "LAB";
@@ -101,113 +100,137 @@ export default function SearchPage() {
       <Navbar />
 
       {/* Header & Search Section */}
-      <div className="bg-[#0f1e38] pt-24 pb-6 border-b border-[rgba(200,169,110,0.15)] sticky top-0 z-10 shadow-lg">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white text-center mb-6">
-            Find the Best Care
-          </h1>
+      <div
+        className="sticky top-0 z-10 pt-24 pb-5 shadow-xl"
+        style={{ background: "linear-gradient(135deg,#0f1e38 0%,#1a3059 100%)", borderBottom: "1px solid rgba(200,169,110,0.18)" }}
+      >
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
-          {/* Main Search Bar */}
-          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 mb-4">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-[#6b7a96]" />
-              <Input
-                placeholder="Search by hospital name..."
-                className="pl-10 h-12 text-base rounded-xl border-[rgba(200,169,110,0.2)] bg-[rgba(255,255,255,0.08)] text-white placeholder:text-slate-400 focus:bg-[rgba(255,255,255,0.12)] transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          {/* ── Title left + search right ── */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+
+            {/* Left: title */}
+            <div className="flex-shrink-0 sm:w-56">
+              <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight">
+                Find the<br />Best Care
+              </h1>
+              <p className="text-[#c8a96e]/70 text-xs mt-1.5 leading-snug">Hospitals, clinics &amp; labs<br className="hidden sm:block" /> across Nepal</p>
             </div>
 
-            {/* City Dropdown */}
-            <div className="relative sm:w-48">
-              <MapPin className="absolute left-3 top-3 h-4 w-4 text-[#c8a96e] z-10" />
-              <select
-                className="h-12 w-full appearance-none rounded-xl border border-[rgba(200,169,110,0.25)] bg-[rgba(255,255,255,0.08)] text-white pl-10 pr-8 text-sm outline-none focus:border-[#c8a96e] transition-all cursor-pointer"
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                aria-label="Filter hospitals by city"
-              >
-                <option value="All Cities" className="bg-[#0f1e38]">All Cities</option>
-                {cities.map((city) => (
-                  <option key={city} value={city} className="bg-[#0f1e38]">
-                    {city}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-4 pointer-events-none">
-                <ChevronDown className="h-4 w-4 text-[#c8a96e]" />
+            {/* Right: search pill + filters + sort */}
+            <div className="flex-1 flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+
+            {/* Combined search pill */}
+            <div
+              className="flex-1 flex items-stretch bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(10,18,35,.35)] min-w-0"
+              style={{ border: "1.5px solid rgba(200,169,110,0.3)" }}
+            >
+              {/* Search input */}
+              <div className="relative flex-1 flex items-center min-w-0">
+                <Search className="absolute left-4 h-4 w-4 text-[#a88b50] flex-shrink-0 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search by hospital name..."
+                  className="w-full pl-11 pr-4 py-3.5 text-sm font-medium text-[#0f1e38] placeholder:text-gray-400 bg-transparent outline-none"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 h-5 w-5 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors flex-shrink-0"
+                  >
+                    <X className="h-3 w-3 text-gray-600" />
+                  </button>
+                )}
+              </div>
+
+              {/* Divider */}
+              <div className="w-px bg-[rgba(200,169,110,0.25)] my-3 flex-shrink-0" />
+
+              {/* City dropdown */}
+              <div className="relative flex items-center sm:w-40 flex-shrink-0">
+                <MapPin className="absolute left-3 h-4 w-4 text-[#c8a96e] pointer-events-none flex-shrink-0" />
+                <select
+                  className="h-full w-full appearance-none pl-9 pr-8 text-sm font-medium text-[#0f1e38] bg-transparent outline-none cursor-pointer"
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  aria-label="Filter by city"
+                >
+                  <option value="All Cities">All Cities</option>
+                  {cities.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 h-4 w-4 text-[#c8a96e] pointer-events-none" />
               </div>
             </div>
-          </div>
 
-          {/* Filter & Sort Row */}
-          <div className="max-w-3xl mx-auto flex flex-wrap items-center gap-3">
-            {/* Advanced Filters Toggle */}
+            {/* Filters button */}
             <button
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
+              className={`flex-shrink-0 flex items-center gap-2 px-4 py-3.5 rounded-2xl border text-sm font-semibold transition-all whitespace-nowrap ${
                 showAdvanced || activeFilterCount > 0
-                  ? "border-[#c8a96e] bg-[rgba(200,169,110,0.15)] text-[#c8a96e]"
-                  : "border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.08)] text-slate-300 hover:border-[rgba(200,169,110,0.4)]"
+                  ? "border-[#c8a96e] bg-[rgba(200,169,110,0.18)] text-[#c8a96e]"
+                  : "border-white/20 bg-white/10 text-white/80 hover:bg-white/15 hover:border-white/30"
               }`}
             >
               <Filter className="h-4 w-4" />
-              Filters
+              <span className="hidden sm:inline">Filters</span>
               {activeFilterCount > 0 && (
-                <span className="bg-[#c8a96e] text-[#0f1e38] text-xs px-2 py-0.5 rounded-full font-bold">
+                <span className="bg-[#c8a96e] text-[#0f1e38] text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none">
                   {activeFilterCount}
                 </span>
               )}
             </button>
 
-            {/* Sort Dropdown */}
-            <div className="relative">
+            {/* Sort dropdown */}
+            <div className="relative flex-shrink-0">
               <select
-                className="h-9 appearance-none rounded-lg border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.08)] text-slate-300 pl-3 pr-8 text-sm outline-none focus:border-[#c8a96e] transition-all cursor-pointer"
+                className="h-[50px] appearance-none rounded-2xl border border-white/20 bg-white/10 text-white/80 pl-3 pr-8 text-sm font-semibold outline-none focus:border-[#c8a96e] transition-all cursor-pointer whitespace-nowrap"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
-                <option value="recent" className="bg-[#0f1e38]">Most Recent</option>
-                <option value="name" className="bg-[#0f1e38]">Name (A-Z)</option>
-                <option value="price-low" className="bg-[#0f1e38]">Price: Low to High</option>
-                <option value="price-high" className="bg-[#0f1e38]">Price: High to Low</option>
+                <option value="recent" className="bg-[#0f1e38] text-white">Most Recent</option>
+                <option value="name" className="bg-[#0f1e38] text-white">A – Z</option>
+                <option value="price-low" className="bg-[#0f1e38] text-white">Price ↑</option>
+                <option value="price-high" className="bg-[#0f1e38] text-white">Price ↓</option>
               </select>
-              <div className="absolute right-2 top-2.5 pointer-events-none">
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              </div>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/50 pointer-events-none" />
             </div>
 
-            {/* Clear All */}
+            {/* Clear all */}
             {activeFilterCount > 0 && (
               <button
                 onClick={clearAllFilters}
-                className="text-sm text-slate-600 hover:text-slate-900 font-medium"
+                className="flex-shrink-0 flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 font-medium transition-colors"
               >
-                Clear all
+                <X className="h-3 w-3" />
+                <span className="hidden sm:inline">Clear</span>
               </button>
             )}
           </div>
 
-          {/* Advanced Filters Panel */}
+          {/* ── Advanced Filters Panel ── */}
           {showAdvanced && (
-            <div className="max-w-3xl mx-auto mt-4 p-4 bg-[rgba(255,255,255,0.07)] rounded-xl border border-[rgba(200,169,110,0.2)]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Hospital Type */}
+            <div
+              className="mt-1 p-5 rounded-2xl border border-[rgba(200,169,110,0.2)]"
+              style={{ background: "rgba(255,255,255,0.07)" }}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                {/* Type */}
                 <div>
-                  <label className="block text-sm font-medium text-[#c8a96e] mb-2">
-                    Type
-                  </label>
-                  <div className="flex gap-2">
+                  <label className="block text-xs font-bold uppercase tracking-widest text-[#c8a96e] mb-2">Type</label>
+                  <div className="flex gap-1.5">
                     {(["ALL", "HOSPITAL", "CLINIC", "LAB"] as HospitalType[]).map((type) => (
                       <button
                         key={type}
                         onClick={() => setSelectedType(type)}
-                        className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                        className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
                           selectedType === type
-                            ? "bg-[#c8a96e] text-[#0f1e38] font-bold"
-                            : "bg-[rgba(255,255,255,0.08)] text-slate-300 border border-[rgba(255,255,255,0.15)] hover:border-[rgba(200,169,110,0.4)]"
+                            ? "bg-[#c8a96e] text-[#0f1e38]"
+                            : "bg-white/10 text-white/70 border border-white/15 hover:border-[rgba(200,169,110,0.4)]"
                         }`}
                       >
                         {type === "ALL" ? "All" : type.charAt(0) + type.slice(1).toLowerCase()}
@@ -218,47 +241,45 @@ export default function SearchPage() {
 
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium text-[#c8a96e] mb-2">
-                    Price Range (NPR)
-                  </label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-[#c8a96e] mb-2">Price Range (NPR)</label>
                   <div className="flex gap-2">
-                    <Input
+                    <input
                       type="number"
                       placeholder="Min"
-                      className="h-9 text-sm"
+                      className="flex-1 h-9 rounded-lg border border-[rgba(200,169,110,0.3)] bg-white text-[#0f1e38] placeholder:text-gray-400 px-3 text-xs font-medium outline-none focus:border-[#c8a96e] transition-all"
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                     />
-                    <Input
+                    <input
                       type="number"
                       placeholder="Max"
-                      className="h-9 text-sm"
+                      className="flex-1 h-9 rounded-lg border border-[rgba(200,169,110,0.3)] bg-white text-[#0f1e38] placeholder:text-gray-400 px-3 text-xs font-medium outline-none focus:border-[#c8a96e] transition-all"
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                     />
                   </div>
                 </div>
 
-                {/* Emergency Services */}
+                {/* Emergency */}
                 <div>
-                  <label className="block text-sm font-medium text-[#c8a96e] mb-2">
-                    Services
-                  </label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-[#c8a96e] mb-2">Services</label>
                   <button
                     onClick={() => setEmergencyOnly(!emergencyOnly)}
-                    className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`w-full flex items-center justify-center gap-2 h-9 px-4 rounded-lg text-xs font-semibold transition-all border ${
                       emergencyOnly
-                        ? "bg-red-600 text-white"
-                        : "bg-[rgba(255,255,255,0.08)] text-slate-300 border border-[rgba(255,255,255,0.15)] hover:border-[rgba(200,169,110,0.4)]"
+                        ? "bg-red-500 border-red-400 text-white"
+                        : "bg-white border-[rgba(200,169,110,0.3)] text-[#0f1e38] hover:border-[#c8a96e]"
                     }`}
                   >
-                    <Siren className="h-4 w-4" />
+                    <Siren className="h-3.5 w-3.5" />
                     Emergency Available
                   </button>
                 </div>
               </div>
             </div>
           )}
+            </div>{/* end flex-col search side */}
+          </div>{/* end title + search row */}
         </div>
       </div>
 
