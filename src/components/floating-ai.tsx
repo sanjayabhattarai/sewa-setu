@@ -1,23 +1,26 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { X, Send, MessageCircle, Stethoscope, Loader2, MapPin } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X, Send, MessageCircle, Stethoscope, Loader2, MapPin, AlertTriangle } from "lucide-react";
+
+interface FloatingAIProps {
+  autoOpen?: boolean;
+  conversationId?: string;
+}
 
 type Message = {
   role: "user" | "bot";
   content: string;
-  type?: "chat" | "booking_intent" | "symptoms_analyzed" | "confirmation";
+  type?: "chat" | "booking_intent" | "symptoms_analyzed" | "confirmation" | "error";
   hospitals?: Array<{
     id: string;
     name: string;
     slug: string;
-    type: string;
     location: string;
     minPrice: number;
-    services: string[];
-    specialties?: string[];
-    departments?: Array<{
+    specialties: string[];
+    departments: Array<{
       id: string;
       name: string;
       slug: string;
@@ -30,6 +33,8 @@ type Message = {
     confidence: number;
     matchedKeywords: string[];
   }>;
+  isEmergency?: boolean;
+  nextStep?: string;
   metadata?: {
     action?: string;
     hospital?: any;
@@ -42,10 +47,9 @@ type BookingStep = "chat" | "symptoms" | "hospital_selection" | "confirmation";
 // Storage key for conversation
 const STORAGE_KEY = "sewaSetu_chat_history";
 
-export function FloatingAI() {
+export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(autoOpen);
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +57,7 @@ export function FloatingAI() {
   const [selectedHospital, setSelectedHospital] = useState<any>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<any>(null);
   const [problemDescription, setProblemDescription] = useState("");
-  const [currentConversationId, setCurrentConversationId] = useState<string>("");
+  const [currentConversationId, setCurrentConversationId] = useState<string>(conversationId || "");
   
   const [bookingData, setBookingData] = useState({
     patientName: "",
@@ -64,91 +68,85 @@ export function FloatingAI() {
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Check URL for autoOpen and conversationId
-  useEffect(() => {
-    const autoOpen = searchParams.get("openAI") === "true";
-    const convId = searchParams.get("conversationId");
-    
-    if (autoOpen) {
-      setIsOpen(true);
-    }
-    
-    if (convId) {
-      setCurrentConversationId(convId);
-      loadConversation(convId);
-    }
-  }, [searchParams]);
-
-  // Load saved conversation
-  const loadConversation = (convId: string) => {
-    try {
-      console.log("[FloatingAI] Loading conversation:", convId);
-      const saved = localStorage.getItem(`${STORAGE_KEY}_${convId}`);
-      if (saved) {
-        const conversation = JSON.parse(saved);
-        console.log("[FloatingAI] Loaded conversation data:", conversation);
-        
-        setMessages(conversation.messages || []);
-        setBookingStep(conversation.bookingStep || "chat");
-        setSelectedHospital(conversation.selectedHospital || null);
-        setSelectedDepartment(conversation.selectedDepartment || null);
-        setProblemDescription(conversation.problemDescription || "");
-        setBookingData(conversation.bookingData || {
-          patientName: "",
-          patientAge: "",
-          patientPhone: "",
-          buyerEmail: "",
-        });
-      }
-    } catch (error) {
-      console.error("[FloatingAI] Failed to load conversation:", error);
-    }
-  };
-
-  // Generate a new conversation ID
+  // Generate a new conversation ID if needed
   const generateConversationId = () => {
     return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  // Save conversation state
-  const saveConversation = () => {
-    if (!currentConversationId || messages.length === 0) return;
-    
-    try {
-      const conversation = {
-        messages,
-        bookingStep,
-        selectedHospital,
-        selectedDepartment,
-        problemDescription,
-        bookingData,
-        lastUpdated: new Date().toISOString(),
-      };
-      localStorage.setItem(`${STORAGE_KEY}_${currentConversationId}`, JSON.stringify(conversation));
-    } catch (error) {
-      console.error("[FloatingAI] Failed to save conversation:", error);
+  // Load saved conversation when component mounts or conversationId changes
+  useEffect(() => {
+    if (conversationId) {
+      try {
+        console.log("[FloatingAI] Loading conversation:", conversationId);
+        const saved = localStorage.getItem(`${STORAGE_KEY}_${conversationId}`);
+        if (saved) {
+          const conversation = JSON.parse(saved);
+          console.log("[FloatingAI] Loaded conversation data:", conversation);
+          
+          // Restore all state
+          setMessages(conversation.messages || []);
+          setBookingStep(conversation.bookingStep || "chat");
+          setSelectedHospital(conversation.selectedHospital || null);
+          setSelectedDepartment(conversation.selectedDepartment || null);
+          setProblemDescription(conversation.problemDescription || "");
+          setBookingData(conversation.bookingData || {
+            patientName: "",
+            patientAge: "",
+            patientPhone: "",
+            buyerEmail: "",
+          });
+          setCurrentConversationId(conversationId);
+        } else {
+          console.log("[FloatingAI] No saved conversation found for ID:", conversationId);
+          setCurrentConversationId(conversationId);
+        }
+      } catch (error) {
+        console.error("[FloatingAI] Failed to load conversation:", error);
+      }
+    } else {
+      // Generate new ID for new conversation
+      setCurrentConversationId(generateConversationId());
     }
-  };
+  }, [conversationId]);
 
-  // Auto-save when state changes
+  // Save conversation state whenever it changes
   useEffect(() => {
     if (currentConversationId && messages.length > 0) {
-      saveConversation();
+      try {
+        const conversation = {
+          messages,
+          bookingStep,
+          selectedHospital,
+          selectedDepartment,
+          problemDescription,
+          bookingData,
+          lastUpdated: new Date().toISOString(),
+        };
+        console.log("[FloatingAI] Saving conversation:", currentConversationId, conversation);
+        localStorage.setItem(`${STORAGE_KEY}_${currentConversationId}`, JSON.stringify(conversation));
+      } catch (error) {
+        console.error("[FloatingAI] Failed to save conversation:", error);
+      }
     }
-  }, [messages, bookingStep, selectedHospital, selectedDepartment, problemDescription, bookingData]);
+  }, [messages, bookingStep, selectedHospital, selectedDepartment, problemDescription, bookingData, currentConversationId]);
 
-  // Scroll to bottom
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isLoading, bookingStep]);
 
-  // Add initial greeting
+  // Handle autoOpen prop
   useEffect(() => {
-    if (isOpen && messages.length === 0 && !currentConversationId) {
-      const newId = generateConversationId();
-      setCurrentConversationId(newId);
+    if (autoOpen) {
+      setIsOpen(true);
+    }
+  }, [autoOpen]);
+
+  // Add initial greeting only if no messages and not loading from conversation
+  useEffect(() => {
+    if (isOpen && messages.length === 0 && !conversationId) {
       setMessages([
         {
           role: "bot",
@@ -156,8 +154,11 @@ export function FloatingAI() {
           type: "chat",
         },
       ]);
+    } else if (isOpen && messages.length > 0 && conversationId) {
+      // Log that we restored conversation
+      console.log("[FloatingAI] Restored conversation with", messages.length, "messages");
     }
-  }, [isOpen, messages.length, currentConversationId]);
+  }, [isOpen, messages.length, conversationId]);
 
   const askAI = async () => {
     if (!prompt.trim()) return;
@@ -174,15 +175,11 @@ export function FloatingAI() {
         body: JSON.stringify({ 
           prompt: userMsg, 
           action: "chat",
-          conversationId: currentConversationId || generateConversationId()
+          conversationId: currentConversationId
         }),
       });
 
       const data = await res.json();
-
-      if (data.conversationId && !currentConversationId) {
-        setCurrentConversationId(data.conversationId);
-      }
 
       if (data.type === "booking_intent" && data.nextStep === "collect_symptoms") {
         setBookingStep("symptoms");
@@ -196,7 +193,7 @@ export function FloatingAI() {
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "Connection error. Please try again." },
+        { role: "bot", content: "Connection error. Please try again.", type: "error" },
       ]);
     } finally {
       setIsLoading(false);
@@ -226,6 +223,8 @@ export function FloatingAI() {
 
       if (data.type === "symptoms_analyzed") {
         setBookingStep("hospital_selection");
+        
+        // Add analysis message
         setMessages((prev) => [
           ...prev,
           {
@@ -234,13 +233,26 @@ export function FloatingAI() {
             type: "symptoms_analyzed",
             hospitals: data.hospitals,
             matchedDepartments: data.matchedDepartments,
+            isEmergency: data.isEmergency,
           },
         ]);
+
+        // If emergency, show warning
+        if (data.isEmergency) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "bot",
+              content: "⚠️ **URGENT**: Based on your symptoms, please seek immediate medical attention or call emergency services (102) if you're experiencing a medical emergency.",
+              type: "chat",
+            },
+          ]);
+        }
       }
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "Failed to analyze symptoms. Please try again." },
+        { role: "bot", content: "Failed to analyze symptoms. Please try again.", type: "error" },
       ]);
     } finally {
       setIsLoading(false);
@@ -250,9 +262,11 @@ export function FloatingAI() {
   const selectHospital = (hospital: any) => {
     console.log("[Floating AI] Selecting hospital:", hospital.name);
     
+    // If hospital has departments, let user choose
     if (hospital.departments && hospital.departments.length > 0) {
       setSelectedHospital(hospital);
       
+      // Show department selection
       const deptList = hospital.departments.map((d: any) => 
         `• ${d.name} (${d.doctorCount} doctors)`
       ).join('\n');
@@ -266,6 +280,7 @@ export function FloatingAI() {
         },
       ]);
       
+      // Add clickable department buttons
       hospital.departments.forEach((dept: any) => {
         setTimeout(() => {
           setMessages((prev) => [
@@ -280,6 +295,7 @@ export function FloatingAI() {
         }, 100);
       });
     } else {
+      // Direct redirect to hospital page
       navigateToHospital(hospital, null);
     }
   };
@@ -290,6 +306,7 @@ export function FloatingAI() {
   };
 
   const navigateToHospital = (hospital: any, department: any) => {
+    // Build URL with department parameter for deep linking
     let url = `/hospital/${hospital.slug}`;
     const params = new URLSearchParams();
     
@@ -298,10 +315,12 @@ export function FloatingAI() {
       params.set("deptName", department.name);
     }
     
+    // Add matched specialties as search params for filtering
     if (hospital.specialties && hospital.specialties.length > 0) {
       params.set("specialties", hospital.specialties.slice(0, 3).join(","));
     }
     
+    // Add flag and conversation ID to indicate this navigation came from AI
     params.set("from", "ai");
     params.set("conversationId", currentConversationId);
     
@@ -311,20 +330,100 @@ export function FloatingAI() {
     }
     
     console.log("[Floating AI] Navigating to:", url);
-    saveConversation(); // Save one last time before navigation
+    console.log("[Floating AI] With conversation ID:", currentConversationId);
+    
+    // Save one last time before navigation
+    if (currentConversationId && messages.length > 0) {
+      const conversation = {
+        messages,
+        bookingStep,
+        selectedHospital,
+        selectedDepartment,
+        problemDescription,
+        bookingData,
+        lastUpdated: new Date().toISOString(),
+      };
+      localStorage.setItem(`${STORAGE_KEY}_${currentConversationId}`, JSON.stringify(conversation));
+    }
+    
     router.push(url);
     setIsOpen(false);
   };
 
+  const submitBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!bookingData.patientName || !bookingData.patientAge || !bookingData.patientPhone || !bookingData.buyerEmail) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/ai", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hospitalId: selectedHospital.id,
+          patientName: bookingData.patientName,
+          patientAge: bookingData.patientAge,
+          patientPhone: bookingData.patientPhone,
+          buyerEmail: bookingData.buyerEmail,
+          problemDescription,
+          hospitalServiceId: null,
+          departmentId: selectedDepartment?.id,
+          conversationId: currentConversationId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            content: `✓ Booking confirmed! Your appointment at ${data.booking.hospitalName} has been requested. Booking ID: ${data.booking.id}. Our team will contact you shortly at ${bookingData.patientPhone}.`,
+          },
+        ]);
+        
+        // Reset but keep conversation for history
+        setBookingStep("chat");
+        setSelectedHospital(null);
+        setSelectedDepartment(null);
+        setProblemDescription("");
+        setBookingData({
+          patientName: "",
+          patientAge: "",
+          patientPhone: "",
+          buyerEmail: "",
+        });
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "bot", content: `Booking failed: ${data.error}` },
+        ]);
+      }
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", content: "Failed to create booking. Please try again." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle custom message actions
   const handleMessageClick = (msg: any) => {
     if (msg.metadata?.action === "select_department") {
       selectDepartment(msg.metadata.hospital, msg.metadata.department);
     }
   };
 
+  // Clear conversation
   const handleNewChat = () => {
-    const newId = generateConversationId();
-    setCurrentConversationId(newId);
     setMessages([]);
     setBookingStep("chat");
     setSelectedHospital(null);
@@ -336,7 +435,37 @@ export function FloatingAI() {
       patientPhone: "",
       buyerEmail: "",
     });
+    
+    // Generate new ID
+    const newId = generateConversationId();
+    setCurrentConversationId(newId);
+    
+    // Clear old storage
+    if (conversationId) {
+      localStorage.removeItem(`${STORAGE_KEY}_${conversationId}`);
+    }
   };
+
+  // Add a welcome back message when returning with conversation
+  useEffect(() => {
+    if (isOpen && messages.length > 0 && conversationId && autoOpen) {
+      // Check if we already added a welcome back message
+      const hasWelcomeBack = messages.some(msg => 
+        msg.content.includes("Welcome back") || msg.role === "bot" && msg.content.includes("continuing")
+      );
+      
+      if (!hasWelcomeBack) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            content: "Welcome back! 👋 I see you're continuing your health consultation. Feel free to ask more questions or book an appointment.",
+            type: "chat",
+          },
+        ]);
+      }
+    }
+  }, [isOpen, messages.length, conversationId, autoOpen]);
 
   return (
     <>
@@ -358,6 +487,8 @@ export function FloatingAI() {
           --text-mid:  #3d5752;
           --text-soft: #7a9a95;
           --gold:     #d4a853;
+          --red:      #dc2626;
+          --red-light: #fee2e2;
           --shadow-teal: rgba(14, 149, 128, 0.22);
         }
 
@@ -597,9 +728,84 @@ export function FloatingAI() {
           animation: ssMsg 0.28s cubic-bezier(0.34, 1.5, 0.64, 1);
         }
 
+        .ss-bubble-emergency {
+          background: var(--red-light);
+          border: 2px solid var(--red);
+          color: var(--red);
+          padding: 11px 15px;
+          border-radius: 4px 18px 18px 18px;
+          font-size: 13.5px;
+          line-height: 1.65;
+          max-width: 88%;
+          font-weight: 600;
+          animation: ssMsg 0.28s cubic-bezier(0.34, 1.5, 0.64, 1);
+        }
+
         @keyframes ssMsg {
           from { opacity: 0; transform: scale(0.92) translateY(6px); }
           to   { opacity: 1; transform: scale(1)    translateY(0); }
+        }
+
+        .ss-hospital-card {
+          background: white;
+          border: 2px solid var(--teal-500);
+          border-radius: 12px;
+          padding: 12px;
+          margin: 8px 0;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          width: 100%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .ss-hospital-card:hover {
+          border-color: var(--gold);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px var(--shadow-teal);
+        }
+
+        .ss-hospital-name {
+          font-size: 14px;
+          font-weight: 700;
+          color: var(--teal-900);
+          text-decoration: underline;
+          margin-bottom: 6px;
+        }
+
+        .ss-hospital-location {
+          font-size: 11px;
+          color: var(--text-soft);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-bottom: 8px;
+        }
+
+        .ss-hospital-specialties {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+          margin: 6px 0;
+        }
+
+        .ss-specialty-tag {
+          font-size: 9px;
+          padding: 2px 8px;
+          background: var(--teal-50);
+          color: var(--teal-700);
+          border-radius: 12px;
+          border: 1px solid var(--teal-100);
+        }
+
+        .ss-department-badge {
+          font-size: 10px;
+          font-weight: 600;
+          color: var(--gold);
+          background: rgba(212,168,83,0.1);
+          border: 1px solid rgba(212,168,83,0.3);
+          border-radius: 16px;
+          padding: 2px 8px;
+          display: inline-block;
         }
 
         .ss-typing {
@@ -623,69 +829,6 @@ export function FloatingAI() {
         @keyframes ssDot {
           0%, 60%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
           30%            { transform: translateY(-5px) scale(1.1); opacity: 1; }
-        }
-
-        .ss-hospital-card {
-          background: white;
-          border: 2px solid #0f9580;
-          border-radius: 8px;
-          padding: 12px;
-          margin: 8px 0;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          width: 100%;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        .ss-hospital-card:hover {
-          border-color: #d4a853;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(14, 149, 128, 0.22);
-        }
-
-        .ss-hospital-name {
-          font-size: 14px;
-          font-weight: 700;
-          color: #0d6457;
-          text-decoration: underline;
-          margin-bottom: 6px;
-        }
-
-        .ss-hospital-location {
-          font-size: 11px;
-          color: #7a9a95;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-bottom: 8px;
-        }
-
-        .ss-hospital-specialties {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-          margin: 6px 0;
-        }
-
-        .ss-specialty-tag {
-          font-size: 9px;
-          padding: 2px 8px;
-          background: #f0faf8;
-          color: #0d6457;
-          border-radius: 12px;
-          border: 1px solid #d0f5ef;
-        }
-
-        .ss-department-badge {
-          font-size: 10px;
-          font-weight: 600;
-          color: #d4a853;
-          background: rgba(212,168,83,0.1);
-          border: 1px solid rgba(212,168,83,0.3);
-          border-radius: 16px;
-          padding: 2px 8px;
-          display: inline-block;
-          margin-bottom: 6px;
         }
 
         .ss-input-wrap {
@@ -874,22 +1017,36 @@ export function FloatingAI() {
                     <div className="ss-micro-avatar">
                       <Stethoscope size={12} color="white" strokeWidth={2} />
                     </div>
-                    <div 
-                      className="ss-bubble-bot"
-                      onClick={() => handleMessageClick(msg)}
-                      style={msg.metadata ? { cursor: "pointer" } : {}}
-                    >
-                      {msg.content}
-                    </div>
                     
-                    {/* Hospital Selection */}
+                    {msg.isEmergency ? (
+                      <div className="ss-bubble-emergency">
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                          <AlertTriangle size={14} />
+                          <span>EMERGENCY</span>
+                        </div>
+                        {msg.content}
+                      </div>
+                    ) : (
+                      <div 
+                        className="ss-bubble-bot"
+                        onClick={() => handleMessageClick(msg)}
+                        style={msg.metadata ? { cursor: "pointer" } : {}}
+                      >
+                        {msg.content}
+                      </div>
+                    )}
+                    
+                    {/* Hospital Cards */}
                     {msg.type === "symptoms_analyzed" && msg.hospitals && (
-                      <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+                      <div style={{ marginTop: "10px", width: "100%" }}>
+                        <p style={{ fontSize: "12px", color: "var(--text-mid)", marginBottom: "8px" }}>
+                          Recommended hospitals:
+                        </p>
                         {msg.hospitals.map((h) => (
                           <div
                             key={h.id}
-                            onClick={() => selectHospital(h)}
                             className="ss-hospital-card"
+                            onClick={() => selectHospital(h)}
                           >
                             <div className="ss-hospital-name">🏥 {h.name}</div>
                             <div className="ss-hospital-location">
@@ -898,30 +1055,32 @@ export function FloatingAI() {
                             </div>
                             
                             {h.matchedDepartment && (
-                              <div className="ss-department-badge">
-                                ✓ Matched: {h.matchedDepartment}
+                              <div style={{ marginBottom: "6px" }}>
+                                <span className="ss-department-badge">
+                                  ✓ Matched: {h.matchedDepartment}
+                                </span>
                               </div>
                             )}
                             
                             <div className="ss-hospital-specialties">
-                              {h.specialties && h.specialties.slice(0, 3).map((s: string, i: number) => (
+                              {h.specialties.slice(0, 3).map((s, i) => (
                                 <span key={i} className="ss-specialty-tag">
                                   {s}
                                 </span>
                               ))}
-                              {h.specialties && h.specialties.length > 3 && (
+                              {h.specialties.length > 3 && (
                                 <span className="ss-specialty-tag">+{h.specialties.length - 3}</span>
                               )}
                             </div>
                             
                             <div style={{ 
                               fontSize: "10px", 
-                              color: "#0f9580", 
+                              color: "var(--teal-500)", 
                               marginTop: "6px",
                               fontStyle: "italic",
                               textAlign: "right",
                             }}>
-                              ➜ Click to view departments
+                              Click to view departments →
                             </div>
                           </div>
                         ))}
@@ -978,105 +1137,6 @@ export function FloatingAI() {
                 </div>
               )}
 
-              {/* Booking Confirmation Form */}
-              {bookingStep === "confirmation" && selectedHospital && (
-                <div className="ss-row-bot" style={{ width: "100%" }}>
-                  <div style={{ width: "100%", background: "#f0faf8", borderRadius: "12px", padding: "12px", border: "1px solid rgba(14, 149, 128, 0.2)" }}>
-                    <h4 style={{ fontSize: "12px", fontWeight: "600", color: "#0f3d38", marginBottom: "10px" }}>
-                      Booking at {selectedHospital.name}
-                    </h4>
-                    <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <input
-                        type="text"
-                        placeholder="Full Name"
-                        value={bookingData.patientName}
-                        onChange={(e) => setBookingData({ ...bookingData, patientName: e.target.value })}
-                        style={{
-                          padding: "8px 10px",
-                          fontSize: "12px",
-                          border: "1px solid #d0f5ef",
-                          borderRadius: "6px",
-                          fontFamily: "Plus Jakarta Sans, sans-serif",
-                          outline: "none",
-                          boxSizing: "border-box",
-                        }}
-                        required
-                      />
-                      <input
-                        type="number"
-                        placeholder="Age"
-                        value={bookingData.patientAge}
-                        onChange={(e) => setBookingData({ ...bookingData, patientAge: e.target.value })}
-                        style={{
-                          padding: "8px 10px",
-                          fontSize: "12px",
-                          border: "1px solid #d0f5ef",
-                          borderRadius: "6px",
-                          fontFamily: "Plus Jakarta Sans, sans-serif",
-                          outline: "none",
-                          boxSizing: "border-box",
-                        }}
-                        required
-                      />
-                      <input
-                        type="tel"
-                        placeholder="Phone"
-                        value={bookingData.patientPhone}
-                        onChange={(e) => setBookingData({ ...bookingData, patientPhone: e.target.value })}
-                        style={{
-                          padding: "8px 10px",
-                          fontSize: "12px",
-                          border: "1px solid #d0f5ef",
-                          borderRadius: "6px",
-                          fontFamily: "Plus Jakarta Sans, sans-serif",
-                          outline: "none",
-                          boxSizing: "border-box",
-                        }}
-                        required
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email"
-                        value={bookingData.buyerEmail}
-                        onChange={(e) => setBookingData({ ...bookingData, buyerEmail: e.target.value })}
-                        style={{
-                          padding: "8px 10px",
-                          fontSize: "12px",
-                          border: "1px solid #d0f5ef",
-                          borderRadius: "6px",
-                          fontFamily: "Plus Jakarta Sans, sans-serif",
-                          outline: "none",
-                          boxSizing: "border-box",
-                        }}
-                        required
-                      />
-                      <button
-                        type="submit"
-                        disabled={isLoading}
-                        style={{
-                          padding: "10px",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          background: isLoading ? "#ccc" : "linear-gradient(145deg, #0d6457, #0f9580)",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "6px",
-                          cursor: isLoading ? "not-allowed" : "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "6px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {isLoading && <Loader2 size={12} className="animate-spin" />}
-                        Confirm Booking
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              )}
-
               {/* Typing indicator */}
               {isLoading && bookingStep !== "confirmation" && (
                 <div className="ss-row-bot">
@@ -1111,7 +1171,6 @@ export function FloatingAI() {
                 <div style={{ fontSize: "12px", color: "#7a9a95", textAlign: "center", width: "100%", padding: "8px" }}>
                   {bookingStep === "symptoms" && "Describe your symptoms above ↑"}
                   {bookingStep === "hospital_selection" && "Select a hospital above ↑"}
-                  {bookingStep === "confirmation" && "Fill in your details above ↑"}
                 </div>
               )}
             </div>
