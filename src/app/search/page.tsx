@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { HospitalCard } from "@/components/hospital-card";
-import { Search, MapPin, Filter, X, Siren, ChevronDown } from "lucide-react";
+import { AISearchModal } from "@/components/ai-search-modal";
+import { Search, MapPin, Filter, X, Siren, ChevronDown, Brain } from "lucide-react";
 import type { ApiHospital } from "@/types/hospital";
 
 type HospitalType = "ALL" | "HOSPITAL" | "CLINIC" | "LAB";
@@ -19,6 +20,7 @@ export default function SearchPage() {
   const [maxPrice, setMaxPrice] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("recent");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAISearch, setShowAISearch] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [hospitals, setHospitals] = useState<ApiHospital[]>([]);
@@ -166,6 +168,15 @@ export default function SearchPage() {
                 <ChevronDown className="absolute right-3 h-4 w-4 text-[#c8a96e] pointer-events-none" />
               </div>
             </div>
+
+            {/* Smart Search button */}
+            <button
+              onClick={() => setShowAISearch(true)}
+              className="flex-shrink-0 flex items-center gap-2 px-4 py-3.5 rounded-2xl border border-[#c8a96e] bg-gradient-to-r from-[#0f9580]/20 to-[#0f9580]/10 text-[#c8a96e] text-sm font-semibold transition-all whitespace-nowrap hover:bg-gradient-to-r hover:from-[#0f9580]/30 hover:to-[#0f9580]/20"
+            >
+              <Brain className="h-4 w-4" />
+              <span className="hidden sm:inline">Smart Search</span>
+            </button>
 
             {/* Filters button */}
             <button
@@ -345,6 +356,9 @@ export default function SearchPage() {
           </>
         )}
       </div>
+
+      {/* AI Search Modal */}
+      <AISearchModal isOpen={showAISearch} onCloseAction={() => setShowAISearch(false)} />
     </main>
   );
 }
