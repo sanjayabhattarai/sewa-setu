@@ -11,9 +11,10 @@ interface PackageAccordionProps {
   pkg: UiPackage;
   index: number;
   hospitalName: string;
+  hospitalId?: string;
 }
 
-export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionProps) {
+export function PackageAccordion({ pkg, index, hospitalName, hospitalId }: PackageAccordionProps) {
   const [isOpen, setIsOpen] = useState(index === 1);
   const [showModal, setShowModal] = useState(false);
 
@@ -85,6 +86,7 @@ export function PackageAccordion({ pkg, index, hospitalName }: PackageAccordionP
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         hospitalName={hospitalName}
+        hospitalId={hospitalId}
         selectedPackage={pkg}
         packageId={pkg.id}
       />

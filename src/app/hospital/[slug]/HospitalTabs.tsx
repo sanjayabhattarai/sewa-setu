@@ -531,7 +531,7 @@ export function HospitalTabs({
             {packages.length ? (
               <div style={{ display:"grid", gap:".75rem", gridTemplateColumns:"repeat(auto-fill, minmax(255px,1fr))" }}>
                 {packages.map((pkg, i) => (
-                  <PackageCard key={pkg.id} pkg={pkg as any} hospitalName={hospital.name} featured={i === 1} />
+                  <PackageCard key={pkg.id} pkg={pkg as any} hospitalName={hospital.name} hospitalId={hospital.id} featured={i === 1} />
                 ))}
               </div>
             ) : (
