@@ -9,10 +9,15 @@ import { TestimonialsSection } from "@/components/testimonials-section";
 import { FAQSection } from "@/components/faq-section";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { RecentBooking } from "@/components/recent-booking";
 import { FloatingAI } from "@/components/floating-ai";
 import type { ApiHospital } from "@/types/hospital";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: Promise<{ openAI?: string; conversationId?: string }>;
+}) {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL
@@ -28,10 +33,19 @@ export default async function Home() {
 
   const featuredHospitals = hospitals.slice(0, 3);
 
+  // Await searchParams before accessing its properties
+  const params = await searchParams;
+  const shouldOpenAI = params?.openAI === "true";
+  const conversationId = params?.conversationId;
+
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      <FloatingAI />
+      <FloatingAI autoOpen={shouldOpenAI} conversationId={conversationId} />
+
+      <div className="pt-20">
+        <RecentBooking />
+      </div>
 
       <HeroSection />
       
