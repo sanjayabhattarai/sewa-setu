@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,10 +39,14 @@ export function AvailabilityModal({
   daysToShow = 7,
 }: Props) {
   // ✅ hooks must be unconditional
+  const { isSignedIn } = useUser();
   const [isMounted, setIsMounted] = useState(false);
   const [selectedOcc, setSelectedOcc] = useState<Occurrence | null>(null);
   const [bookingStep, setBookingStep] = useState<BookingStep>("slots");
   const [isLoading, setIsLoading] = useState(false);
+  // booked slot sets: keys are `${slotId}::${date}`
+  const [bookedSet, setBookedSet] = useState<Set<string>>(new Set());
+  const [yourSet, setYourSet] = useState<Set<string>>(new Set());
   const [formData, setFormData] = useState({
     patientName: "",
     patientAge: "",
@@ -70,6 +75,25 @@ export function AvailabilityModal({
     d.setHours(0, 0, 0, 0);
     setPageStart(d);
   }, [doctor.id]);
+
+  // Fetch booked slots for this doctor whenever modal opens or doctor changes
+  useEffect(() => {
+    if (!isOpen) return;
+    fetch(`/api/availability/booked?doctorId=${doctor.id}`)
+      .then((r) => r.json())
+      .then((data: { booked?: { slotId: string; date: string; isYours: boolean }[] }) => {
+        const booked = new Set<string>();
+        const yours = new Set<string>();
+        for (const b of data.booked ?? []) {
+          const key = `${b.slotId}::${b.date}`;
+          booked.add(key);
+          if (b.isYours) yours.add(key);
+        }
+        setBookedSet(booked);
+        setYourSet(yours);
+      })
+      .catch(() => {/* fail silently, don't block UI */});
+  }, [isOpen, doctor.id]);
 
   // Handle Escape key to close modal
   useEffect(() => {
@@ -402,6 +426,10 @@ export function AvailabilityModal({
                       if (!selectedOcc || !formData.patientName || !formData.patientAge || !formData.patientPhone || !formData.buyerEmail) return;
                       const slot = slots.find(s => s.id === selectedOcc.windowId);
                       if (!slot) { alert("Slot not found."); return; }
+                      if (!isSignedIn) {
+                        window.location.href = `/sign-in?redirect_url=${encodeURIComponent(window.location.href)}`;
+                        return;
+                      }
                       setIsLoading(true);
                       try {
                         const response = await fetch("/api/checkout", {
@@ -584,7 +612,61 @@ export function AvailabilityModal({
                         occ.map((o) => {
                           const isSel = selectedOcc?.date === o.date && selectedOcc?.startTime === o.startTime && selectedOcc?.mode === o.mode;
                           const isOnline = o.mode === "ONLINE";
+                          const bookedKey = `${o.windowId}::${o.date}`;
+                          const isBooked = bookedSet.has(bookedKey);
+                          const isYours = yourSet.has(bookedKey);
 
+                          // Booked by current user — show "Your Booking" badge, not selectable
+                          if (isYours) {
+                            return (
+                              <div
+                                key={`${o.date}-${o.startTime}-${o.mode}`}
+                                style={{
+                                  width: "100%",
+                                  padding: "10px 12px",
+                                  borderRadius: 10,
+                                  textAlign: "left",
+                                  border: "2px solid #c8a96e",
+                                  background: "linear-gradient(135deg,rgba(200,169,110,.13),rgba(200,169,110,.06))",
+                                  boxShadow: "0 2px 10px rgba(200,169,110,.18)",
+                                }}
+                              >
+                                <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#c8a96e", marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
+                                  <span>✓</span><span>YOUR BOOKING</span>
+                                </div>
+                                <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f1e38", letterSpacing: "-0.01em" }}>
+                                  {o.startTime} – {o.endTime}
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          // Booked by someone else — show as unavailable
+                          if (isBooked) {
+                            return (
+                              <div
+                                key={`${o.date}-${o.startTime}-${o.mode}`}
+                                style={{
+                                  width: "100%",
+                                  padding: "10px 12px",
+                                  borderRadius: 10,
+                                  textAlign: "left",
+                                  border: "1.5px solid rgba(15,30,56,.1)",
+                                  background: "rgba(15,30,56,.04)",
+                                  opacity: 0.55,
+                                }}
+                              >
+                                <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#9aa3b0", marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
+                                  <span>✕</span><span>UNAVAILABLE</span>
+                                </div>
+                                <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#9aa3b0", letterSpacing: "-0.01em" }}>
+                                  {o.startTime} – {o.endTime}
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          // Available — normal selectable button
                           return (
                             <button
                               key={`${o.date}-${o.startTime}-${o.mode}`}
