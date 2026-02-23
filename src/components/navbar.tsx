@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
@@ -14,10 +14,15 @@ export function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 bg-[#0f1e38]/95 backdrop-blur-md border-b border-[rgba(200,169,110,0.2)]"
     >
       <div className="container max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#c8a96e] to-[#a88b50] flex items-center justify-center shadow-lg shadow-[rgba(200,169,110,0.3)] transition-transform group-hover:scale-105">
-            <Heart className="w-5 h-5 text-[#0f1e38] fill-[#0f1e38]" />
-          </div>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <Image
+            src="/logo-icon.png"
+            alt="Sewa-Setu icon"
+            width={72}
+            height={72}
+            className="h-[72px] w-[72px] object-contain transition-transform group-hover:scale-105"
+            priority
+          />
           <span className="text-xl font-bold text-white">
             Sewa<span className="text-[#c8a96e]">-Setu</span>
           </span>

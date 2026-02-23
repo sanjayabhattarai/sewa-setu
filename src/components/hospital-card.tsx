@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import type { ApiHospital } from "@/types/hospital";
+import { formatMoneyCents } from "@/lib/money";
 
 interface HospitalCardProps {
   hospital: ApiHospital;
@@ -14,30 +14,7 @@ interface HospitalCardProps {
 }
 
 export function HospitalCard({ hospital, index }: HospitalCardProps) {
-  const [formattedPrice, setFormattedPrice] = useState<string>("...");
-
-  useEffect(() => {
-    try {
-      const price = hospital.fromPrice;
-
-      if (price == null) {
-        setFormattedPrice("—");
-        return;
-      }
-
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: hospital.currency || "NPR",
-        maximumFractionDigits: 0,
-      });
-
-      setFormattedPrice(formatter.format(price));
-    } catch {
-      setFormattedPrice(
-        hospital.fromPrice != null ? `${hospital.currency} ${hospital.fromPrice}` : "—"
-      );
-    }
-  }, [hospital.fromPrice, hospital.currency]);
+  const formattedPrice = formatMoneyCents(hospital.fromPrice, hospital.currency);
 
   const location = hospital.area ? `${hospital.area}, ${hospital.city}` : hospital.city;
 
