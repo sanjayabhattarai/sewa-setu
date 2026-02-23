@@ -178,13 +178,18 @@ export default async function ProfilePage() {
         </div>
 
         {/* ── SIGN OUT ── */}
-        <div className="flex justify-center">
+        <div className="border-t pt-8 flex flex-col sm:flex-row gap-3">
           <SignOutButton redirectUrl="/">
-            <button className="inline-flex items-center gap-2 bg-red-600 text-white font-semibold py-2.5 px-8 rounded-xl hover:bg-red-700 hover:shadow-md transition-all text-sm">
-              <LogOut size={16} />
+            <button className="flex items-center justify-center gap-2 bg-red-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-red-700 transition flex-1">
+              <LogOut size={18} />
               Sign Out
             </button>
           </SignOutButton>
+          <Link href="/" className="flex-1">
+            <button className="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg hover:bg-gray-300 transition">
+              Back Home
+            </button>
+          </Link>
         </div>
 
       </div>
