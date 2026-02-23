@@ -44,11 +44,13 @@ enum BookingStatus {
  */
 
 model User {
-  id       String   @id @default(cuid())
+  id      String @id @default(cuid())
+  clerkId String @unique // Clerk user ID — the link between Clerk auth and our DB
+
   fullName String
   email    String   @unique
   phone    String?
-  country  String
+  country  String   @default("NP")
   role     UserRole @default(USER)
 
   patients Patient[]
@@ -58,6 +60,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([email])
+  @@index([clerkId])
 }
 
 model Patient {
@@ -296,6 +299,7 @@ model HospitalPackage {
   dataOrigin String @default("MANUAL")
 
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -388,6 +392,7 @@ model AvailabilitySlot {
 
   doctor   Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   hospital Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+  bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -441,6 +446,8 @@ model Booking {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  stripeSessionId String? @unique // prevents duplicate bookings
+
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -453,9 +460,19 @@ model Booking {
   doctorId String?
   doctor   Doctor? @relation(fields: [doctorId], references: [id], onDelete: SetNull)
 
+  packageId String?
+  package   HospitalPackage? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+
+  availabilitySlotId String?
+  availabilitySlot   AvailabilitySlot? @relation(fields: [availabilitySlotId], references: [id], onDelete: SetNull)
+
   mode        ConsultationMode
   scheduledAt DateTime
+  slotTime    String? // e.g. "09:30-10:00"
   notes       String?
+
+  amountPaid Int?    // in cents, from Stripe
+  currency   String? @default("eur")
 
   status BookingStatus @default(DRAFT)
 
@@ -464,4 +481,6 @@ model Booking {
   @@index([hospitalId])
   @@index([doctorId])
   @@index([status, scheduledAt])
+  @@index([availabilitySlotId])
+  @@unique([availabilitySlotId, scheduledAt], name: "unique_slot_occurrence") // prevents double-booking
 }
