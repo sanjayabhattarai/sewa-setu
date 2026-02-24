@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AvailabilityModal } from "@/components/availability-modal";
-import { CheckCircle2, GraduationCap } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, GraduationCap } from "lucide-react";
 import * as lucideReact from "lucide-react";
 import type { ApiDoctor, ApiAvailabilitySlot } from "@/types/hospital";
 import type { Occurrence } from "@/lib/availability";
@@ -84,6 +84,7 @@ function formatFeeWholeEUR(amountCents?: number | null, currency?: string | null
 
 export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAction }: Props) {
   const [showAvailability, setShowAvailability] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const doctorSlots = useMemo(() => {
     return slots.filter((s) => s.isActive && s.doctorId === doctor.id);
@@ -109,13 +110,13 @@ export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAct
       {/* Subtle gradient decoration */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-[#c8a96e]/10 via-[#c8a96e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
       
-      <div className="relative p-5 flex gap-4 flex-1 items-stretch">
+      <div className="relative p-5 flex gap-4 flex-1 items-stretch min-h-[220px]">
         {/* Photo */}
         <div className="relative">
           <img
             src={doctor.image ?? "https://picsum.photos/seed/doctor/200/200"}
             alt={doctor.fullName}
-            className="h-16 w-16 rounded-xl object-cover border-2 border-[#0f1e38]/10 group-hover:border-[#c8a96e] transition-colors"
+            className="h-20 w-20 rounded-xl object-cover border-2 border-[#0f1e38]/10 group-hover:border-[#c8a96e] transition-colors"
           />
           {doctor.verified && (
             <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-white shadow-lg">
@@ -135,31 +136,10 @@ export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAct
                 </h3>
               </div>
 
-              {/* Specialty (+ experience only if present) */}
+              {/* Specialty */}
               <div className="flex items-center gap-2 mt-1">
-                <p className="text-sm text-[#0f1e38]/70">
-                  {primarySpecialty}
-                </p>
-                {hasExperience && (
-                  <>
-                    <span className="text-[#0f1e38]/20">•</span>
-                    <span className="text-sm font-semibold text-[#a88b50]">
-                      {doctor.experienceYears} yrs
-                    </span>
-                  </>
-                )}
+                <p className="text-sm text-[#0f1e38]/70">{primarySpecialty}</p>
               </div>
-
-              {/* Education */}
-              {educationText && (
-                <div className="mt-2 flex items-start gap-2 text-sm text-slate-500">
-                  <GraduationCap className="h-4 w-4 mt-0.5 shrink-0 text-slate-400" />
-                  <div className="min-w-0">
-                    <span className="font-semibold text-slate-600">Education: </span>
-                    <span className="text-slate-500">{educationText}</span>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Fee */}
@@ -169,8 +149,47 @@ export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAct
             </div>
           </div>
 
-          {/* Action */}
-          <div className="mt-auto pt-4 flex justify-end">
+          {/* Details + Action */}
+          <div className="mt-auto pt-4 flex flex-col gap-3">
+            {(hasExperience || educationText) && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowDetails((prev) => !prev)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#a88b50] hover:text-[#0f1e38] transition-colors"
+                  aria-expanded={showDetails}
+                >
+                  {showDetails ? "View less" : "View more"}
+                  {showDetails ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+
+                {showDetails && (
+                  <div className="mt-2 space-y-2">
+                    {hasExperience && (
+                      <div className="text-sm text-slate-600">
+                        <span className="font-semibold text-slate-600">Experience: </span>
+                        <span className="text-slate-500">{doctor.experienceYears} yrs</span>
+                      </div>
+                    )}
+                    {educationText && (
+                      <div className="flex items-start gap-2 text-sm text-slate-500">
+                        <GraduationCap className="h-4 w-4 mt-0.5 shrink-0 text-slate-400" />
+                        <div className="min-w-0">
+                          <span className="font-semibold text-slate-600">Education: </span>
+                          <span className="text-slate-500">{educationText}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-end">
             <Button
               onClick={() => setShowAvailability(true)}
               size="sm"
@@ -181,6 +200,7 @@ export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAct
               <lucideReact.Calendar className="h-4 w-4 mr-1.5" />
               Check Availability
             </Button>
+            </div>
           </div>
         </div>
       </div>
