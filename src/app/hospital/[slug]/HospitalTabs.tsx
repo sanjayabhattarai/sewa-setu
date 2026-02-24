@@ -495,15 +495,6 @@ export function HospitalTabs({
                   <div className="ht-stat-val" style={{ fontSize:"1rem" }}>{hospital.location.city}</div>
                 </div>
               </div>
-
-              <div className="ht-actions">
-                <button className="ht-btn ht-btn-navy" onClick={() => setTab("services")}>
-                  <lucideReact.Package size={14} /> View Packages
-                </button>
-                <button className="ht-btn ht-btn-ghost" onClick={() => setTab("departments")}>
-                  <lucideReact.Building2 size={14} /> Departments
-                </button>
-              </div>
             </div>
 
             {/* Top doctors */}
@@ -521,7 +512,7 @@ export function HospitalTabs({
                 </button>
               </div>
               <div className="ht-doc-grid" style={{ marginTop:".8rem" }}>
-                {hospital.doctors.slice(0, 2).map((d) => (
+                {hospital.doctors.slice(0, 3).map((d) => (
                   <DoctorCard
                     key={d.id} doctor={d}
                     slots={hospital.availability}
@@ -728,76 +719,189 @@ export function HospitalTabs({
 
         {/* CONTACT */}
         {tab === "contact" && (
-          <div>
-            <div className="ht-card" style={{ marginBottom:"1.1rem" }}>
-              <div className="ht-head">
-                <div className="ht-icon"><lucideReact.Phone size={17} /></div>
-                <div>
-                  <div className="ht-title">Contact Information</div>
-                  <div className="ht-sub">Get in touch with us</div>
+          <div style={{ display:"grid", gap:"1.2rem" }}>
+            {/* Contact Cards Grid */}
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:"1rem" }}>
+
+              {/* Phone */}
+              <div className="ht-card" style={{ marginBottom:0 }}>
+                <div className="ht-head">
+                  <div className="ht-icon" style={{ background:"rgba(34,197,94,.12)", color:"#16a34a" }}>
+                    <lucideReact.Phone size={17} />
+                  </div>
+                  <div>
+                    <div className="ht-title">Phone Number</div>
+                    <div className="ht-sub">Call us anytime</div>
+                  </div>
+                </div>
+                <div style={{ padding:"0 1.1rem 1.1rem", display:"flex", flexDirection:"column", gap:".6rem" }}>
+                  {hospital.phone ? (
+                    <a href={`tel:${hospital.phone}`} style={{ display:"flex", alignItems:"center", gap:".5rem", color:"#a88b50", fontWeight:600, fontSize:".92rem", textDecoration:"none" }}>
+                      <lucideReact.Phone size={14} style={{ opacity:0.6 }} />
+                      {hospital.phone}
+                    </a>
+                  ) : (
+                    <span style={{ color:"#9aaac0", fontSize:".92rem" }}>Will be added soon</span>
+                  )}
                 </div>
               </div>
-              <div className="ht-contact-grid">
-                <a href={hospital.phone ? `tel:${hospital.phone}` : undefined}
-                  className={`ht-contact-item${hospital.phone ? " link" : ""}`}>
-                  <div className="ht-contact-ico"><lucideReact.Phone size={15} /></div>
-                  <div>
-                    <div className="ht-contact-key">Phone</div>
-                    <div className={`ht-contact-val${hospital.phone ? " gold" : ""}`}>
-                      {hospital.phone || "Will be added soon"}
-                    </div>
+
+              {/* Address */}
+              <div className="ht-card" style={{ marginBottom:0 }}>
+                <div className="ht-head">
+                  <div className="ht-icon" style={{ background:"rgba(59,130,246,.12)", color:"#2563eb" }}>
+                    <lucideReact.MapPin size={17} />
                   </div>
-                </a>
-                <div className="ht-contact-item">
-                  <div className="ht-contact-ico"><lucideReact.Mail size={15} /></div>
                   <div>
-                    <div className="ht-contact-key">Email</div>
-                    <div className="ht-contact-val">{hospital.email || "Will be added soon"}</div>
+                    <div className="ht-title">Address</div>
+                    <div className="ht-sub">Visit us at</div>
                   </div>
                 </div>
-                <div className="ht-contact-item">
-                  <div className="ht-contact-ico"><lucideReact.Globe size={15} /></div>
-                  <div>
-                    <div className="ht-contact-key">Website</div>
-                    <div className="ht-contact-val">{hospital.website || "Will be added soon"}</div>
-                  </div>
-                </div>
-                <div className="ht-contact-item">
-                  <div className="ht-contact-ico"><lucideReact.Clock size={15} /></div>
-                  <div>
-                    <div className="ht-contact-key">Hours</div>
-                    <div className="ht-contact-val">{hospital.openingHours || "Will be added soon"}</div>
-                  </div>
+                <div style={{ padding:"0 1.1rem 1.1rem", fontSize:".92rem", color:"#0f1e38", lineHeight:1.6 }}>
+                  {hospital.location.area && <p style={{ margin:0, fontWeight:600 }}>{hospital.location.area}</p>}
+                  <p style={{ margin:0 }}>{hospital.location.city}, {hospital.location.country}</p>
+                  {hospital.location.postalCode && (
+                    <p style={{ margin:0, color:"#9aaac0", fontSize:".82rem", marginTop:".3rem" }}>Postal Code: {hospital.location.postalCode}</p>
+                  )}
                 </div>
               </div>
+
+              {/* Email */}
+              <div className="ht-card" style={{ marginBottom:0 }}>
+                <div className="ht-head">
+                  <div className="ht-icon" style={{ background:"rgba(168,139,80,.12)", color:"#a88b50" }}>
+                    <lucideReact.Mail size={17} />
+                  </div>
+                  <div>
+                    <div className="ht-title">Email Address</div>
+                    <div className="ht-sub">Write to us</div>
+                  </div>
+                </div>
+                <div style={{ padding:"0 1.1rem 1.1rem" }}>
+                  {hospital.email ? (
+                    <a href={`mailto:${hospital.email}`}
+                      style={{ display:"flex", alignItems:"center", gap:".5rem", color:"#a88b50", fontWeight:600, fontSize:".92rem", textDecoration:"none" }}>
+                      <lucideReact.Mail size={14} style={{ opacity:0.6 }} />
+                      {hospital.email}
+                    </a>
+                  ) : (
+                    <span style={{ color:"#9aaac0", fontSize:".92rem" }}>Will be added soon</span>
+                  )}
+                </div>
+              </div>
+
             </div>
 
-            <div className="ht-card-white">
-              <div className="ht-head">
-                <div className="ht-icon"><lucideReact.MapPin size={17} /></div>
-                <div className="ht-title">Address</div>
+            {/* Extra Info Row */}
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:"1rem" }}>
+              {/* Website */}
+              <div className="ht-card" style={{ marginBottom:0 }}>
+                <div className="ht-head">
+                  <div className="ht-icon" style={{ background:"rgba(139,92,246,.12)", color:"#7c3aed" }}>
+                    <lucideReact.Globe size={17} />
+                  </div>
+                  <div>
+                    <div className="ht-title">Website</div>
+                  </div>
+                </div>
+                <div style={{ padding:"0 1.1rem 1.1rem" }}>
+                  {hospital.website ? (
+                    <a href={hospital.website} target="_blank" rel="noopener noreferrer"
+                      style={{ display:"flex", alignItems:"center", gap:".5rem", color:"#a88b50", fontWeight:600, fontSize:".92rem", textDecoration:"none" }}>
+                      <lucideReact.ExternalLink size={14} style={{ opacity:0.6 }} />
+                      {hospital.website}
+                    </a>
+                  ) : (
+                    <span style={{ color:"#9aaac0", fontSize:".92rem" }}>Will be added soon</span>
+                  )}
+                </div>
               </div>
-              <p className="ht-prose" style={{ marginTop:0 }}>
-                {[
-                  hospital.location.addressLine,
-                  hospital.location.area,
-                  hospital.location.city,
-                  hospital.location.district,
-                  hospital.location.country,
-                  hospital.location.postalCode,
-                ].filter(Boolean).join(", ") || "Will be added soon"}
-              </p>
-              <div style={{
-                marginTop:".9rem", background:"#f7f4ef",
-                border:"1px solid rgba(15,30,56,.09)",
-                borderRadius:9, padding:".8rem .95rem",
-                display:"flex", alignItems:"center", gap:".45rem",
-                fontSize:".78rem", color:"#9aaac0",
-              }}>
-                <lucideReact.Map size={14} />
-                Interactive map coming soon.
+
+              {/* Opening Hours */}
+              <div className="ht-card" style={{ marginBottom:0 }}>
+                <div className="ht-head">
+                  <div className="ht-icon" style={{ background:"rgba(245,158,11,.12)", color:"#d97706" }}>
+                    <lucideReact.Clock size={17} />
+                  </div>
+                  <div>
+                    <div className="ht-title">Opening Hours</div>
+                  </div>
+                </div>
+                <div style={{ padding:"0 1.1rem 1.1rem", fontSize:".92rem", color:"#0f1e38", lineHeight:1.7 }}>
+                  {hospital.emergencyAvailable && (
+                    <div style={{ display:"flex", alignItems:"center", gap:".5rem" }}>
+                      <span style={{ display:"inline-block", width:8, height:8, borderRadius:"50%", background:"#16a34a" }}></span>
+                      <span style={{ fontWeight:600 }}>Emergency:</span> 24/7
+                    </div>
+                  )}
+                  <div style={{ display:"flex", alignItems:"center", gap:".5rem" }}>
+                    <span style={{ display:"inline-block", width:8, height:8, borderRadius:"50%", background:"#2563eb" }}></span>
+                    <span>{hospital.openingHours || "Contact for hours"}</span>
+                  </div>
+                </div>
               </div>
+
+              {/* Emergency */}
+              {hospital.emergencyAvailable && hospital.phone && (
+                <div className="ht-card" style={{ marginBottom:0, border:"1px solid rgba(220,38,38,.15)", background:"rgba(254,242,242,.5)" }}>
+                  <div className="ht-head">
+                    <div className="ht-icon" style={{ background:"rgba(220,38,38,.12)", color:"#dc2626" }}>
+                      <lucideReact.Siren size={17} />
+                    </div>
+                    <div>
+                      <div className="ht-title" style={{ color:"#dc2626" }}>Emergency</div>
+                      <div className="ht-sub">Available 24/7</div>
+                    </div>
+                  </div>
+                  <div style={{ padding:"0 1.1rem 1.1rem" }}>
+                    <a href={`tel:${hospital.phone}`} style={{ display:"flex", alignItems:"center", gap:".5rem", color:"#dc2626", fontWeight:700, fontSize:"1rem", textDecoration:"none" }}>
+                      <lucideReact.Phone size={15} />
+                      {hospital.phone}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Google Maps Embed */}
+            {hospital.location.lat && hospital.location.lng && (
+              <div className="ht-card" style={{ marginBottom:0, overflow:"hidden" }}>
+                <div className="ht-head">
+                  <div className="ht-icon" style={{ background:"rgba(59,130,246,.12)", color:"#2563eb" }}>
+                    <lucideReact.Map size={17} />
+                  </div>
+                  <div>
+                    <div className="ht-title">Find Us On Map</div>
+                    <div className="ht-sub">{hospital.name}, {hospital.location.area || hospital.location.city}</div>
+                  </div>
+                </div>
+                <div style={{ padding:"0 1.1rem 1.1rem" }}>
+                  <div style={{ borderRadius:12, overflow:"hidden", border:"1px solid rgba(15,30,56,.09)" }}>
+                    <iframe
+                      src={`https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3000!2d${hospital.location.lng}!3d${hospital.location.lat}!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${hospital.location.lat}%2C${hospital.location.lng}!5e0!3m2!1sen!2snp!4v1`}
+                      width="100%"
+                      height="350"
+                      style={{ border:0, display:"block" }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`${hospital.name} Location`}
+                    />
+                  </div>
+                  <div style={{ marginTop:".7rem", display:"flex", alignItems:"center", gap:".5rem" }}>
+                    <a
+                      href={`https://www.google.com/maps/dir//${encodeURIComponent(hospital.name)}+${encodeURIComponent(hospital.location.area || hospital.location.city)}/@${hospital.location.lat},${hospital.location.lng},15z`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ display:"inline-flex", alignItems:"center", gap:".4rem", background:"#0f1e38", color:"#c8a96e", padding:".55rem 1rem", borderRadius:8, fontSize:".82rem", fontWeight:600, textDecoration:"none" }}
+                    >
+                      <lucideReact.Navigation size={14} />
+                      Get Directions
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

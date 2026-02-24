@@ -159,13 +159,24 @@ async function main() {
   const SUMMARY =
     "CHARAK MEMORIAL HOSPITAL PVT. LTD. (CMH) was founded with the principles of Social equity in health care. " +
     "CMH is registered and established on 10th of Mangsir 2069 and is thriving to provide health services in hygienic way " +
-    "as well as modernization in its system. The Hospital is located presently in a centre of Pokhara, best suited for providing prompt health services. " +
+    "as well as modernization in its system. The Hospital is located presently in a centre of Pokhara, best suited for providing prompt health services.\n\n" +
     "The hospital was originated by the combined sincere efforts of Doctors and few dedicated people working in health sector. " +
     "Over the course of this exciting journey we have the central mission of providing quality health care services mainly the rural and disadvantaged people " +
     "surrounding near the Gandaki and Dhaulagiri zone with the utmost professionalism. " +
-    "Despite all the challenges CMH become one of the fastest growing hospital in the western region also managed to expand its services to the academics programs in the near future. " +
+    "Despite all the challenges CMH become one of the fastest growing hospital in the western region also managed to expand its services to the academics programs in the near future.\n\n" +
+    "We are committed to innovation and the adoption of new appropriate and cost effective technologies for the promotion of health services of individuals and community. " +
+    "We have managed the social care unit in the hospital which is concerned for the disabled, disadvantaged, marginalized and vulnerable patients. " +
+    "The hospitals allocate ten percent of free beds and medical services to financially weak patients and keep additional medical services at subsidized rates. " +
+    "We are providing all medical services in our well-equipped hospital.\n\n" +
+    "Founded in 2012, Charak Memorial Hospital has been pioneer in providing world class health care services. " +
+    "Located in the heart of Pokhara, a metropolitan city, nicknamed as 'Heaven on Earth'. " +
     "Charak Memorial Hospital is a multi-specialty hospital, cares for over a 2 million population in the Gandaki Province. " +
-    "Its mission is to offer state-of-the-art diagnostic, curative and rehabilitative services of international standards with evidence-based ethical healthcare.";
+    "Its mission is to offer state-of-the-art diagnostic, curative and rehabilitative services of international standards with evidence-based ethical healthcare.\n\n" +
+    "WORLD CLASS FACILITY\n" +
+    "Charak Memorial Hospital is a leader in medical technology and innovative patient services. " +
+    "The 100 bedded, 7-storey new building is equipped with rooftop helipad is truly unique. " +
+    "We can enjoy the magnificent view of Pokhara. Another positive aspect is its Central location also the building is Earthquake resistant. " +
+    "We have other facilities like modern equipments, latest technology, Central air-conditioning and of best international brands medical equipments.";
 
   const hospital = await prisma.hospital.upsert({
     where: { slug: "charak-memorial-hospital" },
