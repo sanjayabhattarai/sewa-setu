@@ -12,6 +12,7 @@ import type { Occurrence } from "@/lib/availability";
 type Props = {
   doctor: ApiDoctor;
   slots?: ApiAvailabilitySlot[];
+  departmentName?: string;
   onSelectSlotAction?: (occ: Occurrence) => void;
 };
 
@@ -81,7 +82,7 @@ function formatFeeWholeEUR(amountCents?: number | null, currency?: string | null
   return `${symbol}${whole}`;
 }
 
-export function DoctorCard({ doctor, slots = [], onSelectSlotAction }: Props) {
+export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAction }: Props) {
   const [showAvailability, setShowAvailability] = useState(false);
 
   const doctorSlots = useMemo(() => {
@@ -89,6 +90,7 @@ export function DoctorCard({ doctor, slots = [], onSelectSlotAction }: Props) {
   }, [slots, doctor.id]);
 
   const primarySpecialty =
+    departmentName ??
     doctor.specialties.find((s) => s.isPrimary)?.name ??
     doctor.specialties[0]?.name ??
     "Doctor";

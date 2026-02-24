@@ -1,0 +1,857 @@
+{
+  "source": "cmh.com.np",
+  "hospital": {
+    "slug": "charak-memorial-hospital",
+    "name": "Charak Memorial Hospital",
+    "type": "HOSPITAL",
+    "website": "https://cmh.com.np"
+  },
+  "departments": [
+    {
+      "name": "Department",
+      "slug": "internal-medicine",
+      "overview": "The Internal Medicine department at Charak Memorial Hospital is a comprehensive healthcare facility dedicated to the diagnosis, treatment, and management of a wide range of adult medical conditions. Staffed by a team of highly skilled and experienced internists, the department provides exceptional care to patients with acute and chronic illnesses. Key Services and Specialties: General Internal Medicine: The department offers comprehensive care for a variety of medical conditions, including respiratory disorders, cardiovascular diseases, digestive disorders, endocrine problems, and rheumatologic conditions. The internists work closely with patients to develop personalized treatment plans and provide ongoing management of their health. Specialized Clinics: The department houses several specialized clinics focused on specific areas of internal medicine, such as diabetes management, hypertension and heart disease, pulmonary disorders, and rheumatology. These clinics are staffed by physicians with advanced training and expertise in their respective fields. Diagnostic Services: Patients have access to a wide range of diagnostic services within the department, including laboratory testing, imaging (X-rays, CT scans, MRI), and specialized procedures like endoscopies and biopsies. These services aid in the accurate diagnosis and monitoring of various medical conditions. Inpatient Care: The department provides comprehensive inpatient care for individuals requiring hospitalization for acute medical conditions or exacerbations of chronic illnesses. The internists work closely with other healthcare professionals, such as nurses, pharmacists, and therapists, to ensure coordinated and holistic care. Preventive Medicine: The Internal Medicine department places a strong emphasis on preventive care, offering services such as routine health screenings, counseling on lifestyle modifications, and management of risk factors for chronic diseases. The Internal Medicine department at Charak Memorial Hospital is committed to delivering patient-centered care, utilizing evidence-based practices and the latest advancements in medical technology. The team of internists works collaboratively with other specialists within the hospital to provide comprehensive and integrated care for patients with complex or multisystem disorders.",
+      "sourceUrl": "https://cmh.com.np/departments/internal-medicine",
+      "doctors": [
+        {
+          "fullName": "Dr. Maan Bahadur Gurung",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Awards And AchievementsTo be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles, And by opposing end them? T (2023-08-16)",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-maan-bahadur-gurung"
+        },
+        {
+          "fullName": "Dr. Buddhisagar Lamichhane",
+          "education": [
+            "DM",
+            "MD"
+          ],
+          "specialty": "Consultant Pulmonologist",
+          "about": "MD (Internal medicine, NAMS), DM (Pulmonary, Critical Care and Sleep Medicine, NAMS)",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-buddhisagar-lamichhane"
+        },
+        {
+          "fullName": "Dr. Suraj Baral",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Awards And AchievementsGold Medal - TU (Intermediate in Science) (2024-07-16)MBBS and MD scholarships (Ministry of Education) (2024-07-16)Outstanding International Student - MD (HUST, Wuhan) (2024-07-16)",
+          "about": "Consultant physician with more than 11 years' of experience in Emergency medicine, chronic disease management, infectious disease and critical care. A merit student of Ministry of Education with experience in various government and private health institutes. I believe in good doctor patient relationship, quality and evidence based medicine. Also interested in research work and academic activities on a regular basis for up-to-date knowledge.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-suraj-baral"
+        },
+        {
+          "fullName": "Dr. Sarad Chandra Baral",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Consultant Physician",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/sarad-chandra-baral"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "interventional-cardiology",
+      "overview": "The Interventional Cardiology department at Charak Memorial Hospital is a state-of-the-art facility dedicated to the diagnosis, treatment, and management of cardiovascular diseases through minimally invasive procedures. Led by a team of highly skilled interventional cardiologists, the department offers advanced and innovative techniques to provide comprehensive care for patients with heart-related conditions. Key Services and Specialties: Coronary Angiography and Angioplasty: The department specializes in performing diagnostic coronary angiography to assess blockages or narrowing in the heart's arteries. Additionally, they offer angioplasty procedures, including balloon angioplasty and stent placement, to open blocked arteries and restore blood flow to the heart. Percutaneous Coronary Interventions (PCI): The interventional cardiologists are experts in performing complex percutaneous coronary interventions (PCI), such as treating chronic total occlusions (CTOs) and bifurcation lesions, using advanced techniques and specialized equipment. Structural Heart Interventions: The department offers minimally invasive procedures for structural heart diseases, including transcatheter aortic valve replacement (TAVR) for aortic stenosis, mitral valve repair, and closure of atrial septal defects and patent foramen ovale (PFO). Peripheral Vascular Interventions: The team provides minimally invasive treatments for peripheral artery disease, such as angioplasty, stenting, and atherectomy, to improve blood flow and alleviate symptoms in the legs and other extremities. Electrophysiology Studies and Ablations: In collaboration with cardiac electrophysiologists, the department performs diagnostic electrophysiology studies and ablation procedures to treat various heart rhythm disorders, including atrial fibrillation, ventricular tachycardia, and other arrhythmias. The Interventional Cardiology department at Charak Memorial Hospital is equipped with cutting-edge catheterization laboratories, advanced imaging technologies, and state-of-the-art equipment to ensure precise and safe interventional procedures. The team works closely with other cardiovascular specialists, such as cardiologists, cardiac surgeons, and vascular surgeons, to provide comprehensive and integrated care for patients with complex cardiovascular conditions. General cardiology services include preoperative evaluation and treatment and assessment of: Acute Myocardial Infarction Angina Ischemic heart disease CAD with TVD DVD or SVD Dyslipidemia Congenital heart disease Valvular heart disease Rheumatic heart disease Hypertension and related problem Cardiac rhythm abnormality Complete Heart Block Sinus Brady or Tachycardia Atrial fibrillation Infective Endocarditis Myopathies",
+      "sourceUrl": "https://cmh.com.np/departments/interventional-cardiology",
+      "doctors": [
+        {
+          "fullName": "Dr. SK Jayswal",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Awards And AchievementsNational and international awards in different cardiovascular conferences. (2024-06-04)",
+          "about": "A highly professional and dedicated cardiologist with over 12 years experience in daignosing,intervening and treating a wide range of heart and cardiovascular disorders as well as operating and handling various cardiac testing equipment and devices.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-sk-jayswal"
+        },
+        {
+          "fullName": "Dr. Abhinav Pradhan",
+          "education": [
+            "MBBS",
+            "MD",
+            "PHD"
+          ],
+          "specialty": "Professional Memberships And CertificationsNMC",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-abhinav-pradhan"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "anaesthesiology",
+      "overview": "The Critical Care Department at Charak Memorial Hospital is dedicated to providing specialized and intensive care to patients who are critically ill or experiencing life-threatening medical conditions. Led by a multidisciplinary team of critical care physicians, nurses, respiratory therapists, and other healthcare professionals, the department is equipped to handle a wide range of complex medical cases, including post-operative complications, severe infections, cardiac emergencies, and respiratory failure. The department is outfitted with state-of-the-art monitoring equipment and advanced life support systems to closely monitor patients' vital signs and provide immediate interventions as needed. From mechanical ventilation and hemodynamic monitoring to continuous renal replacement therapy and advanced cardiac life support, the Critical Care Department utilizes the latest technologies and evidence-based practices to optimize patient outcomes. In addition to providing acute medical care, the department also emphasizes holistic patient management, addressing not only the physical aspects of critical illness but also the psychological, emotional, and social needs of patients and their families. This includes providing support and counseling, facilitating communication between healthcare providers and family members, and ensuring that patients receive appropriate palliative care when needed. Furthermore, the Critical Care Department at Charak Memorial Hospital is actively involved in research and education, contributing to advancements in critical care medicine and training the next generation of critical care providers. Through a combination of compassionate care, medical expertise, and interdisciplinary collaboration, the department strives to deliver the highest standard of critical care to patients in their time of greatest need.",
+      "sourceUrl": "https://cmh.com.np/departments/anaesthesiology",
+      "doctors": [
+        {
+          "fullName": "Dr. Manoj Tripathee",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Professional Memberships And CertificationsNepal Medical Council (NMC )CertifiedNepal Medical Association (NMA) memberSociety of Anaesthesiologist(SAN) member",
+          "about": "Dr. Manoj Tripathee is an Anaesthesiologist with a dual focus on Nepal's medical landscape: providing expert anaesthesia care and crucial support in the ICU. Dedicated to ensuring patient comfort and safety during procedures while also delivering top-notch critical care in emergency situations. Committed to advancing medical practices and improving healthcare outcomes in Nepal through prompt and effective medical interventions.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-manoj-tripathee"
+        },
+        {
+          "fullName": "Dr Bibek Mishra",
+          "education": [
+            "MD",
+            "MBBS"
+          ],
+          "specialty": "Consultant Anesthesia and Critical Care Medicine",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bibek-mishra"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "endocrinology-and-metabolism",
+      "overview": "The Endocrinology and Metabolism department at Charak Memorial Hospital is a specialized facility dedicated to the diagnosis, treatment, and management of disorders related to the endocrine system and metabolic processes. Staffed by a team of highly trained and experienced endocrinologists, the department provides comprehensive care for a wide range of hormonal and metabolic conditions. Key Services and Specialties: Diabetes Management: The department offers comprehensive diabetes care, including insulin therapy management, continuous glucose monitoring, and education on nutrition, exercise, and lifestyle modifications. The team also specializes in the treatment of gestational diabetes and diabetic complications. Thyroid Disorders: The endocrinologists provide expert care for thyroid conditions, such as hypothyroidism, hyperthyroidism, thyroid nodules, and thyroid cancer. Services include thyroid function testing, ultrasound imaging, and treatments like radioactive iodine therapy and thyroid surgery (in collaboration with general surgeons). Pituitary and Adrenal Disorders: The department specializes in the diagnosis and management of pituitary and adrenal gland disorders, such as Cushing's syndrome, acromegaly, hypopituitarism, and adrenal insufficiency. Treatment options include medication, hormone replacement therapy, and surgical interventions when necessary. Metabolic Bone Disorders: The team offers comprehensive care for metabolic bone disorders, including osteoporosis, Paget's disease, and disorders of calcium and phosphate metabolism. Services include bone density scans, fracture risk assessments, and appropriate medical and lifestyle interventions. Reproductive Endocrinology: The department provides evaluation and treatment for hormonal imbalances affecting reproductive health, such as polycystic ovary syndrome (PCOS), male hypogonadism, and infertility (in collaboration with fertility specialists). The Endocrinology and Metabolism department at Charak Memorial Hospital is equipped with advanced diagnostic tools, including hormone testing laboratories, imaging modalities, and specialized equipment for procedures like fine-needle aspiration biopsies. The team collaborates closely with other departments, such as radiology, nuclear medicine, and surgery, to provide comprehensive and multidisciplinary care for patients with complex endocrine and metabolic disorders.",
+      "sourceUrl": "https://cmh.com.np/departments/endocrinology-and-metabolism",
+      "doctors": []
+    },
+    {
+      "name": "Department",
+      "slug": "nephrology",
+      "overview": "The Nephrology department at Charak Memorial Hospital is a specialized facility dedicated to the diagnosis, treatment, and management of kidney-related diseases and disorders. Staffed by a team of highly skilled and experienced nephrologists, the department provides comprehensive care for patients with acute and chronic kidney conditions. Key Services and Specialties: Chronic Kidney Disease (CKD) Management : The department offers comprehensive care for patients with various stages of chronic kidney disease, including medical management, dietary counseling, and preparation for dialysis or kidney transplantation when necessary. Dialysis Services : The department houses a state-of-the-art dialysis unit, offering both hemodialysis and peritoneal dialysis services for patients with end-stage renal disease (ESRD). The dialysis unit is staffed by highly trained nurses and technicians, ensuring safe and efficient dialysis treatments. Kidney Transplantation : In collaboration with the hospital's transplant team, the nephrology department evaluates and prepares patients for kidney transplantation, providing pre- and post-transplant care, immunosuppression management, and long-term follow-up. Glomerular Diseases : The nephrologists specialize in the diagnosis and treatment of glomerular diseases, such as glomerulonephritis, nephrotic syndrome, and vasculitis, utilizing advanced diagnostic techniques like kidney biopsies and targeted therapies. Hypertension Management : The department offers comprehensive evaluation and management of hypertension, including resistant and secondary forms, in collaboration with other specialists when necessary. Metabolic and Electrolyte Disorders : The team provides expert care for metabolic and electrolyte disturbances, such as acid-base imbalances, fluid disorders, and mineral metabolism disorders, often associated with kidney diseases. The Nephrology department at Charak Memorial Hospital is equipped with state-of-the-art facilities, including a dedicated dialysis unit, advanced diagnostic equipment, and specialized laboratories for kidney function testing and analysis. The nephrologists work closely with other specialists, such as urologists, transplant surgeons, and dietitians, to provide multidisciplinary care tailored to the unique needs of each patient with kidney-related conditions.",
+      "sourceUrl": "https://cmh.com.np/departments/nephrology",
+      "doctors": [
+        {
+          "fullName": "Dr. Bikash Khatri",
+          "education": [
+            "DM",
+            "MD"
+          ],
+          "specialty": "Consultant Nephrologist",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bikash-khatri"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "general-surgery",
+      "overview": "The General Surgery department at Charak Memorial Hospital is a leading facility that provides comprehensive surgical care for a wide range of conditions and diseases. Staffed by a team of highly skilled and experienced general surgeons, the department offers advanced surgical techniques and state-of-the-art technologies to ensure the best possible outcomes for patients. Key Services and Specialties: General Surgical Procedures: The department performs a variety of surgical procedures, including but not limited to appendectomies, hernia repairs, gallbladder surgeries, breast surgeries, and abdominal surgeries for conditions like bowel obstructions, diverticulitis, and gastrointestinal cancers. Minimally Invasive Surgery: The department is at the forefront of minimally invasive surgical techniques, such as laparoscopic and robotic-assisted surgeries. These advanced approaches offer patients faster recovery times, reduced pain, and smaller incisions, leading to improved cosmetic results and a quicker return to normal activities. Surgical Oncology: The department has a dedicated team of surgical oncologists who specialize in the surgical treatment of various types of cancers, including breast, colorectal, and other gastrointestinal cancers. They work closely with medical oncologists and radiation oncologists to provide comprehensive cancer care. Trauma and Emergency Surgery: The general surgeons are equipped to handle traumatic injuries and emergency surgical cases, working closely with the hospital's emergency department and trauma team to provide prompt and life-saving interventions. Perioperative Care: The department provides comprehensive perioperative care, ensuring patients receive thorough pre-operative assessments, careful monitoring during surgery, and attentive post-operative care and follow-up to facilitate optimal recovery. The General Surgery department at Charak Memorial Hospital is equipped with cutting-edge surgical suites, advanced imaging technologies, and dedicated surgical wards to ensure the highest standards of care. The surgeons collaborate with a multidisciplinary team of healthcare professionals, including anesthesiologists, nurses, and allied health professionals, to deliver personalized and comprehensive surgical care to each patient.",
+      "sourceUrl": "https://cmh.com.np/departments/general-surgery",
+      "doctors": [
+        {
+          "fullName": "Dr. Kovid Nepal",
+          "education": [
+            "FCPS SURGERY"
+          ],
+          "specialty": "Consultant General and Laparoscopic Surgeon",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-kovid-nepal"
+        },
+        {
+          "fullName": "Dr. Rabin Pahari",
+          "education": [
+            "MS, M.CH - GI & HPB"
+          ],
+          "specialty": "Professional Memberships And CertificationsNMC",
+          "about": "Consultant General Surgery & GI Surgery MS, M.Ch - Gastrointestinal Surgery (GI) & Hepato Pancreato Biliary (HPB) Surgery",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rabin-pahari"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "urology-and-uro-surgery",
+      "overview": "The Urology and Uro-surgery department at Charak Memorial Hospital is a leading facility that provides comprehensive care for conditions affecting the urinary tract and male reproductive system. Staffed by a team of highly skilled and experienced urologists and uro-surgeons, the department offers advanced diagnostic and treatment services, utilizing the latest technologies and surgical techniques. Key Services and Specialties: Urologic Oncology : The department specializes in the diagnosis and treatment of urologic cancers, including prostate cancer, bladder cancer, kidney cancer, and testicular cancer. Services include advanced diagnostic procedures, robotic and minimally invasive surgeries, chemotherapy, and radiation therapy (in collaboration with medical and radiation oncologists). Kidney Stone Management : The urologists are experts in the evaluation and management of kidney stones, offering a range of treatment options, such as extracorporeal shock wave lithotripsy (ESWL), ureteroscopy, and percutaneous nephrolithotomy (PCNL), tailored to the specific needs of each patient. Male Reproductive Health : The department provides comprehensive care for male reproductive disorders, including erectile dysfunction, male infertility, vasectomy, and vasectomy reversal procedures. Advanced techniques like penile implants and microsurgical vasectomy reversals are available. Urinary Incontinence and Pelvic Floor Disorders : The team offers evaluation and treatment for urinary incontinence, overactive bladder, and pelvic floor disorders in both men and women. Treatment options include pelvic floor muscle rehabilitation, medications, and surgical interventions when necessary. Reconstructive Urology : The uro-surgeons specialize in complex reconstructive procedures for congenital anomalies, trauma-related injuries, and other urologic conditions requiring reconstruction of the urinary tract or genital organs. Robotic and Minimally Invasive Surgery : The department is at the forefront of robotic and minimally invasive surgical techniques, offering patients the benefits of smaller incisions, reduced pain, faster recovery times, and improved cosmetic outcomes. The Urology and Uro-surgery department at Charak Memorial Hospital is equipped with state-of-the-art operating rooms, advanced imaging technologies, and dedicated inpatient and outpatient facilities. The urologists and uro-surgeons work closely with other specialists, such as oncologists, radiologists, and pathologists, to provide multidisciplinary and personalized care for patients with urologic conditions.",
+      "sourceUrl": "https://cmh.com.np/departments/urology-and-uro-surgery",
+      "doctors": [
+        {
+          "fullName": "Prof. Dr. Dhruba Bahadur Adhikari",
+          "education": [
+            "MBBS",
+            "MS"
+          ],
+          "specialty": "Professor & Consultant Urologist",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-dhruba-bahadur-adhikari"
+        },
+        {
+          "fullName": "Dr. Anup Chapagain",
+          "education": [
+            "MS, MCH."
+          ],
+          "specialty": "Awards And AchievementsBest Pral Presentation in AUA 2019 (2019-01-01)",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/anup-chapagain"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "obstetrics-and-gynecology",
+      "overview": "The Obstetrics and Gynecology (OB/GYN) department at Charak Memorial Hospital is a comprehensive facility dedicated to providing exceptional care for women throughout all stages of their lives. Staffed by a team of highly skilled and experienced obstetricians, gynecologists, and specialized nurses, the department offers a wide range of services focused on reproductive health, pregnancy care, and gynecological conditions. Key Services and Specialties: Obstetric Care : The department provides comprehensive prenatal care, labor and delivery services, and postpartum care for expectant mothers. The state-of-the-art labor and delivery suites are equipped with advanced fetal monitoring systems and specialized care for high-risk pregnancies. The department also offers prenatal diagnostic services, such as ultrasounds and genetic testing. Gynecologic Services : The team of gynecologists specializes in the diagnosis and treatment of various gynecological conditions, including abnormal uterine bleeding, pelvic pain, endometriosis, uterine fibroids, and gynecological cancers. Services include routine gynecological examinations, colposcopy, hysteroscopy, and minimally invasive surgical procedures. Fertility Services : The department offers fertility evaluation and treatment options for couples experiencing difficulty conceiving. Services include ovulation induction, intrauterine insemination (IUI), and in vitro fertilization (IVF) in collaboration with the hospital's fertility center. Minimally Invasive Gynecologic Surgery : The department is equipped with advanced surgical suites and robotic surgical systems, enabling the performance of minimally invasive procedures, such as laparoscopic hysterectomies, myomectomies (fibroid removal), and endometriosis surgery, resulting in faster recovery times and improved patient outcomes. Well-Woman Care : The OB/GYN department emphasizes preventive care and promotes women's overall health through routine screenings, such as cervical cancer screening (Pap tests), breast examinations, and counseling on contraception, menopause management, and lifestyle modifications. The Obstetrics and Gynecology department at Charak Memorial Hospital is committed to providing compassionate and personalized care to women throughout all stages of their lives. The team collaborates closely with other specialists, such as maternal-fetal medicine specialists, reproductive endocrinologists, and oncologists, to offer multidisciplinary care for complex cases and high-risk pregnancies.",
+      "sourceUrl": "https://cmh.com.np/departments/obstetrics-and-gynecology",
+      "doctors": [
+        {
+          "fullName": "Dr. Madan Khadka",
+          "education": [
+            "MBBS",
+            "MS"
+          ],
+          "specialty": "Consultant Gynaec Endoscopic Surgeon and Infertility Specialist",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-madan-khadka"
+        },
+        {
+          "fullName": "Dr. Bishnu Palikhe",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Professional Memberships And CertificationsLife member of World Association of Laparoscopic SurgeonLife member of Nepal Medical CouncilLife member of Nepal Society of Obstetrics and GynecologyDiploma in Minimal Access Surgery, WALS 2023Fellowship in Minimal Access Surgery, WALS 2023Post-partum Intrauterine Copper Device on Job Training (PPIUCD OJT), National Health Training Centre, 2017Quality Improvement for perinatal care training of health workers, National Health Training Centre, 2017Comprehensive Abortion Care (CAC), National Health Training Centre, 2017Cervical Cancer Screening and Prevention (CCSP), National Health Training Centre, 2017Certificate Course in the Management of Thyroid Disorder (CCMTD), 2019Total Laparoscopic Hysterectomy (decoding the technique), 2020Intrauterine Insemination Workshop, NESOG, 2022Intrauterine Insemination Workshop, Ian Donald Inter university of Medical Ultrasound and Om Hospital and Research Centre, 2022",
+          "about": "Dr. Bishnu Palikhe is a highly skilled and compassionate obstetrician and gynecologist with extensive experience in women's health. Dr. Palikhe is committed to providing exceptional care in areas such as prenatal and postnatal care, high-risk pregnancies, gynecologic laparoscopic surgery, and overall reproductive health. Dr. Palikhe earned their medical degree from a Jiamusi University and has completed rigorous training in obstetrics and gynecology. With a patient-centered approach, Dr. Palikhe emphasizes personalized care and open communication, ensuring that each patient receives the best possible treatment tailored to their needs. Dedicated to staying current with the latest advancements in the field, Dr. Palikhe is an active member of several professional organizations and regularly participates in continuing education. Fluent in multiple languages, Dr. Palikhe is able to serve a diverse patient population effectively. When not providing medical care, Dr. Palikhe enjoys engaging in community health initiatives and spending time with family. Dr. Palikhe’s expertise and dedication to women's health make them an invaluable asset to our medical team.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bhishnu-palikhe"
+        },
+        {
+          "fullName": "Dr. Rupa Paneru",
+          "education": [
+            "MBBS",
+            "MD OBSTETRICS & GYNAECOLOGY"
+          ],
+          "specialty": "Consultant Obstetrics and Gynecology",
+          "about": "Specialist in women and reproductive health problems",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rupa-paneru"
+        }
+      ]
+    },
+    {
+      "name": "Trauma and Orthopedics",
+      "slug": "trauma-and-orthopedics",
+      "overview": "The Trauma and Orthopedics department at Charak Memorial Hospital is a state-of-the-art facility dedicated to providing comprehensive care for patients suffering from traumatic injuries, musculoskeletal disorders, and orthopedic conditions. Staffed by a team of highly skilled and experienced orthopedic surgeons, trauma specialists, and allied healthcare professionals, the department offers advanced diagnostic and treatment services, utilizing the latest techniques and technologies. Key Services and Specialties: Trauma Care : The department has a dedicated trauma team that provides prompt and efficient care for patients with traumatic injuries, such as fractures, dislocations, and soft tissue injuries resulting from accidents, falls, or other trauma. The team collaborates closely with the hospital's emergency department to ensure timely and appropriate treatment. Orthopedic Surgery : The department specializes in a wide range of orthopedic surgical procedures, including joint replacements (hip, knee, shoulder), arthroscopic surgeries, spinal surgeries, sports injury repairs, and corrective surgeries for congenital deformities and musculoskeletal disorders. Sports Medicine : The team of sports medicine specialists focuses on the prevention, diagnosis, and treatment of sports-related injuries, providing comprehensive care to athletes and active individuals. Services include injury evaluation, rehabilitation, and guidance on safe return to play. Pediatric Orthopedics : The department has dedicated pediatric orthopedic surgeons who specialize in treating musculoskeletal conditions and injuries in children, including congenital deformities, developmental disorders, and pediatric trauma. Orthopedic Oncology : In collaboration with the hospital's cancer center, the department offers specialized care for patients with musculoskeletal tumors, including diagnostic services, surgical interventions, and rehabilitation. Rehabilitation Services : The department works closely with the hospital's rehabilitation team to provide comprehensive post-operative care, physical therapy, and occupational therapy services, aiming to restore optimal function and mobility for patients recovering from orthopedic surgeries or injuries. The Trauma and Orthopedics department at Charak Memorial Hospital is equipped with advanced surgical facilities, including operating rooms dedicated to orthopedic procedures, state-of-the-art imaging modalities, and specialized rehabilitation facilities. The multidisciplinary team approaches each case with a patient-centered approach, ensuring personalized care and tailored treatment plans for optimal recovery and improved quality of life.",
+      "sourceUrl": "https://cmh.com.np/departments/trauma-and-orthopedics",
+      "doctors": [
+        {
+          "fullName": "Dr. Jhapindra Pokharel",
+          "education": [
+            "MS"
+          ],
+          "specialty": "Awards And AchievementsUMN SCHOLARSHIP AWARD (2024-06-02)",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-jhapindra-pokharel"
+        },
+        {
+          "fullName": "Dr. Pradeep Kafle",
+          "education": [
+            "MS"
+          ],
+          "specialty": "Awards And AchievementsBest Resident (2024-06-05)",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-pradeep-kafle"
+        },
+        {
+          "fullName": "Dr. Manoj Kumar Tiwari",
+          "education": [
+            "MS - ORTHOPEDIC SURGERY"
+          ],
+          "specialty": "Robotic Primary, Complex & Revision Hip, Knee Replacement & Arthroscopy",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-manoj-kumar-tiwari"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "neurosurgery",
+      "overview": "At Charak Memorial Hospital, our Neurosurgery Department is dedicated to providing comprehensive and advanced care for patients with disorders and injuries affecting the brain, spine, and peripheral nerves. Our team of highly skilled neurosurgeons, supported by specialized nurses and support staff, utilizes the latest techniques and state-of-the-art technology to ensure optimal outcomes for our patients. Surgical Services Our Neurosurgery Department offers a wide range of surgical services to treat various neurological conditions, including: Brain Tumor Surgery: Our neurosurgeons are experienced in performing complex procedures to remove or treat brain tumors, including gliomas, meningiomas, and pituitary tumors, using advanced surgical techniques such as neuronavigation and intraoperative imaging. Spine Surgery: We offer surgical interventions for conditions affecting the spine, such as herniated discs, spinal stenosis, scoliosis, and spinal tumors. Our neurosurgeons perform minimally invasive spine surgeries, as well as complex procedures like spinal fusion and decompression surgeries. Cerebrovascular Surgery: Our neurosurgeons have expertise in treating cerebrovascular disorders, including aneurysms, arteriovenous malformations, and carotid artery disease, through advanced surgical techniques like endovascular coiling and clipping procedures. Peripheral Nerve Surgery: Our neurosurgeons perform surgeries to repair or decompress peripheral nerves affected by conditions like carpal tunnel syndrome, nerve injuries, and entrapment neuropathies. Advanced Technologies Our Neurosurgery Department is equipped with cutting-edge technologies to enhance surgical precision and patient outcomes, including: Intraoperative Neuronavigation: This advanced imaging guidance system provides real-time, 3D visualization of the brain and spine during surgery, allowing for precise surgical planning and execution. Intraoperative Neurophysiological Monitoring: Our team utilizes advanced monitoring techniques to assess neural function during surgery, minimizing the risk of neurological complications. Surgical Microscopes and Endoscopes: We employ high-resolution microscopes and endoscopes to magnify and visualize intricate neural structures during delicate neurosurgical procedures. Stereotactic Radiosurgery: Our state-of-the-art stereotactic radiosurgery system delivers precisely targeted radiation therapy for certain brain tumors and other neurological conditions, offering a non-invasive treatment option. Multidisciplinary Care At our Neurosurgery Department, we believe in a collaborative and multidisciplinary approach to patient care. Our neurosurgeons work closely with neurologists, neuro-oncologists, neuroradiologists, and other specialists to develop comprehensive treatment plans tailored to each patient's unique needs. This integrated approach ensures that our patients receive comprehensive care, addressing all aspects of their neurological condition. With our team of highly skilled neurosurgeons, advanced technologies, and commitment to excellence, the Neurosurgery Department at Charak Memorial Hospital is dedicated to providing world-class care and improving the lives of patients with neurological disorders and injuries.",
+      "sourceUrl": "https://cmh.com.np/departments/neurosurgery",
+      "doctors": [
+        {
+          "fullName": "Dr. Rajan Kumar Sharma",
+          "education": [
+            "MS, MCH."
+          ],
+          "specialty": "Consultant Neurosurgeon",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rajan-kumar-sharma"
+        },
+        {
+          "fullName": "Dr. Bikas Thapa",
+          "education": [
+            "MBBS",
+            "MD",
+            "MCH"
+          ],
+          "specialty": "Consultant Neurosurgery, Brain and Spine Surgeon",
+          "about": "Morning 7:30-8:30 am Evening 4:00-7:00pm",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bikas-thapa"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "plastic-reconstructive-surgery",
+      "overview": "About Us Doctors Available Contact Us Departments Internal Medicine Interventional Cardiology Critical Care Medicine & Anaesthesiology Endocrinology and Metabolism Nephrology General and Laparoscopic Surgery Urology and Uro-surgery Obstetrics and Gynecology Trauma and Orthopedics Neurosurgery Plastic & Reconstructive Surgery Pediatrics Ophthalmology Otorhinolaryngology (ENT) Dermatology, Cosmetology And Hair Transplant Radiology Oncology Psychiatry & Psychology Dental and Oral Care Physiotherapy Pulmonology & Sleep Dietetics & Nutrition Services Emergency and Trauma Care Cath-Lab Services Radiology Services In-Patient Services Out-Patient Services OT and Surgical Services Optical Diagnostics Services Pain Management Services Critical Care Services Skin & Aesthetics Clinic Pathology Pharmacy Traveler Health Medicine Ambulance Laboratory Media Center Research & Publications Careers About Us Doctors Available Departments Internal Medicine Interventional Cardiology Critical Care Medicine & Anaesthesiology Endocrinology and Metabolism Nephrology General and Laparoscopic Surgery Urology and Uro-surgery Obstetrics and Gynecology Trauma and Orthopedics Neurosurgery Plastic & Reconstructive Surgery Pediatrics Ophthalmology Otorhinolaryngology (ENT) Dermatology, Cosmetology And Hair Transplant Radiology Oncology Psychiatry & Psychology Dental and Oral Care Physiotherapy Pulmonology & Sleep Dietetics & Nutrition Services Emergency and Trauma Care Cath-Lab Services Radiology Services In-Patient Services Out-Patient Services OT and Surgical Services Optical Diagnostics Services Pain Management Services Critical Care Services Skin & Aesthetics Clinic Pathology Pharmacy Traveler Health Medicine Ambulance Laboratory Contact Us Media Center Research & Publications Careers Department of Plastic & Reconstructive Surgery Home > Department > plastic reconstructive surgery Departments Internal Medicine Interventional Cardiology Critical Care Medicine & Anaesthesiology Endocrinology and Metabolism Nephrology General and Laparoscopic Surgery Urology and Uro-surgery Obstetrics and Gynecology Trauma and Orthopedics Neurosurgery Plastic & Reconstructive Surgery Pediatrics Ophthalmology Otorhinolaryngology (ENT) Dermatology, Cosmetology And Hair Transplant Radiology Oncology Psychiatry & Psychology Dental and Oral Care Physiotherapy Pulmonology & Sleep Dietetics & Nutrition Doctors Available Dr. Piyush Giri FCPS Surgery Consultant Plastic & Reconstructive Surgeon NMC: 13627 Call us Now +977 61 582779 Book Health Check-up Book Appointment Recognized by Nagdhunga, Pokhara-8, Kaski, Gandaki Province Price List © 2026 Charak Memorial Hospital | Developed by Aarambha IT Privacy Terms Sitemap",
+      "sourceUrl": "https://cmh.com.np/departments/plastic-reconstructive-surgery",
+      "doctors": [
+        {
+          "fullName": "Dr. Piyush Giri",
+          "education": [
+            "FCPS SURGERY"
+          ],
+          "specialty": "Awards And AchievementsInternational Federation of Societies for Surgery of the Hand (IFSSH) (2024-06-02)The American Society for Surgery of the Hand (ASSH), (2024-06-02)the American Association for Hand Surgery (AAHS) fellowship Award (2024-06-02)",
+          "about": "Dr. Piyush Giri is a highly skilled Burn, Plastic, and Reconstructive Microsurgeon with extensive experience in treating severe burn injuries, complex wound care, and intricate reconstructive procedures. After earning their medical degree from College of Physicians and Surgeons, Dr. Piyush completed specialized training in plastic and reconstructive surgery, followed by a fellowship in microsurgery. Known for their meticulous surgical technique and compassionate patient care, Dr. Piyush has significantly improved the quality of life for countless patients, restoring both function and aesthetics. They are also an active contributor to medical research and education, committed to advancing the field of reconstructive microsurgery.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-piyush-giri"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "pediatrics",
+      "overview": "The Pediatrics department at Charak Memorial Hospital is a comprehensive healthcare facility dedicated to providing exceptional medical care for infants, children, and adolescents. Staffed by a team of highly trained and experienced pediatricians, specialized nurses, and allied healthcare professionals, the department offers a wide range of services focused on promoting the physical, emotional, and developmental well-being of young patients. Key Services and Specialties: General Pediatric Care : The department provides comprehensive primary care services, including routine well-child visits, immunizations, growth and development monitoring, and the diagnosis and management of common childhood illnesses and conditions. Pediatric Subspecialties : The department houses several specialized clinics and teams dedicated to specific areas of pediatric care, such as pediatric cardiology, pediatric endocrinology, pediatric gastroenterology, pediatric neurology, and pediatric oncology. These subspecialists offer advanced diagnostic and treatment services for complex medical conditions affecting children. Neonatal Intensive Care Unit (NICU) : The department's state-of-the-art NICU provides specialized care for premature and critically ill newborns, staffed by neonatologists, neonatal nurses, and respiratory therapists. The NICU is equipped with advanced medical equipment and technology to ensure the highest level of care for these vulnerable patients. Pediatric Emergency Services : The department has a dedicated pediatric emergency unit, staffed by pediatric emergency medicine specialists, to provide prompt and efficient care for children with acute illnesses or injuries, ensuring age-appropriate and family-centered care. Developmental and Behavioral Pediatrics : The team of developmental and behavioral pediatricians focuses on the evaluation and management of developmental disorders, learning disabilities, behavioral and emotional problems, and other neurodevelopmental conditions in children. Child Life Services : The department offers child life services to help children and families cope with the stress and challenges associated with hospitalization and medical procedures, providing age-appropriate support, education, and therapeutic activities. The Pediatrics department at Charak Memorial Hospital is committed to providing family-centered care in a child-friendly and nurturing environment. The team collaborates closely with other specialists, such as pediatric surgeons, pediatric radiologists, and child psychologists, to offer comprehensive and multidisciplinary care tailored to the unique needs of each young patient and their family.",
+      "sourceUrl": "https://cmh.com.np/departments/pediatrics",
+      "doctors": [
+        {
+          "fullName": "Dr. Kiran Sharma",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Professional Memberships And CertificationsPermanent registration in Nepal Medical Council (NMC), 2013Lifetime member of Nepal Medical Association (NMA)Lifetime member of Nepal Pediatric Society (NEPAS)Trainer “Helping Babies Breathe” , Devdaha Medical College, Butwal 2017Emergency Triage Assessment and Treatment plus (ETAT+), UMH Tansen, 2017Pediatric Fundamental Critical Care Support (PFCCS), PAHS Kathmandu, 2019Managing Children in Disaster, 2020Post-graduation in Pediatric nutrition, Boston USA, 2020",
+          "about": "Dr. Kiran Sharma, MD is a dedicated pediatrician known for his compassionate care, commitment to children's health and state of art methods of managing health of the young lives. He completed his medical training at the renowned Kathmandu University, where he developed a passion for pediatrics. After specializing in pediatrics, Dr. Sharma joined Pokhara academy of health sciences (PoAHS), where he made a difference in the lives of his young patients. Later, Dr. Sharma joined Charak Memorial Hospital as a full-time doctor where he has been making promising changes in the contemporary treatment methods with his conscience, good observation ability and judicial use of medicines if needed. Dr. Sharma is highly respected for his expertise in childhood development, vaccinations, and preventive care. He takes the time to listen to both his young patients and their parents, creating a supportive and nurturing environment in his OPD clinic. His gentle demeanor and friendly approach help children feel comfortable and at ease during their visits. In addition to his clinical work, Dr. Sharma is involved in community outreach programs that focus on children's health and wellness. He regularly visits at local health-post, once every week, to provide free expert health service to the poor and needy children. He often speaks to parenting groups, emphasizing the importance of early intervention and healthy lifestyle choices for children. Outside of work, Dr. Sharma enjoys spending time with his own family, hiking in the great outdoors, and volunteering at a local community service. He is truly passionate about making a positive impact on the lives of children and is dedicated to providing the best possible care to his patients. Publications Panthee K, Sharma K, Kalakheti B, Thapa K. Clinical Profile and Outcome of Asphyxiated Newborn in a Medical College Teaching Hospital. Journal of Lumbini Medical College. 2016 Jun 30;4(1):1-3. Panthee K, Sharma K, Kalakheti B. Supernumerary Nipples, Congenital Scoliosis, Spina Bifida,Diastematomyelia, and Crossed Renal Ectopia in a child: Case Report of a Rare Combination. Journal of Lumbini Medical College.;3(2):55-7. Paudel L, Kalakheti B, Sharma K. Prevalence and Outcome of Preterm Neonates Admitted to NeonatalUnit of a Tertiary Care Center in Western Nepal. Journal of Lumbini Medical College. 2018;6(2):6 pages.DOI: 10.22502/jlmcv6i2.218. Epub: 2018 Dec 8. Sharma K, Sah LK, Pareek P, Shah S, Garegrat R. Bacterial etiology and antimicrobial susceptibility pattern of neonatal sepsis at a tertiary care hospital in Nepal. Int J Contemp Pediatr 2021;8:830-4.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-kiran-sharma"
+        },
+        {
+          "fullName": "Dr. Bikram Hirachan",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Consultant Pediatrics",
+          "about": "Passionate care for young souls.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bikram-hirachan"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "ophthalmology",
+      "overview": "The Ophthalmology department at Charak Memorial Hospital is a dedicated facility that provides comprehensive eye care services and treatments for a wide range of vision-related conditions. Staffed by a team of highly skilled and experienced ophthalmologists, optometrists, and ophthalmic technicians, the department offers advanced diagnostic and therapeutic services using the latest technologies and techniques. Key Services and Specialties: Comprehensive Eye Examination Ocular Prosthesis Clinic Cataract Clinic Retina Service Glaucoma Clinic Vision Therapy / Amblyopia Therapy Neuro Ophthalmology Service Pediatric Clinic Cornea and External Eye Disease Clinic Uveitis Clinic Contact Lens Clinic Oculoplasty Clinic Low Vision Service Corneal Clinic The Ophthalmology department at Charak Memorial Hospital is equipped with advanced diagnostic equipment, including optical coherence tomography (OCT), visual field analyzers, and specialized imaging modalities. The department also houses state-of-the-art surgical facilities, including operating rooms dedicated to ophthalmic procedures. The team works closely with other specialists, such as neuro-ophthalmologists and ocular oncologists, to provide comprehensive and multidisciplinary care for patients with complex eye conditions.",
+      "sourceUrl": "https://cmh.com.np/departments/ophthalmology",
+      "doctors": [
+        {
+          "fullName": "Dr. Jamuna Gurung",
+          "education": [
+            "MS"
+          ],
+          "specialty": "Awards And AchievementsGold medalist in MBBS (2023-09-06)",
+          "about": "Dr. Gurung is a dedicated Ophthalmologist with a passion for treating and caring patients. She is dynamic Ophthalmologist known for her deligience. She has been involved in training and teachings besides giving optimum care to the patients.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-jamuna-gurung"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "ear-nose-and-throat-ent",
+      "overview": "The Ear, Nose and Throat (ENT) department at Charak Memorial Hospital is dedicated to providing comprehensive and specialized care for disorders related to the ear, nose, throat, head, and neck regions. Led by a team of highly skilled otolaryngologists (ENT specialists), the department offers advanced diagnostic and treatment services for a wide range of conditions. Key Services and Specialties: Ear Disorders: The department treats conditions such as hearing loss, ear infections, tinnitus (ringing in the ears), balance disorders, and ear injuries. They offer services like hearing tests, ear surgery, and hearing aid fittings. Nose and Sinus Disorders: Patients can receive treatment for nasal congestion, sinusitis, nasal allergies, nasal polyps, and other nasal and sinus-related issues. Services include sinus surgery, allergy testing, and medical management. Throat and Voice Disorders: The ENT team addresses problems like tonsillitis, hoarseness, voice disorders, swallowing difficulties, and throat cancer. They provide comprehensive care, including voice therapy, surgical interventions, and speech rehabilitation. Head and Neck Surgery: The department specializes in the diagnosis and treatment of head and neck cancers, thyroid disorders, and other conditions affecting the neck and facial structures. Advanced surgical techniques, such as robotic surgery, are employed for precise and minimally invasive procedures. Pediatric ENT: The department has a dedicated team of pediatric otolaryngologists who specialize in treating children with ear, nose, throat, and related disorders, including congenital conditions, airway issues, and speech and language delays. The ENT department at Charak Memorial Hospital is equipped with state-of-the-art diagnostic tools, including endoscopy suites, audiology testing facilities, and advanced imaging modalities. The team follows a multidisciplinary approach, collaborating with other specialists as needed, to provide personalized and comprehensive care for each patient.",
+      "sourceUrl": "https://cmh.com.np/departments/ear-nose-and-throat-ent",
+      "doctors": [
+        {
+          "fullName": "Dr. Nabin Raj Gautam",
+          "education": [
+            "MS"
+          ],
+          "specialty": "Awards And AchievementsBest Doctor Award Charak hospital 2080 BS (2024-06-02)",
+          "about": "School Gandaki Boarding School, plus two from Gandaki Boarding Scool, MBBS from Manipal College Of Medical Sciences, MS ENT from college of medical sciences Bharatpur.Training on Advanced ENT Surgery UK",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-nabin-raj-gautam"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "dermatology-cosmetology-and-hair-transplant-center",
+      "overview": "Here's a description for the Dermatology, Cosmetology, and Hair Transplant Center department at Charak Memorial Hospital: The Dermatology, Cosmetology, and Hair Transplant Center at Charak Memorial Hospital is a comprehensive facility dedicated to providing specialized care for various skin, hair, and cosmetic concerns. Staffed by a team of highly skilled and experienced dermatologists, cosmetologists, and hair transplant surgeons, the department offers a wide range of services using the latest technologies and techniques. Key Services and Specialties: Medical Dermatology : The department provides diagnosis and treatment for various skin conditions, including acne, eczema, psoriasis, skin cancers, and autoimmune skin disorders. The dermatologists employ advanced diagnostic tools and offer medical therapies, phototherapy, and surgical interventions when necessary. Cosmetic Dermatology : The team offers a range of cosmetic dermatology services, such as chemical peels, laser treatments (e.g., laser hair removal, laser resurfacing), injectable treatments (e.g., Botox, dermal fillers), and body contouring procedures, aimed at enhancing appearance and addressing aesthetic concerns. Hair Transplant Surgery : The department houses a dedicated hair transplant center, where experienced surgeons perform advanced hair restoration procedures, such as follicular unit extraction (FUE) and follicular unit transplantation (FUT), to address hair loss and baldness in both men and women. Cosmetology Services : The cosmetology wing of the department offers a variety of beauty treatments and services, including facials, body treatments, waxing, threading, and professional makeup services, utilizing premium skincare products and techniques. Trichology Clinic : The department has a specialized trichology clinic that focuses on the diagnosis and treatment of hair and scalp disorders, such as alopecia, dandruff, and hair thinning, using advanced diagnostic tools and targeted therapies. Mohs Surgery : The department offers Mohs micrographic surgery, a specialized technique for the precise removal of skin cancers, particularly basal cell and squamous cell carcinomas, with high cure rates and excellent cosmetic outcomes. The Dermatology, Cosmetology, and Hair Transplant Center at Charak Memorial Hospital is equipped with state-of-the-art facilities, including specialized treatment rooms, laser suites, and a dedicated hair transplant operating theater. The team collaborates closely with other departments, such as plastic surgery and oncology, to provide comprehensive and multidisciplinary care for patients with complex dermatological conditions or those requiring reconstructive procedures.",
+      "sourceUrl": "https://cmh.com.np/departments/dermatology-cosmetology-and-hair-transplant-center",
+      "doctors": [
+        {
+          "fullName": "Dr. Pravin Baniya",
+          "education": [
+            "MBBS",
+            "MD"
+          ],
+          "specialty": "Consultant Dermatologist & Hair Transplant Surgeon",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-pravin-baniya"
+        },
+        {
+          "fullName": "Dr. Ranju Pokharel",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Consultant Dermatology",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-ranju-pokharel"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "radiology",
+      "overview": "At Charak Memorial Hospital, our state-of-the-art Radiology Department plays a crucial role in accurate diagnosis and effective treatment planning. We are equipped with the latest imaging technologies and staffed by a team of highly skilled and experienced radiologists, technologists, and support staff. Diagnostic Imaging Services Our Radiology Department offers a comprehensive range of diagnostic imaging services, including: - X-ray: We provide traditional X-ray imaging for various body parts, including bones, chest, and abdomen. - Computed Tomography (CT) Scan: Our advanced CT scanners enable detailed cross-sectional imaging of the body, providing precise diagnostic information for various conditions. - Ultrasound: Our ultrasound services include general, obstetric, and specialized examinations, allowing for real-time visualization of internal structures and monitoring of fetal development. - Nuclear Medicine: We offer various nuclear medicine procedures, including bone scans, cardiac stress tests, and specialized imaging techniques for diagnosing and monitoring various conditions. Interventional Radiology In addition to diagnostic imaging, our Radiology Department offers interventional radiology services, which involve minimally invasive, image-guided procedures. Our interventional radiologists use advanced imaging techniques to guide and perform procedures such as: - Angiography: Imaging of blood vessels to diagnose and treat conditions like aneurysms, blockages, and vascular malformations. - Biopsies: Image-guided biopsies allow for precise tissue sampling for diagnostic purposes. - Tumor Ablation: Minimally invasive techniques for treating certain types of tumors, such as radiofrequency ablation and cryoablation. - Pain Management: Procedures like epidural steroid injections and nerve blocks can provide relief for chronic pain conditions. Patient-Centered Care At our Radiology Department, we prioritize patient comfort and safety. Our experienced technologists ensure that patients are properly positioned and informed throughout the imaging process. We use advanced techniques and equipment to minimize radiation exposure while maintaining diagnostic accuracy. Our radiologists work closely with referring physicians, providing detailed reports and consultations to ensure accurate diagnosis and appropriate treatment recommendations. With our state-of-the-art facilities, cutting-edge technologies, and dedicated team of professionals, the Radiology Department at Charak Memorial Hospital is committed to delivering exceptional diagnostic and interventional radiology services, contributing to improved patient outcomes and overall healthcare excellence.",
+      "sourceUrl": "https://cmh.com.np/departments/radiology",
+      "doctors": [
+        {
+          "fullName": "Dr. Om Kumar Shrestha",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Professional Memberships And CertificationsNMA NRA",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-om-kumar-shrestha"
+        },
+        {
+          "fullName": "Dr Rajan Mani Bhandari",
+          "education": [
+            "MD, DM"
+          ],
+          "specialty": "Consultant Interventional Radiologist",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rajan-mani-bhandari"
+        },
+        {
+          "fullName": "Dr. Krishna Timilsina",
+          "education": [
+            "MD"
+          ],
+          "specialty": "Professional Memberships And CertificationsNMA",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-krishna-timilsina"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "oncology",
+      "overview": "The Oncology department at Charak Memorial Hospital is a comprehensive cancer care facility dedicated to providing cutting-edge diagnostic, treatment, and supportive services for patients with various types of cancers. Staffed by a multidisciplinary team of highly skilled medical oncologists, surgical oncologists, radiation oncologists, and specialized healthcare professionals, the department offers a patient-centered approach to cancer care. Key Services and Specialties: Medical Oncology : The medical oncology team specializes in the diagnosis and systemic treatment of cancers using chemotherapy, targeted therapies, immunotherapies, and other innovative pharmaceutical interventions. They work closely with patients to develop personalized treatment plans and manage side effects. Surgical Oncology : The department has a team of experienced surgical oncologists who perform complex cancer surgeries, including tumor resections, reconstructive surgeries, and minimally invasive procedures, using advanced techniques and technologies. Radiation Oncology : The radiation oncology team utilizes state-of-the-art radiation therapy techniques, such as intensity-modulated radiation therapy (IMRT), stereotactic radiosurgery (SRS), and brachytherapy, to precisely target and treat various types of cancers while minimizing damage to healthy tissues. Hematologic Oncology : The department offers specialized care for patients with blood cancers, such as leukemia, lymphoma, and multiple myeloma, including stem cell transplantation and cellular therapies. Palliative and Supportive Care : The oncology team recognizes the importance of supportive care and provides services such as pain management, nutritional counseling, psychosocial support, and integrative therapies to help patients cope with the physical and emotional challenges of cancer treatment. Clinical Trials and Research : The department actively participates in clinical trials and research studies, providing patients with access to cutting-edge investigational treatments and contributing to the advancement of cancer care. The Oncology department at Charak Memorial Hospital is equipped with state-of-the-art facilities, including advanced diagnostic imaging modalities, specialized treatment areas for chemotherapy and radiation therapy, and dedicated inpatient and outpatient units. The multidisciplinary team collaborates closely with other departments, such as pathology, radiology, and genetics, to ensure comprehensive and coordinated care for each patient.",
+      "sourceUrl": "https://cmh.com.np/departments/oncology",
+      "doctors": []
+    },
+    {
+      "name": "Department",
+      "slug": "psychiatry-psychology",
+      "overview": "The Psychiatry & Psychology department at Charak Memorial Hospital is a comprehensive mental health facility dedicated to providing compassionate and evidence-based care for individuals experiencing a wide range of mental health conditions. Staffed by a multidisciplinary team of highly qualified psychiatrists, psychologists, therapists, and mental health professionals, the department offers a holistic approach to mental health care. Key Services and Specialties: Psychiatric Services : The department provides evaluation, diagnosis, and treatment for various psychiatric disorders, including depression, anxiety disorders, bipolar disorder, schizophrenia, and other psychotic disorders. Treatment modalities include medication management, psychotherapy, and specialized therapies tailored to individual needs. Psychology Services : The team of licensed psychologists offers psychological assessments, psychotherapy, and counseling services for a wide range of mental health issues, such as mood disorders, trauma-related disorders, eating disorders, and relationship problems. They employ evidence-based therapeutic approaches, including cognitive-behavioral therapy (CBT), interpersonal therapy, and family therapy. Child and Adolescent Psychiatry and Psychology : The department has a dedicated team of child and adolescent psychiatrists and psychologists who specialize in the assessment and treatment of mental health conditions affecting children and adolescents, including neurodevelopmental disorders, behavioral issues, and emotional difficulties. Addiction and Substance Abuse Treatment : The department offers comprehensive addiction treatment services, including detoxification, inpatient and outpatient rehabilitation programs, individual and group therapies, and support for long-term recovery from substance use disorders. Geriatric Psychiatry : The team provides specialized care for elderly patients experiencing mental health issues, such as dementia, depression, anxiety, and other age-related psychiatric conditions, focusing on improving quality of life and supporting caregivers. Consultation-Liaison Psychiatry : The department offers consultation-liaison services, where psychiatrists and psychologists collaborate with other medical departments to address the psychological and emotional needs of patients with chronic or acute medical conditions. The Psychiatry & Psychology department at Charak Memorial Hospital is equipped with modern facilities, including private counseling rooms, group therapy spaces, and specialized inpatient units to ensure a safe and supportive environment for patients. The multidisciplinary team works closely with other healthcare professionals, such as social workers, occupational therapists, and nutritionists, to provide comprehensive and integrated care for individuals struggling with mental health challenges.",
+      "sourceUrl": "https://cmh.com.np/departments/psychiatry-psychology",
+      "doctors": [
+        {
+          "fullName": "Dr. Basanta Dhungana",
+          "education": [
+            "MBBS",
+            "MD"
+          ],
+          "specialty": "Consultant Neuropsychiatrist",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-basanta-dhungana"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "dental-and-oral-care",
+      "overview": "The Dental and Oral Care department at Charak Memorial Hospital is a state-of-the-art facility dedicated to providing comprehensive oral health services and treatments. Staffed by a team of highly skilled and experienced dentists, oral surgeons, and specialized dental professionals, the department offers a wide range of services to address various dental and oral conditions. Key Services and Specialties: General Dentistry : The department provides routine dental care, including cleanings, fillings, root canal treatments, and preventive services such as fluoride treatments and sealants. The general dentists also perform cosmetic procedures like teeth whitening and veneers. Orthodontics : The department has a team of orthodontists who specialize in correcting misaligned teeth and jaw irregularities using traditional braces, clear aligners (e.g., Invisalign), and other orthodontic appliances. Oral and Maxillofacial Surgery : The oral surgeons at the department perform complex procedures such as wisdom teeth extractions, jaw surgery, treatment of facial injuries and trauma, and surgical management of oral cancers. Periodontics : The department offers advanced treatments for gum diseases, including scaling and root planing, gum grafting, and periodontal surgery to address issues like gingivitis and periodontitis. Endodontics : The endodontists specialize in the diagnosis and treatment of dental pulp and root canal-related issues, providing root canal therapies and other endodontic procedures. Pediatric Dentistry : The department has a dedicated team of pediatric dentists who provide specialized dental care for children, focusing on preventive care, behavior management, and treatment of dental issues specific to growing children. Prosthodontics : The department offers prosthodontic services, including the fabrication and fitting of dentures, dental implants, crowns, bridges, and other restorative and reconstructive dental procedures. The Dental and Oral Care department at Charak Memorial Hospital is equipped with state-of-the-art dental operatories, digital imaging technologies, and advanced dental equipment to ensure precise diagnosis and treatment. The department also houses a dedicated oral surgery suite for complex surgical procedures. The dental team works closely with other medical specialists, such as otolaryngologists (ENT) and oncologists, to provide comprehensive care for patients with complex oral health conditions or those undergoing cancer treatment.",
+      "sourceUrl": "https://cmh.com.np/departments/dental-and-oral-care",
+      "doctors": [
+        {
+          "fullName": "Dr. Alina Baral",
+          "education": [
+            "BDS"
+          ],
+          "specialty": "Awards And AchievementsTraining in Orthodontics (2023-08-16)Training in Periodontics and Implantology (2023-08-16)",
+          "about": "Dr. Alina Baral is the embodiment of youth and dynamism in the dental profession, serving as a prominent dental surgeon at Charak Memorial Hospital. Renowned for her passion for excellence and her innovative approach to dentistry, Dr. Baral is committed to providing top-notch care to her patients. With her warm demeanor and genuine concern for patient well-being, she has earned a reputation as a trusted and respected member of the hospital staff. Dr. Baral's dedication to staying abreast of the latest advancements in dental techniques ensures that her patients receive cutting-edge treatment tailored to their individual needs. Her presence at Charak Memorial Hospital enhances its reputation as a center of excellence in dental care.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-alina-baral"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "physiotherapy",
+      "overview": "About Us Doctors Available Contact Us Departments Internal Medicine Interventional Cardiology Critical Care Medicine & Anaesthesiology Endocrinology and Metabolism Nephrology General and Laparoscopic Surgery Urology and Uro-surgery Obstetrics and Gynecology Trauma and Orthopedics Neurosurgery Plastic & Reconstructive Surgery Pediatrics Ophthalmology Otorhinolaryngology (ENT) Dermatology, Cosmetology And Hair Transplant Radiology Oncology Psychiatry & Psychology Dental and Oral Care Physiotherapy Pulmonology & Sleep Dietetics & Nutrition Services Emergency and Trauma Care Cath-Lab Services Radiology Services In-Patient Services Out-Patient Services OT and Surgical Services Optical Diagnostics Services Pain Management Services Critical Care Services Skin & Aesthetics Clinic Pathology Pharmacy Traveler Health Medicine Ambulance Laboratory Media Center Research & Publications Careers About Us Doctors Available Departments Internal Medicine Interventional Cardiology Critical Care Medicine & Anaesthesiology Endocrinology and Metabolism Nephrology General and Laparoscopic Surgery Urology and Uro-surgery Obstetrics and Gynecology Trauma and Orthopedics Neurosurgery Plastic & Reconstructive Surgery Pediatrics Ophthalmology Otorhinolaryngology (ENT) Dermatology, Cosmetology And Hair Transplant Radiology Oncology Psychiatry & Psychology Dental and Oral Care Physiotherapy Pulmonology & Sleep Dietetics & Nutrition Services Emergency and Trauma Care Cath-Lab Services Radiology Services In-Patient Services Out-Patient Services OT and Surgical Services Optical Diagnostics Services Pain Management Services Critical Care Services Skin & Aesthetics Clinic Pathology Pharmacy Traveler Health Medicine Ambulance Laboratory Contact Us Media Center Research & Publications Careers Department of Physiotherapy Home > Department > physiotherapy Departments Internal Medicine Interventional Cardiology Critical Care Medicine & Anaesthesiology Endocrinology and Metabolism Nephrology General and Laparoscopic Surgery Urology and Uro-surgery Obstetrics and Gynecology Trauma and Orthopedics Neurosurgery Plastic & Reconstructive Surgery Pediatrics Ophthalmology Otorhinolaryngology (ENT) Dermatology, Cosmetology And Hair Transplant Radiology Oncology Psychiatry & Psychology Dental and Oral Care Physiotherapy Pulmonology & Sleep Dietetics & Nutrition Doctors Available Dinesh Gurung BPT Consultant Physiotherapy NMC: A-1231 PHY Call us Now +977 61 582779 Book Health Check-up Book Appointment Recognized by Nagdhunga, Pokhara-8, Kaski, Gandaki Province Price List © 2026 Charak Memorial Hospital | Developed by Aarambha IT Privacy Terms Sitemap",
+      "sourceUrl": "https://cmh.com.np/departments/physiotherapy",
+      "doctors": [
+        {
+          "fullName": "Dinesh Gurung",
+          "education": [
+            "BPT"
+          ],
+          "specialty": "Professional Memberships And CertificationsPermanent member of NEPAT,L-827",
+          "about": "Dinesh Gurung.Age:32.Khandbari, Sankhuwasava,Koshi,Zone,Nepal,Province-1.",
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dinesh-gurung"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "pulmonology-and-sleep",
+      "overview": "The Department of Pulmonology & Sleep Medicine at Charak Memorial Hospital is a comprehensive and specialized healthcare facility dedicated to the diagnosis, treatment, and management of a wide range of respiratory, lung, and sleep-related conditions. Staffed by a team of highly skilled and experienced pulmonologists and sleep medicine specialists, the department provides exceptional care to patients suffering from both acute and chronic diseases affecting the lungs, airways, respiratory system, and sleep health. Recognizing the close relationship between respiratory function and sleep quality, the department offers an integrated approach to care that addresses both conditions simultaneously. Key Services and Specialties: General Pulmonology: The department offers comprehensive care for a variety of respiratory conditions, including asthma, chronic obstructive pulmonary disease (COPD), bronchitis, pneumonia, pulmonary fibrosis, lung cancer, and pleural diseases. Our pulmonologists work closely with patients to develop personalized treatment plans and provide ongoing management of their respiratory health. General Sleep Medicine: The department provides expert care for a wide range of sleep disorders, including obstructive sleep apnea, insomnia, narcolepsy, restless leg syndrome, sleepwalking, and circadian rhythm disorders. Our sleep specialists work closely with patients to identify the root causes of their sleep disturbances and develop effective, individualized management strategies. Specialized Clinics: The department houses several specialized clinics focused on specific areas of pulmonary and sleep medicine, such as asthma and allergy management, COPD and smoking cessation, sleep apnea and CPAP therapy, interstitial lung disease, insomnia and behavioral sleep medicine, and sleep-related breathing disorders. These clinics are staffed by physicians with advanced training and expertise in their respective fields. Diagnostic Services: Patients have access to a wide range of diagnostic services within the department, including pulmonary function tests (spirometry), bronchoscopy, chest X-rays, CT scans, overnight polysomnography (sleep studies), home sleep apnea testing, multiple sleep latency tests (MSLT), arterial blood gas analysis, and actigraphy. These services aid in the accurate diagnosis and monitoring of various respiratory and sleep-related conditions. Inpatient Care: The department provides comprehensive inpatient care for individuals requiring hospitalization for acute respiratory illnesses, respiratory failure, severe sleep disorders, or exacerbations of chronic conditions. Our pulmonologists and sleep medicine specialists work closely with nurses, respiratory therapists, and other healthcare professionals to ensure coordinated and holistic care. Preventive Medicine: The Department of Pulmonology & Sleep Medicine places a strong emphasis on preventive care, offering services such as lung health screenings, sleep health assessments, smoking cessation programs, cognitive behavioral therapy for insomnia (CBT-I), counseling on sleep hygiene and lifestyle modifications, and vaccination programs for respiratory infections such as influenza and pneumonia. The Department of Pulmonology & Sleep Medicine at Charak Memorial Hospital is committed to delivering patient-centered care, utilizing evidence-based practices and the latest advancements in respiratory medicine and sleep science. The team of specialists works collaboratively with cardiologists, neurologists, thoracic surgeons, ENT specialists, psychiatrists, and other experts within the hospital to provide comprehensive and integrated care for patients with complex or multisystem respiratory and sleep-related disorders.",
+      "sourceUrl": "https://cmh.com.np/departments/pulmonology-and-sleep",
+      "doctors": [
+        {
+          "fullName": "Dr. Ranjana Tiwari",
+          "education": [
+            "MBBS",
+            "MD-IM"
+          ],
+          "specialty": "Consultant Physician",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/dr-ranjana-tiwari"
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "slug": "dietetics-nutrition",
+      "overview": "The Department of Dietetics & Nutrition at Charak Memorial Hospital is a comprehensive healthcare facility dedicated to the assessment, management, and promotion of optimal nutritional health across a wide range of medical conditions. Staffed by a team of highly skilled and experienced registered dietitians and nutritionists, the department provides exceptional care to patients requiring nutritional support for both acute and chronic illnesses. Recognizing the vital role that nutrition plays in overall health and recovery, the department offers a personalized and evidence-based approach to dietary care that complements and enhances medical treatment. Key Services and Specialties: General Dietetics & Nutrition: The department offers comprehensive nutritional assessment and dietary counseling for a variety of conditions, including diabetes, obesity, cardiovascular disease, kidney disease, gastrointestinal disorders, eating disorders, and cancer. Our dietitians work closely with patients to develop personalized meal plans and provide ongoing guidance to support their health and recovery goals. Specialized Clinics: The department houses several specialized clinics focused on specific areas of dietetics and nutrition, such as diabetes and metabolic nutrition, renal nutrition, oncology nutrition, pediatric and maternal nutrition, weight management and bariatric nutrition, and sports and performance nutrition. These clinics are staffed by dietitians with advanced training and expertise in their respective fields. Diagnostic & Assessment Services: Patients have access to a wide range of nutritional assessment services within the department, including body composition analysis, anthropometric measurements, biochemical nutritional screening, dietary intake assessments, and resting metabolic rate testing. These services aid in the accurate evaluation of a patient's nutritional status and the development of targeted dietary interventions. Inpatient Nutritional Support: The department provides comprehensive inpatient nutritional care for individuals requiring hospitalization, including those who need enteral nutrition (tube feeding) or parenteral nutrition (intravenous feeding) support. Our dietitians work closely with physicians, nurses, pharmacists, and other healthcare professionals to ensure coordinated and holistic nutritional management throughout the patient's hospital stay. Preventive Nutrition & Wellness: The Department of Dietetics & Nutrition places a strong emphasis on preventive care and wellness, offering services such as routine nutritional screenings, counseling on healthy eating habits and lifestyle modifications, community nutrition education programs, and management of dietary risk factors associated with chronic diseases such as obesity, hypertension, and diabetes. The Department of Dietetics & Nutrition at Charak Memorial Hospital is committed to delivering patient-centered care, utilizing evidence-based practices and the latest advancements in nutritional science. The team of dietitians and nutritionists works collaboratively with endocrinologists, gastroenterologists, oncologists, nephrologists, cardiologists, and other specialists within the hospital to provide comprehensive and integrated nutritional care for patients with complex or multisystem disorders.",
+      "sourceUrl": "https://cmh.com.np/departments/dietetics-nutrition",
+      "doctors": [
+        {
+          "fullName": "Mina Kumari Gurung",
+          "education": null,
+          "specialty": "Clinical Dietitian, Nutritionist",
+          "about": null,
+          "sourceUrl": "https://cmh.com.np/doctor-detail/mina-kumari-gurung"
+        }
+      ]
+    }
+  ],
+  "doctors": [
+    {
+      "fullName": "Dr. Maan Bahadur Gurung",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Awards And AchievementsTo be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles, And by opposing end them? T (2023-08-16)",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-maan-bahadur-gurung"
+    },
+    {
+      "fullName": "Dr. Buddhisagar Lamichhane",
+      "education": [
+        "DM",
+        "MD"
+      ],
+      "specialty": "Consultant Pulmonologist",
+      "about": "MD (Internal medicine, NAMS), DM (Pulmonary, Critical Care and Sleep Medicine, NAMS)",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-buddhisagar-lamichhane"
+    },
+    {
+      "fullName": "Dr. Suraj Baral",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Awards And AchievementsGold Medal - TU (Intermediate in Science) (2024-07-16)MBBS and MD scholarships (Ministry of Education) (2024-07-16)Outstanding International Student - MD (HUST, Wuhan) (2024-07-16)",
+      "about": "Consultant physician with more than 11 years' of experience in Emergency medicine, chronic disease management, infectious disease and critical care. A merit student of Ministry of Education with experience in various government and private health institutes. I believe in good doctor patient relationship, quality and evidence based medicine. Also interested in research work and academic activities on a regular basis for up-to-date knowledge.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-suraj-baral"
+    },
+    {
+      "fullName": "Dr. Sarad Chandra Baral",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Consultant Physician",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/sarad-chandra-baral"
+    },
+    {
+      "fullName": "Dr. SK Jayswal",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Awards And AchievementsNational and international awards in different cardiovascular conferences. (2024-06-04)",
+      "about": "A highly professional and dedicated cardiologist with over 12 years experience in daignosing,intervening and treating a wide range of heart and cardiovascular disorders as well as operating and handling various cardiac testing equipment and devices.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-sk-jayswal"
+    },
+    {
+      "fullName": "Dr. Abhinav Pradhan",
+      "education": [
+        "MBBS",
+        "MD",
+        "PHD"
+      ],
+      "specialty": "Professional Memberships And CertificationsNMC",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-abhinav-pradhan"
+    },
+    {
+      "fullName": "Dr. Manoj Tripathee",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Professional Memberships And CertificationsNepal Medical Council (NMC )CertifiedNepal Medical Association (NMA) memberSociety of Anaesthesiologist(SAN) member",
+      "about": "Dr. Manoj Tripathee is an Anaesthesiologist with a dual focus on Nepal's medical landscape: providing expert anaesthesia care and crucial support in the ICU. Dedicated to ensuring patient comfort and safety during procedures while also delivering top-notch critical care in emergency situations. Committed to advancing medical practices and improving healthcare outcomes in Nepal through prompt and effective medical interventions.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-manoj-tripathee"
+    },
+    {
+      "fullName": "Dr Bibek Mishra",
+      "education": [
+        "MD",
+        "MBBS"
+      ],
+      "specialty": "Consultant Anesthesia and Critical Care Medicine",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bibek-mishra"
+    },
+    {
+      "fullName": "Dr. Bikash Khatri",
+      "education": [
+        "DM",
+        "MD"
+      ],
+      "specialty": "Consultant Nephrologist",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bikash-khatri"
+    },
+    {
+      "fullName": "Dr. Kovid Nepal",
+      "education": [
+        "FCPS SURGERY"
+      ],
+      "specialty": "Consultant General and Laparoscopic Surgeon",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-kovid-nepal"
+    },
+    {
+      "fullName": "Dr. Rabin Pahari",
+      "education": [
+        "MS, M.CH - GI & HPB"
+      ],
+      "specialty": "Professional Memberships And CertificationsNMC",
+      "about": "Consultant General Surgery & GI Surgery MS, M.Ch - Gastrointestinal Surgery (GI) & Hepato Pancreato Biliary (HPB) Surgery",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rabin-pahari"
+    },
+    {
+      "fullName": "Prof. Dr. Dhruba Bahadur Adhikari",
+      "education": [
+        "MBBS",
+        "MS"
+      ],
+      "specialty": "Professor & Consultant Urologist",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-dhruba-bahadur-adhikari"
+    },
+    {
+      "fullName": "Dr. Anup Chapagain",
+      "education": [
+        "MS, MCH."
+      ],
+      "specialty": "Awards And AchievementsBest Pral Presentation in AUA 2019 (2019-01-01)",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/anup-chapagain"
+    },
+    {
+      "fullName": "Dr. Madan Khadka",
+      "education": [
+        "MBBS",
+        "MS"
+      ],
+      "specialty": "Consultant Gynaec Endoscopic Surgeon and Infertility Specialist",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-madan-khadka"
+    },
+    {
+      "fullName": "Dr. Bishnu Palikhe",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Professional Memberships And CertificationsLife member of World Association of Laparoscopic SurgeonLife member of Nepal Medical CouncilLife member of Nepal Society of Obstetrics and GynecologyDiploma in Minimal Access Surgery, WALS 2023Fellowship in Minimal Access Surgery, WALS 2023Post-partum Intrauterine Copper Device on Job Training (PPIUCD OJT), National Health Training Centre, 2017Quality Improvement for perinatal care training of health workers, National Health Training Centre, 2017Comprehensive Abortion Care (CAC), National Health Training Centre, 2017Cervical Cancer Screening and Prevention (CCSP), National Health Training Centre, 2017Certificate Course in the Management of Thyroid Disorder (CCMTD), 2019Total Laparoscopic Hysterectomy (decoding the technique), 2020Intrauterine Insemination Workshop, NESOG, 2022Intrauterine Insemination Workshop, Ian Donald Inter university of Medical Ultrasound and Om Hospital and Research Centre, 2022",
+      "about": "Dr. Bishnu Palikhe is a highly skilled and compassionate obstetrician and gynecologist with extensive experience in women's health. Dr. Palikhe is committed to providing exceptional care in areas such as prenatal and postnatal care, high-risk pregnancies, gynecologic laparoscopic surgery, and overall reproductive health. Dr. Palikhe earned their medical degree from a Jiamusi University and has completed rigorous training in obstetrics and gynecology. With a patient-centered approach, Dr. Palikhe emphasizes personalized care and open communication, ensuring that each patient receives the best possible treatment tailored to their needs. Dedicated to staying current with the latest advancements in the field, Dr. Palikhe is an active member of several professional organizations and regularly participates in continuing education. Fluent in multiple languages, Dr. Palikhe is able to serve a diverse patient population effectively. When not providing medical care, Dr. Palikhe enjoys engaging in community health initiatives and spending time with family. Dr. Palikhe’s expertise and dedication to women's health make them an invaluable asset to our medical team.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bhishnu-palikhe"
+    },
+    {
+      "fullName": "Dr. Rupa Paneru",
+      "education": [
+        "MBBS",
+        "MD OBSTETRICS & GYNAECOLOGY"
+      ],
+      "specialty": "Consultant Obstetrics and Gynecology",
+      "about": "Specialist in women and reproductive health problems",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rupa-paneru"
+    },
+    {
+      "fullName": "Dr. Jhapindra Pokharel",
+      "education": [
+        "MS"
+      ],
+      "specialty": "Awards And AchievementsUMN SCHOLARSHIP AWARD (2024-06-02)",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-jhapindra-pokharel"
+    },
+    {
+      "fullName": "Dr. Pradeep Kafle",
+      "education": [
+        "MS"
+      ],
+      "specialty": "Awards And AchievementsBest Resident (2024-06-05)",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-pradeep-kafle"
+    },
+    {
+      "fullName": "Dr. Manoj Kumar Tiwari",
+      "education": [
+        "MS - ORTHOPEDIC SURGERY"
+      ],
+      "specialty": "Robotic Primary, Complex & Revision Hip, Knee Replacement & Arthroscopy",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-manoj-kumar-tiwari"
+    },
+    {
+      "fullName": "Dr. Rajan Kumar Sharma",
+      "education": [
+        "MS, MCH."
+      ],
+      "specialty": "Consultant Neurosurgeon",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rajan-kumar-sharma"
+    },
+    {
+      "fullName": "Dr. Bikas Thapa",
+      "education": [
+        "MBBS",
+        "MD",
+        "MCH"
+      ],
+      "specialty": "Consultant Neurosurgery, Brain and Spine Surgeon",
+      "about": "Morning 7:30-8:30 am Evening 4:00-7:00pm",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bikas-thapa"
+    },
+    {
+      "fullName": "Dr. Piyush Giri",
+      "education": [
+        "FCPS SURGERY"
+      ],
+      "specialty": "Awards And AchievementsInternational Federation of Societies for Surgery of the Hand (IFSSH) (2024-06-02)The American Society for Surgery of the Hand (ASSH), (2024-06-02)the American Association for Hand Surgery (AAHS) fellowship Award (2024-06-02)",
+      "about": "Dr. Piyush Giri is a highly skilled Burn, Plastic, and Reconstructive Microsurgeon with extensive experience in treating severe burn injuries, complex wound care, and intricate reconstructive procedures. After earning their medical degree from College of Physicians and Surgeons, Dr. Piyush completed specialized training in plastic and reconstructive surgery, followed by a fellowship in microsurgery. Known for their meticulous surgical technique and compassionate patient care, Dr. Piyush has significantly improved the quality of life for countless patients, restoring both function and aesthetics. They are also an active contributor to medical research and education, committed to advancing the field of reconstructive microsurgery.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-piyush-giri"
+    },
+    {
+      "fullName": "Dr. Kiran Sharma",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Professional Memberships And CertificationsPermanent registration in Nepal Medical Council (NMC), 2013Lifetime member of Nepal Medical Association (NMA)Lifetime member of Nepal Pediatric Society (NEPAS)Trainer “Helping Babies Breathe” , Devdaha Medical College, Butwal 2017Emergency Triage Assessment and Treatment plus (ETAT+), UMH Tansen, 2017Pediatric Fundamental Critical Care Support (PFCCS), PAHS Kathmandu, 2019Managing Children in Disaster, 2020Post-graduation in Pediatric nutrition, Boston USA, 2020",
+      "about": "Dr. Kiran Sharma, MD is a dedicated pediatrician known for his compassionate care, commitment to children's health and state of art methods of managing health of the young lives. He completed his medical training at the renowned Kathmandu University, where he developed a passion for pediatrics. After specializing in pediatrics, Dr. Sharma joined Pokhara academy of health sciences (PoAHS), where he made a difference in the lives of his young patients. Later, Dr. Sharma joined Charak Memorial Hospital as a full-time doctor where he has been making promising changes in the contemporary treatment methods with his conscience, good observation ability and judicial use of medicines if needed. Dr. Sharma is highly respected for his expertise in childhood development, vaccinations, and preventive care. He takes the time to listen to both his young patients and their parents, creating a supportive and nurturing environment in his OPD clinic. His gentle demeanor and friendly approach help children feel comfortable and at ease during their visits. In addition to his clinical work, Dr. Sharma is involved in community outreach programs that focus on children's health and wellness. He regularly visits at local health-post, once every week, to provide free expert health service to the poor and needy children. He often speaks to parenting groups, emphasizing the importance of early intervention and healthy lifestyle choices for children. Outside of work, Dr. Sharma enjoys spending time with his own family, hiking in the great outdoors, and volunteering at a local community service. He is truly passionate about making a positive impact on the lives of children and is dedicated to providing the best possible care to his patients. Publications Panthee K, Sharma K, Kalakheti B, Thapa K. Clinical Profile and Outcome of Asphyxiated Newborn in a Medical College Teaching Hospital. Journal of Lumbini Medical College. 2016 Jun 30;4(1):1-3. Panthee K, Sharma K, Kalakheti B. Supernumerary Nipples, Congenital Scoliosis, Spina Bifida,Diastematomyelia, and Crossed Renal Ectopia in a child: Case Report of a Rare Combination. Journal of Lumbini Medical College.;3(2):55-7. Paudel L, Kalakheti B, Sharma K. Prevalence and Outcome of Preterm Neonates Admitted to NeonatalUnit of a Tertiary Care Center in Western Nepal. Journal of Lumbini Medical College. 2018;6(2):6 pages.DOI: 10.22502/jlmcv6i2.218. Epub: 2018 Dec 8. Sharma K, Sah LK, Pareek P, Shah S, Garegrat R. Bacterial etiology and antimicrobial susceptibility pattern of neonatal sepsis at a tertiary care hospital in Nepal. Int J Contemp Pediatr 2021;8:830-4.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-kiran-sharma"
+    },
+    {
+      "fullName": "Dr. Bikram Hirachan",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Consultant Pediatrics",
+      "about": "Passionate care for young souls.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-bikram-hirachan"
+    },
+    {
+      "fullName": "Dr. Jamuna Gurung",
+      "education": [
+        "MS"
+      ],
+      "specialty": "Awards And AchievementsGold medalist in MBBS (2023-09-06)",
+      "about": "Dr. Gurung is a dedicated Ophthalmologist with a passion for treating and caring patients. She is dynamic Ophthalmologist known for her deligience. She has been involved in training and teachings besides giving optimum care to the patients.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-jamuna-gurung"
+    },
+    {
+      "fullName": "Dr. Nabin Raj Gautam",
+      "education": [
+        "MS"
+      ],
+      "specialty": "Awards And AchievementsBest Doctor Award Charak hospital 2080 BS (2024-06-02)",
+      "about": "School Gandaki Boarding School, plus two from Gandaki Boarding Scool, MBBS from Manipal College Of Medical Sciences, MS ENT from college of medical sciences Bharatpur.Training on Advanced ENT Surgery UK",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-nabin-raj-gautam"
+    },
+    {
+      "fullName": "Dr. Pravin Baniya",
+      "education": [
+        "MBBS",
+        "MD"
+      ],
+      "specialty": "Consultant Dermatologist & Hair Transplant Surgeon",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-pravin-baniya"
+    },
+    {
+      "fullName": "Dr. Ranju Pokharel",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Consultant Dermatology",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-ranju-pokharel"
+    },
+    {
+      "fullName": "Dr. Om Kumar Shrestha",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Professional Memberships And CertificationsNMA NRA",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-om-kumar-shrestha"
+    },
+    {
+      "fullName": "Dr Rajan Mani Bhandari",
+      "education": [
+        "MD, DM"
+      ],
+      "specialty": "Consultant Interventional Radiologist",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-rajan-mani-bhandari"
+    },
+    {
+      "fullName": "Dr. Krishna Timilsina",
+      "education": [
+        "MD"
+      ],
+      "specialty": "Professional Memberships And CertificationsNMA",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-krishna-timilsina"
+    },
+    {
+      "fullName": "Dr. Basanta Dhungana",
+      "education": [
+        "MBBS",
+        "MD"
+      ],
+      "specialty": "Consultant Neuropsychiatrist",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-basanta-dhungana"
+    },
+    {
+      "fullName": "Dr. Alina Baral",
+      "education": [
+        "BDS"
+      ],
+      "specialty": "Awards And AchievementsTraining in Orthodontics (2023-08-16)Training in Periodontics and Implantology (2023-08-16)",
+      "about": "Dr. Alina Baral is the embodiment of youth and dynamism in the dental profession, serving as a prominent dental surgeon at Charak Memorial Hospital. Renowned for her passion for excellence and her innovative approach to dentistry, Dr. Baral is committed to providing top-notch care to her patients. With her warm demeanor and genuine concern for patient well-being, she has earned a reputation as a trusted and respected member of the hospital staff. Dr. Baral's dedication to staying abreast of the latest advancements in dental techniques ensures that her patients receive cutting-edge treatment tailored to their individual needs. Her presence at Charak Memorial Hospital enhances its reputation as a center of excellence in dental care.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-alina-baral"
+    },
+    {
+      "fullName": "Dinesh Gurung",
+      "education": [
+        "BPT"
+      ],
+      "specialty": "Professional Memberships And CertificationsPermanent member of NEPAT,L-827",
+      "about": "Dinesh Gurung.Age:32.Khandbari, Sankhuwasava,Koshi,Zone,Nepal,Province-1.",
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dinesh-gurung"
+    },
+    {
+      "fullName": "Dr. Ranjana Tiwari",
+      "education": [
+        "MBBS",
+        "MD-IM"
+      ],
+      "specialty": "Consultant Physician",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/dr-ranjana-tiwari"
+    },
+    {
+      "fullName": "Mina Kumari Gurung",
+      "education": null,
+      "specialty": "Clinical Dietitian, Nutritionist",
+      "about": null,
+      "sourceUrl": "https://cmh.com.np/doctor-detail/mina-kumari-gurung"
+    }
+  ]
+}
