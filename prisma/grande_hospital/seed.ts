@@ -55,7 +55,10 @@ async function main() {
       district: "Kathmandu",
       city: "Kathmandu",
       area: "Dhapasi",
-      addressLine: "Grande International Hospital",
+      addressLine: "Dhapasi, Tokha, Kathmandu",
+      postalCode: "44600",
+      lat: 27.752876,
+      lng: 85.325889,
     },
   });
 
@@ -66,6 +69,10 @@ async function main() {
       name: "Grande International Hospital",
       type: HospitalType.HOSPITAL,
       locationId: location.id,
+      phone: "+977-1-5159266",
+      email: "info@grandehospital.com",
+      website: "https://grandehospital.com",
+      openingHours: "OPD: Sun–Fri | Emergency: 24/7",
       emergencyAvailable: true,
       servicesSummary:
         "Grande International Hospital was created with the vision to fill an existing void in the Nepali healthcare industry. It is dedicated to the seamless delivery of quality, patient-centric healthcare which means supplying everything a patient may need, from acute critical care to rehabilitation to transitional care to home healthcare services at an affordable cost. Our goal is to establish in this country a culture of continuous improvement in healthcare not only by providing excellent healthcare services but also by conducting community health education seminars, outreach programs, and wellness programs in several parts of Nepal.\n\nThe hospital is a 200 bedded, state of the art health care facility offering a wide range of medical, surgical and diagnostic services. The hospital has special features like a Wellness Center to help our community stay healthy. With latest in technology and a network of qualified physicians and staff, Grande International Hospital is your destination for the best healthcare services the country has to offer.",

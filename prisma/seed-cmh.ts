@@ -143,7 +143,13 @@ async function main() {
   // ── Location ──────────────────────────────────────────────────────────────
   const location = await prisma.location.upsert({
     where: { id: "cmh-location-pokhara" },
-    update: {},
+    update: {
+      area: "Nagdhunga",
+      addressLine: "Nagdhunga, Pokhara-08, Kaski",
+      postalCode: "33700",
+      lat: 28.2047455,
+      lng: 83.9822709,
+    },
     create: {
       id: "cmh-location-pokhara",
       country: "Nepal",
@@ -151,7 +157,10 @@ async function main() {
       district: "Kaski",
       city: "Pokhara",
       area: "Nagdhunga",
-      addressLine: "Nagdhunga, Pokhara-8, Kaski",
+      addressLine: "Nagdhunga, Pokhara-08, Kaski",
+      postalCode: "33700",
+      lat: 28.2047455,
+      lng: 83.9822709,
     },
   });
 
@@ -180,14 +189,22 @@ async function main() {
 
   const hospital = await prisma.hospital.upsert({
     where: { slug: "charak-memorial-hospital" },
-    update: { servicesSummary: SUMMARY },
+    update: {
+      servicesSummary: SUMMARY,
+      phone: "+977 61 552493",
+      email: "info@cmh.com.np",
+      website: "https://cmh.com.np",
+      openingHours: "OPD: Sun–Fri 7:00 AM – 5:00 PM | Emergency: 24/7",
+    },
     create: {
       slug: "charak-memorial-hospital",
       name: "Charak Memorial Hospital",
       type: HospitalType.HOSPITAL,
       locationId: location.id,
-      phone: "+977 61 582779",
+      phone: "+977 61 552493",
+      email: "info@cmh.com.np",
       website: "https://cmh.com.np",
+      openingHours: "OPD: Sun–Fri | Emergency: 24/7",
       emergencyAvailable: true,
       verified: true,
       servicesSummary: SUMMARY,
