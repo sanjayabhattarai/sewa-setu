@@ -27,6 +27,7 @@ async function main() {
   const jsonPath = path.join(
     process.cwd(),
     "prisma",
+    "grande_hospital",
     "grande_departments_clean.json"
   );
 

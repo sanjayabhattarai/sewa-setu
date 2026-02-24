@@ -10,7 +10,7 @@
     "postinstall": "prisma generate"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seedmaster.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.0",
