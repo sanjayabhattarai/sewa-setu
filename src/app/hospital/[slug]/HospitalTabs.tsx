@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import * as lucideReact from "lucide-react";
-
 type TabKey = "overview" | "services" | "doctors" | "departments" | "contact";
 
 type UiPackage = {
@@ -26,23 +25,27 @@ type Props = {
   packages: UiPackage[];
   onBookDoctorAction: (doctorId: string) => void;
   initialDepartmentId?: string | null;
+  showAIBadge?: boolean;
 };
 
-export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDepartmentId }: Props) {
+export function HospitalTabs({ 
+  hospital, 
+  packages, 
+  onBookDoctorAction, 
+  initialDepartmentId,
+  showAIBadge = false 
+}: Props) {
   const [tab, setTab] = useState<TabKey>("overview");
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(initialDepartmentId || null);
   const [highlightedDeptId, setHighlightedDeptId] = useState<string | null>(initialDepartmentId || null);
 
-  // Handle initial department selection from URL
+  // Handle initial department selection
   useEffect(() => {
     if (initialDepartmentId) {
       setTab("departments");
       setSelectedDeptId(initialDepartmentId);
-      
-      // Highlight the department
       setHighlightedDeptId(initialDepartmentId);
       
-      // Remove highlight after 3 seconds
       const timer = setTimeout(() => {
         setHighlightedDeptId(null);
       }, 3000);
@@ -68,41 +71,58 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
   }, [hospital.doctors, deptDoctorIdSet, selectedDept]);
 
   const [doctorQuery, setDoctorQuery] = useState("");
-  const [mode, setMode] = useState<"ALL" | "ONLINE" | "PHYSICAL">("ALL");
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [specialty, setSpecialty] = useState<string>("ALL");
-  const [sort, setSort] = useState<"EXP_DESC" | "FEE_ASC">("EXP_DESC");
+  const [sort, setSort] = useState<"FEE_ASC" | "FEE_DESC">("FEE_ASC");
 
+  // Map doctorId → department name (database order)
+  const doctorDeptMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const dept of (hospital.departments ?? [])) {
+      for (const link of (dept.doctors ?? [])) {
+        if (!map.has(link.doctorId)) {
+          map.set(link.doctorId, dept.name);
+        }
+      }
+    }
+    return map;
+  }, [hospital.departments]);
+
+  // Department name order for stable group sorting
+  const deptOrder = useMemo(() => {
+    const order = new Map<string, number>();
+    (hospital.departments ?? []).forEach((d, i) => order.set(d.name, i));
+    return order;
+  }, [hospital.departments]);
+
+  // Filter dropdown lists all department names in order
   const allSpecialties = useMemo(() => {
-    const set = new Set<string>();
-    hospital.doctors.forEach((d) => d.specialties.forEach((s) => set.add(s.name)));
-    return Array.from(set).sort();
-  }, [hospital.doctors]);
+    return (hospital.departments ?? []).map((d) => d.name);
+  }, [hospital.departments]);
 
   const filteredDoctors = useMemo(() => {
     let docs = [...hospital.doctors];
     const q = doctorQuery.trim().toLowerCase();
     if (q) docs = docs.filter((d) => d.fullName.toLowerCase().includes(q));
-    if (verifiedOnly) docs = docs.filter((d) => d.verified);
-    if (mode !== "ALL") docs = docs.filter((d) => d.consultationModes.includes(mode));
-    if (specialty !== "ALL") docs = docs.filter((d) => d.specialties.some((s) => s.name === specialty));
-    const exp = (v: number | null | undefined) => v ?? 0;
-    if (sort === "EXP_DESC") docs.sort((a, b) => exp(b.experienceYears) - exp(a.experienceYears));
-    else docs.sort((a, b) => (a.feeMin ?? 0) - (b.feeMin ?? 0));
+    if (specialty !== "ALL") docs = docs.filter((d) => doctorDeptMap.get(d.id) === specialty);
+    if (sort === "FEE_ASC") docs.sort((a, b) => (a.feeMin ?? 0) - (b.feeMin ?? 0));
+    else docs.sort((a, b) => (b.feeMin ?? 0) - (a.feeMin ?? 0));
     return docs;
-  }, [hospital.doctors, doctorQuery, verifiedOnly, mode, specialty, sort]);
+  }, [hospital.doctors, doctorQuery, specialty, sort, doctorDeptMap]);
 
   const groupedDoctors = useMemo(() => {
     const groups = new Map<string, ApiDoctor[]>();
     for (const d of filteredDoctors) {
-      const primary = d.specialties.find((s) => s.isPrimary) ?? d.specialties[0];
-      const key = primary?.name ?? "Other";
+      const key = doctorDeptMap.get(d.id) ?? "Other";
       const arr = groups.get(key) ?? [];
       arr.push(d);
       groups.set(key, arr);
     }
-    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [filteredDoctors]);
+    return Array.from(groups.entries()).sort((a, b) => {
+      const ia = deptOrder.get(a[0]) ?? 999;
+      const ib = deptOrder.get(b[0]) ?? 999;
+      return ia !== ib ? ia - ib : a[0].localeCompare(b[0]);
+    });
+  }, [filteredDoctors, doctorDeptMap, deptOrder]);
 
   const TABS: { k: TabKey; label: string }[] = [
     { k: "overview",     label: "Overview" },
@@ -118,16 +138,18 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
         @import url('https://fonts.googleapis.com/css2?family=Interstate:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
         .ht-nav {
-          display: flex; flex-wrap: wrap; gap: .45rem;
+          display: flex; flex-wrap: nowrap; gap: .45rem;
           padding-bottom: 1.4rem;
           border-bottom: 1px solid rgba(15,30,56,.08);
           margin-bottom: 1.75rem;
         }
         .ht-tab-btn {
-          padding: .5rem 1.1rem;
-          border-radius: 100px;
-          font-size: .8rem; font-weight: 500;
+          flex: 1;
+          padding: .75rem 1rem;
+          border-radius: 8px;
+          font-size: .9rem; font-weight: 500;
           cursor: pointer; white-space: nowrap;
+          text-align: center;
           border: 1px solid rgba(15,30,56,.12);
           background: transparent; color: #6b7a96;
           transition: all .18s ease;
@@ -248,6 +270,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
           background:#f7f4ef; font-size:.8rem; color:#0f1e38;
           outline:none; font-family:'Interstate',sans-serif;
           transition:border-color .18s;
+          width:100%; min-width:0;
         }
         .ht-select:focus {
           border-color:rgba(200,169,110,.5);
@@ -276,55 +299,68 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
 
         .ht-doc-grid { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill, minmax(275px,1fr)); }
 
-        .ht-dept-grid { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); }
+        .ht-dept-grid { display:grid; gap:.85rem; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); }
         .ht-dept-card {
           background:#fff; border:1px solid rgba(15,30,56,.09);
-          border-radius:13px; padding:1.15rem; text-align:left; cursor:pointer;
-          transition:all .2s ease; box-shadow:0 2px 7px rgba(15,30,56,.05);
-          position: relative;
-          overflow: hidden;
+          border-radius:14px; padding:1.25rem; text-align:left; cursor:pointer;
+          transition:all .3s ease; box-shadow:0 2px 8px rgba(15,30,56,.05);
+          display:flex; flex-direction:column;
+          position:relative; overflow:hidden;
         }
-        .ht-dept-card:hover { border-color:rgba(200,169,110,.4); box-shadow:0 8px 24px rgba(15,30,56,.11); transform:translateY(-2px); }
-        
+        .ht-dept-card:hover { border-color:#c8a96e; box-shadow:0 16px 40px rgba(15,30,56,.13); transform:translateY(-3px); }
         .ht-dept-card.highlighted {
-          border-color: var(--gold);
-          box-shadow: 0 0 0 2px var(--gold), 0 8px 24px rgba(200,169,110,0.3);
+          border-color: #c8a96e;
+          box-shadow: 0 0 0 2px #c8a96e, 0 16px 40px rgba(200,169,110,0.2);
           animation: pulseHighlight 2s ease-in-out;
         }
         
         @keyframes pulseHighlight {
-          0%, 100% { box-shadow: 0 0 0 2px var(--gold), 0 8px 24px rgba(200,169,110,0.3); }
-          50% { box-shadow: 0 0 0 4px var(--gold), 0 12px 32px rgba(200,169,110,0.5); }
+          0%, 100% { box-shadow: 0 0 0 2px #c8a96e, 0 16px 40px rgba(200,169,110,0.2); }
+          50% { box-shadow: 0 0 0 4px #c8a96e, 0 20px 48px rgba(200,169,110,0.3); }
         }
 
         .ht-recommended-badge {
           position: absolute;
-          top: 0;
-          right: 0;
-          background: var(--gold);
-          color: var(--navy);
+          top: 12px;
+          right: 12px;
+          background: #c8a96e;
+          color: #0f1e38;
           font-size: 0.7rem;
           font-weight: 600;
           padding: 0.25rem 0.75rem;
-          border-bottom-left-radius: 10px;
-          z-index: 1;
+          border-radius: 100px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          z-index: 2;
+          box-shadow: 0 2px 8px rgba(200,169,110,0.3);
         }
 
-        .ht-dept-ico {
-          width:38px; height:38px; border-radius:9px; background:#0f1e38;
-          display:flex; align-items:center; justify-content:center; margin-bottom:.8rem;
+        .ht-dept-overlay {
+          position:absolute; top:0; left:0; right:0; height:80px;
+          background:linear-gradient(135deg, rgba(200,169,110,.12), rgba(200,169,110,.05) 60%, transparent);
+          opacity:0; transition:opacity .3s;
+          pointer-events:none;
         }
+        .ht-dept-card:hover .ht-dept-overlay { opacity:1; }
+        .ht-dept-ico {
+          width:42px; height:42px; border-radius:10px; background:#0f1e38;
+          display:flex; align-items:center; justify-content:center; margin-bottom:.9rem;
+          transition:background .3s;
+        }
+        .ht-dept-card:hover .ht-dept-ico { background:#1a3059; }
         .ht-dept-ico svg { color:#c8a96e !important; }
-        .ht-dept-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:#0f1e38; margin-bottom:.3rem; }
-        .ht-dept-text { font-size:.75rem; color:#6b7a96; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .ht-dept-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:.92rem; font-weight:700; color:#0f1e38; margin-bottom:.35rem; line-height:1.35; transition:color .3s; }
+        .ht-dept-card:hover .ht-dept-name { color:#a88b50; }
+        .ht-dept-text { font-size:.76rem; color:#6b7a96; line-height:1.55; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; flex:1; }
         .ht-dept-foot {
           display:flex; justify-content:space-between; align-items:center;
-          margin-top:.8rem; padding-top:.65rem;
+          margin-top:.9rem; padding-top:.7rem;
           border-top:1px solid rgba(15,30,56,.07);
         }
         .ht-dept-ct { font-size:.7rem; font-weight:600; color:#a88b50; background:rgba(200,169,110,.1); border:1px solid rgba(200,169,110,.2); border-radius:100px; padding:.17rem .58rem; }
-        .ht-dept-arrow { color:#9aaac0; transition:transform .18s, color .18s; }
-        .ht-dept-card:hover .ht-dept-arrow { transform:translateX(3px); color:#a88b50; }
+        .ht-dept-arrow { color:#9aaac0; transition:transform .2s, color .2s; }
+        .ht-dept-card:hover .ht-dept-arrow { transform:translateX(4px); color:#c8a96e; }
 
         .ht-back {
           display:inline-flex; align-items:center; gap:.38rem;
@@ -400,10 +436,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
             <button
               key={k}
               className={`ht-tab-btn${tab === k ? " active" : ""}`}
-              onClick={() => { 
-                setTab(k); 
-                if (k !== "departments") setSelectedDeptId(null); 
-              }}
+              onClick={() => { setTab(k); if (k !== "departments") setSelectedDeptId(null); }}
             >
               {label}
             </button>
@@ -520,7 +553,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
             {packages.length ? (
               <div style={{ display:"grid", gap:".75rem", gridTemplateColumns:"repeat(auto-fill, minmax(255px,1fr))" }}>
                 {packages.map((pkg, i) => (
-                  <PackageCard key={pkg.id} pkg={pkg as any} hospitalName={hospital.name} featured={i === 1} />
+                  <PackageCard key={pkg.id} pkg={pkg as any} hospitalName={hospital.name} hospitalId={hospital.id} featured={i === 1} />
                 ))}
               </div>
             ) : (
@@ -569,9 +602,11 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
                         className={`ht-dept-card ${d.id === highlightedDeptId ? 'highlighted' : ''}`} 
                         onClick={() => setSelectedDeptId(d.id)}
                       >
-                        {d.id === initialDepartmentId && (
+                        <div className="ht-dept-overlay" />
+                        {d.id === initialDepartmentId && showAIBadge && (
                           <div className="ht-recommended-badge">
-                            🎯 Recommended
+                            <lucideReact.Sparkles size={12} />
+                            <span>AI Recommended</span>
                           </div>
                         )}
                         <div className="ht-dept-ico"><lucideReact.Stethoscope size={17} /></div>
@@ -610,6 +645,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
                   <div className="ht-doc-grid">
                     {deptDoctors.map((d) => (
                       <DoctorCard key={d.id} doctor={d} slots={hospital.availability}
+                        departmentName={selectedDept.name}
                         onSelectSlotAction={() => onBookDoctorAction(d.id)} />
                     ))}
                   </div>
@@ -633,11 +669,12 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
                   <lucideReact.Filter size={14} />
                 </div>
                 <div className="ht-title" style={{ fontSize:".9rem" }}>Find Your Doctor</div>
+                <span className="ht-pill" style={{ whiteSpace:"nowrap", marginLeft:"auto" }}>{filteredDoctors.length} doctors</span>
               </div>
 
-              <div className="ht-filter-grid">
-                <div style={{ position:"relative" }}>
-                  <lucideReact.Search size={13} style={{ position:"absolute", left:9, top:12, color:"#9aaac0" }} />
+              <div style={{ display:"flex", gap:"0.5rem", alignItems:"center" }}>
+                <div style={{ flex:"0 0 50%", position:"relative", minWidth:0 }}>
+                  <lucideReact.Search size={13} style={{ position:"absolute", left:9, top:"50%", transform:"translateY(-50%)", color:"#9aaac0", pointerEvents:"none" }} />
                   <Input
                     value={doctorQuery}
                     onChange={(e) => setDoctorQuery(e.target.value)}
@@ -645,34 +682,18 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
                     style={{
                       paddingLeft:"1.9rem", height:37, borderRadius:8, fontSize:".8rem",
                       border:"1px solid rgba(15,30,56,.14)", background:"#f7f4ef",
-                      fontFamily:"'Outfit',sans-serif", color:"#0f1e38",
+                      fontFamily:"'Outfit',sans-serif", color:"#0f1e38", width:"100%",
                     }}
                   />
                 </div>
-                <select className="ht-select" value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
-                  <option value="ALL">All Specialties</option>
+                <select className="ht-select" style={{ flex:1 }} value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
+                  <option value="ALL">All Departments</option>
                   {allSpecialties.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select className="ht-select" value={mode} onChange={(e) => setMode(e.target.value as any)}>
-                  <option value="ALL">All Modes</option>
-                  <option value="PHYSICAL">Physical</option>
-                  <option value="ONLINE">Online</option>
+                <select className="ht-select" style={{ flex:1 }} value={sort} onChange={(e) => setSort(e.target.value as any)}>
+                  <option value="FEE_ASC">Fee: Low → High</option>
+                  <option value="FEE_DESC">Fee: High → Low</option>
                 </select>
-                <select className="ht-select" value={sort} onChange={(e) => setSort(e.target.value as any)}>
-                  <option value="EXP_DESC">Sort: Experience ↓</option>
-                  <option value="FEE_ASC">Sort: Fee ↑</option>
-                </select>
-              </div>
-
-              <div className="ht-filter-foot">
-                <label className="ht-check-label">
-                  <input type="checkbox" checked={verifiedOnly}
-                    onChange={(e) => setVerifiedOnly(e.target.checked)}
-                    style={{ accentColor:"#c8a96e" }} />
-                  <lucideReact.CheckCircle2 size={12} style={{ color:"#15803d" }} />
-                  Verified only
-                </label>
-                <span className="ht-pill">{filteredDoctors.length} doctors</span>
               </div>
             </div>
 
@@ -688,6 +709,7 @@ export function HospitalTabs({ hospital, packages, onBookDoctorAction, initialDe
                     <div className="ht-doc-grid">
                       {docs.map((d) => (
                         <DoctorCard key={d.id} doctor={d} slots={hospital.availability}
+                          departmentName={groupName}
                           onSelectSlotAction={() => onBookDoctorAction(d.id)} />
                       ))}
                     </div>

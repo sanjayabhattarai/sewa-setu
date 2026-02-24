@@ -79,7 +79,7 @@ export default async function ProfilePage() {
 
       {/* ── HERO BANNER ── */}
       <div style={{ background: "linear-gradient(135deg,#0f1e38 0%,#1a3059 60%,#0f1e38 100%)" }} className="pt-20 pb-0">
-        <div className="max-w-5xl mx-auto px-6 pt-8 pb-0">
+        <div className="max-w-5xl mx-auto px-4 pt-2 pb-0">
 
           {/* Back link */}
           <Link href="/" className="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium transition-colors mb-8 bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-full border border-white/15">
@@ -178,18 +178,13 @@ export default async function ProfilePage() {
         </div>
 
         {/* ── SIGN OUT ── */}
-        <div className="border-t pt-8 flex flex-col sm:flex-row gap-3">
+        <div className="border-t pt-8 flex justify-center">
           <SignOutButton redirectUrl="/">
-            <button className="flex items-center justify-center gap-2 bg-red-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-red-700 transition flex-1">
+            <button className="flex items-center justify-center gap-2 bg-red-600 text-white font-medium py-3 px-10 rounded-lg hover:bg-red-700 transition">
               <LogOut size={18} />
               Sign Out
             </button>
           </SignOutButton>
-          <Link href="/" className="flex-1">
-            <button className="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg hover:bg-gray-300 transition">
-              Back Home
-            </button>
-          </Link>
         </div>
 
       </div>
