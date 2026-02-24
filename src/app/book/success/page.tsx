@@ -79,7 +79,7 @@ function SuccessContent() {
       </div>
 
       {/* TICKET / DOCUMENT CARD */}
-      <div className="bg-white border-2 border-slate-200 rounded-2xl p-8 max-w-xl w-full shadow-sm print:border-black print:shadow-none">
+      <div className="bg-white border-2 border-slate-200 rounded-2xl p-8 max-w-xl w-full shadow-sm">
         
         {/* Header */}
         <div className="flex justify-between items-start border-b border-slate-100 pb-6 mb-6">
@@ -139,7 +139,7 @@ function SuccessContent() {
 export default function SuccessPage() {
   return (
     <main className="min-h-screen bg-white">
-      <Navbar />
+      <div className="print:hidden"><Navbar /></div>
       
       {/* 1. "items-center": Fixes the left/right gap by centering horizontally.
         2. "justify-start": Keeps it at the top on mobile.

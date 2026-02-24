@@ -361,11 +361,17 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
                     {TIME_SLOTS.map((t) => {
                       const { h12, ampm } = to12h(t);
                       const isSel = selectedTime === t;
+                      // Check if this time slot is in the past (only relevant for today)
+                      const isToday = selectedDate === toDateKey(today);
+                      const [slotHour] = t.split(":").map(Number);
+                      const nowHour = new Date().getHours();
+                      const isExpired = isToday && slotHour <= nowHour;
                       return (
                         <button
                           key={t}
                           type="button"
-                          onClick={() => setSelectedTime(t)}
+                          disabled={isExpired}
+                          onClick={() => !isExpired && setSelectedTime(t)}
                           style={{
                             display: "flex",
                             flexDirection: "column",
@@ -373,18 +379,19 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
                             justifyContent: "center",
                             padding: "12px 8px",
                             borderRadius: 10,
-                            border: isSel ? "2px solid #c8a96e" : "2px solid rgba(15,30,56,.1)",
-                            background: isSel ? "linear-gradient(135deg,#c8a96e 0%,#a88b50 100%)" : "#fff",
-                            cursor: "pointer",
+                            border: isExpired ? "2px solid rgba(15,30,56,.06)" : isSel ? "2px solid #c8a96e" : "2px solid rgba(15,30,56,.1)",
+                            background: isExpired ? "rgba(15,30,56,.03)" : isSel ? "linear-gradient(135deg,#c8a96e 0%,#a88b50 100%)" : "#fff",
+                            cursor: isExpired ? "not-allowed" : "pointer",
+                            opacity: isExpired ? 0.5 : 1,
                             transition: "all .14s ease",
                             boxShadow: isSel ? "0 4px 14px rgba(200,169,110,.3)" : "none",
                           }}
                         >
-                          <span style={{ fontSize: "1rem", fontWeight: 800, color: isSel ? "#fff" : "#0f1e38", lineHeight: 1 }}>
+                          <span style={{ fontSize: "1rem", fontWeight: 800, color: isExpired ? "#b0b8c8" : isSel ? "#fff" : "#0f1e38", lineHeight: 1 }}>
                             {h12}:00
                           </span>
-                          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: isSel ? "rgba(255,255,255,.7)" : "#9aa3b0", marginTop: 3 }}>
-                            {ampm}
+                          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: isExpired ? "#b0b8c8" : isSel ? "rgba(255,255,255,.7)" : "#9aa3b0", marginTop: 3 }}>
+                            {isExpired ? "Expired" : ampm}
                           </span>
                         </button>
                       );

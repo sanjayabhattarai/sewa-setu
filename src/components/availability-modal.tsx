@@ -616,6 +616,37 @@ export function AvailabilityModal({
                           const isBooked = bookedSet.has(bookedKey);
                           const isYours = yourSet.has(bookedKey);
 
+                          // Check if slot is in the past
+                          const isPastDay = d.getTime() < today.getTime();
+                          const slotHour = parseInt(o.startTime.split(":")[0], 10);
+                          const isExpiredToday = isToday && slotHour <= new Date().getHours();
+                          const isExpired = isPastDay || isExpiredToday;
+
+                          // Expired — past date or past time today
+                          if (isExpired) {
+                            return (
+                              <div
+                                key={`${o.date}-${o.startTime}-${o.mode}`}
+                                style={{
+                                  width: "100%",
+                                  padding: "10px 12px",
+                                  borderRadius: 10,
+                                  textAlign: "left",
+                                  border: "1.5px solid rgba(15,30,56,.07)",
+                                  background: "rgba(15,30,56,.02)",
+                                  opacity: 0.45,
+                                }}
+                              >
+                                <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#b0b8c8", marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
+                                  <span>⏰</span><span>EXPIRED</span>
+                                </div>
+                                <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#b0b8c8", letterSpacing: "-0.01em", textDecoration: "line-through" }}>
+                                  {o.startTime} – {o.endTime}
+                                </div>
+                              </div>
+                            );
+                          }
+
                           // Booked by current user — show "Your Booking" badge, not selectable
                           if (isYours) {
                             return (
