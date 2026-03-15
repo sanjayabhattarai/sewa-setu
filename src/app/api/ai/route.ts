@@ -642,6 +642,7 @@ export async function PUT(req: Request) {
             fullName: patientName,
             phone: patientPhone,
             country: "Nepal",
+            clerkId: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           },
         });
       }
