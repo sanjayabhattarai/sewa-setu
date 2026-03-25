@@ -4,6 +4,15 @@ import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+function getAppointmentDateTime(scheduledAt: Date, slotTime: string | null): Date {
+  if (!slotTime) return scheduledAt;
+  const start = slotTime.split("-")[0].trim();
+  const [h, m = 0] = start.split(":").map(Number);
+  const dt = new Date(scheduledAt);
+  dt.setHours(h, m, 0, 0);
+  return dt;
+}
+
 export async function GET(req: Request) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -16,49 +25,67 @@ export async function GET(req: Request) {
   const dbUser = await db.user.findUnique({ where: { clerkId } });
   if (!dbUser) return NextResponse.json({ bookings: [], total: 0, hasMore: false });
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  let extraWhere = {};
-  if (filter === "upcoming") {
-    extraWhere = { scheduledAt: { gte: today } };
-  } else if (filter === "past") {
-    extraWhere = { scheduledAt: { lt: today } };
-  }
+  const include = {
+    hospital: {
+      select: {
+        name: true, slug: true, phone: true, email: true,
+        location: { select: { city: true, district: true, area: true, addressLine: true } },
+      },
+    },
+    doctor: { select: { fullName: true } },
+    package: { select: { title: true, price: true, currency: true } },
+    patient: { select: { fullName: true } },
+  };
 
-  const where = { userId: dbUser.id, ...extraWhere };
   const totalAll = await db.booking.count({ where: { userId: dbUser.id } });
 
-  const [total, raw] = await Promise.all([
-    db.booking.count({ where }),
-    db.booking.findMany({
-      where,
-      include: {
-        hospital: {
-          select: {
-            name: true, slug: true, phone: true,
-            location: { select: { city: true, district: true, area: true, addressLine: true } },
-          },
-        },
-        doctor: { select: { fullName: true } },
-        package: { select: { title: true, price: true, currency: true } },
-        patient: { select: { fullName: true } },
-      },
+  let raw: Awaited<ReturnType<typeof db.booking.findMany>> = [];
+  let total = 0;
+
+  if (filter === "upcoming" || filter === "past") {
+    const allForUser = await db.booking.findMany({
+      where: { userId: dbUser.id },
+      include,
       orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
-  ]);
+    });
+
+    const now = Date.now();
+    const filtered = allForUser.filter((b) => {
+      const apptMs = getAppointmentDateTime(b.scheduledAt, b.slotTime).getTime();
+      return filter === "upcoming" ? apptMs >= now : apptMs < now;
+    });
+
+    total = filtered.length;
+    raw = filtered.slice((page - 1) * pageSize, page * pageSize);
+  } else {
+    const where = { userId: dbUser.id };
+    [total, raw] = await Promise.all([
+      db.booking.count({ where }),
+      db.booking.findMany({
+        where,
+        include,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+  }
 
   const bookings = raw.map((b) => ({
     id: b.id,
     status: b.status,
     scheduledAt: b.scheduledAt.toISOString(),
+    createdAt: b.createdAt.toISOString(),
+    confirmedAt: b.confirmedAt?.toISOString() ?? null,
+    rescheduleCount: b.rescheduleCount,
     slotTime: b.slotTime ?? null,
     amountPaid: b.amountPaid ?? null,
     currency: b.currency ?? null,
     mode: b.mode,
+    hospitalId: b.hospitalId ?? null,
+    doctorId: b.doctorId ?? null,
     hospital: b.hospital
-      ? { name: b.hospital.name, slug: b.hospital.slug, phone: b.hospital.phone ?? null, location: b.hospital.location ?? null }
+      ? { name: b.hospital.name, slug: b.hospital.slug, phone: b.hospital.phone ?? null, email: b.hospital.email ?? null, location: b.hospital.location ?? null }
       : null,
     doctor: b.doctor ? { fullName: b.doctor.fullName } : null,
     package: b.package ? { title: b.package.title, price: b.package.price ?? null, currency: b.package.currency ?? null } : null,

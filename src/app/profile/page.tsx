@@ -9,6 +9,15 @@ import { db } from "@/lib/db";
 
 export const revalidate = 0;
 
+function getAppointmentDateTime(scheduledAt: Date, slotTime: string | null): Date {
+  if (!slotTime) return scheduledAt;
+  const start = slotTime.split("-")[0].trim();
+  const [h, m = 0] = start.split(":").map(Number);
+  const dt = new Date(scheduledAt);
+  dt.setHours(h, m, 0, 0);
+  return dt;
+}
+
 export default async function ProfilePage() {
   const user = await currentUser();
 
@@ -19,16 +28,19 @@ export default async function ProfilePage() {
   // Fetch real DB data
   const dbUser = await db.user.findUnique({ where: { clerkId: user.id } });
 
-  const [bookingCount, upcomingCount, rawBookings] = dbUser
+  const [bookingCount, upcomingSource, rawBookings] = dbUser
     ? await Promise.all([
         db.booking.count({ where: { userId: dbUser.id } }),
-        db.booking.count({ where: { userId: dbUser.id, scheduledAt: { gte: (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })() } } }),
+        db.booking.findMany({
+          where: { userId: dbUser.id },
+          select: { scheduledAt: true, slotTime: true },
+        }),
         db.booking.findMany({
           where: { userId: dbUser.id },
           include: {
             hospital: {
               select: {
-                name: true, slug: true, phone: true,
+                name: true, slug: true, phone: true, email: true,
                 location: { select: { city: true, district: true, area: true, addressLine: true } },
               },
             },
@@ -40,19 +52,28 @@ export default async function ProfilePage() {
           take: 5,
         }),
       ])
-    : [0, 0, []];
+    : [0, [], []];
+
+  const upcomingCount = upcomingSource.filter(
+    (b) => getAppointmentDateTime(b.scheduledAt, b.slotTime).getTime() >= Date.now()
+  ).length;
 
   // Serialize for client component (Dates → strings)
   const serializedBookings: SerializedBooking[] = rawBookings.map((b) => ({
     id: b.id,
     status: b.status,
     scheduledAt: b.scheduledAt.toISOString(),
+    createdAt: b.createdAt.toISOString(),
+    confirmedAt: b.confirmedAt?.toISOString() ?? null,
+    rescheduleCount: b.rescheduleCount,
     slotTime: b.slotTime ?? null,
     amountPaid: b.amountPaid ?? null,
     currency: b.currency ?? null,
     mode: b.mode,
+    hospitalId: b.hospitalId ?? null,
+    doctorId: b.doctorId ?? null,
     hospital: b.hospital
-      ? { name: b.hospital.name, slug: b.hospital.slug, phone: b.hospital.phone ?? null, location: b.hospital.location ?? null }
+      ? { name: b.hospital.name, slug: b.hospital.slug, phone: b.hospital.phone ?? null, email: b.hospital.email ?? null, location: b.hospital.location ?? null }
       : null,
     doctor: b.doctor ? { fullName: b.doctor.fullName } : null,
     package: b.package ? { title: b.package.title, price: b.package.price ?? null, currency: b.package.currency ?? null } : null,

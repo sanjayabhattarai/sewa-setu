@@ -94,6 +94,7 @@ export async function provisionBooking(
       amountPaid: session.amount_total,
       currency: session.currency ?? "eur",
       status: "CONFIRMED" as any,
+      confirmedAt: new Date(),
       notes:
         meta.type === "package"
           ? `Package: ${meta.packageName}`
