@@ -21,6 +21,23 @@ type BookingData = {
   type: string;
 };
 
+const STATUS_STYLES: Record<string, { bg: string; border: string; text: string; label: string }> = {
+  UPCOMING:  { bg: "bg-blue-50",    border: "border-blue-100",   text: "text-blue-800",   label: "Upcoming" },
+  COMPLETED: { bg: "bg-emerald-50", border: "border-emerald-100",text: "text-emerald-800",label: "Completed" },
+  REQUESTED: { bg: "bg-amber-50",   border: "border-amber-100",  text: "text-amber-800",  label: "Requested" },
+  CANCELLED: { bg: "bg-red-50",     border: "border-red-100",    text: "text-red-800",    label: "Cancelled" },
+  DRAFT:     { bg: "bg-gray-50",    border: "border-gray-100",   text: "text-gray-600",   label: "Draft" },
+};
+
+function resolveBookingStatus(bookingDate: string, slotTime: string): string {
+  const dt = new Date(bookingDate);
+  if (slotTime) {
+    const [h, m = 0] = slotTime.split("-")[0].trim().split(":").map(Number);
+    dt.setHours(h, m, 0, 0);
+  }
+  return dt.getTime() < Date.now() ? "COMPLETED" : "UPCOMING";
+}
+
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
@@ -135,10 +152,16 @@ function SuccessContent() {
         </div>
 
         {/* Status Badge */}
-        <div className="bg-green-50 border border-green-100 rounded-lg p-4 flex justify-between items-center">
-          <span className="text-green-800 font-bold text-sm">PAYMENT SUCCESSFUL</span>
-          <span className="text-slate-900 font-bold">{bookingData?.amountPaid}</span>
-        </div>
+        {(() => {
+          const ds = bookingData ? resolveBookingStatus(bookingData.bookingDate, bookingData.slotTime) : "UPCOMING";
+          const s = STATUS_STYLES[ds];
+          return (
+            <div className={`${s.bg} border ${s.border} rounded-lg p-4 flex justify-between items-center`}>
+              <span className={`${s.text} font-bold text-sm`}>{s.label}</span>
+              <span className="text-slate-900 font-bold">{bookingData?.amountPaid}</span>
+            </div>
+          );
+        })()}
         
         <div className="mt-6 text-center text-xs text-slate-400 print:block hidden">
             Show this document at the hospital reception.

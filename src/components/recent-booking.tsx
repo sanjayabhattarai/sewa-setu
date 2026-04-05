@@ -3,6 +3,25 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Ticket, CheckCircle } from "lucide-react";
+
+const STATUS_STYLES = {
+  UPCOMING:  { text: "text-blue-700",    bg: "bg-blue-100",    label: "Upcoming" },
+  COMPLETED: { text: "text-emerald-700", bg: "bg-emerald-100", label: "Completed" },
+  REQUESTED: { text: "text-amber-700",   bg: "bg-amber-100",   label: "Requested" },
+  CANCELLED: { text: "text-red-700",     bg: "bg-red-100",     label: "Cancelled" },
+  DRAFT:     { text: "text-gray-500",    bg: "bg-gray-100",    label: "Draft" },
+} as const;
+
+function resolveDisplayStatus(status: string, scheduledAt: string, slotTime: string | null): string {
+  if (status === "CANCELLED") return "CANCELLED";
+  if (status === "DRAFT") return "DRAFT";
+  const dt = new Date(scheduledAt);
+  if (slotTime) {
+    const [h, m = 0] = slotTime.split("-")[0].trim().split(":").map(Number);
+    dt.setHours(h, m, 0, 0);
+  }
+  return dt.getTime() < Date.now() ? "COMPLETED" : "UPCOMING";
+}
 import type { SerializedBooking } from "@/components/booking-detail-modal";
 
 export function RecentBooking() {
@@ -39,9 +58,15 @@ export function RecentBooking() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full whitespace-nowrap">
-            <CheckCircle className="h-3 w-3" /> Confirmed
-          </div>
+          {(() => {
+            const ds = resolveDisplayStatus(booking.status, booking.scheduledAt, booking.slotTime);
+            const s = STATUS_STYLES[ds as keyof typeof STATUS_STYLES] ?? STATUS_STYLES.UPCOMING;
+            return (
+              <div className={`flex items-center gap-2 text-xs font-medium ${s.text} ${s.bg} px-3 py-1 rounded-full whitespace-nowrap`}>
+                <CheckCircle className="h-3 w-3" /> {s.label}
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>

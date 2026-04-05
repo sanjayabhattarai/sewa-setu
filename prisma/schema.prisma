@@ -55,6 +55,7 @@ model User {
 
   patients Patient[]
   bookings Booking[]
+  reviews  Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -174,6 +175,7 @@ model Hospital {
   tags        HospitalTag[]
   media       HospitalMedia[]
   bookings    Booking[]
+  reviews     Review[]
 
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
@@ -437,6 +439,28 @@ model HospitalMedia {
 
 /**
  * =========================
+ * REVIEWS
+ * =========================
+ */
+
+model Review {
+  id         String  @id @default(cuid())
+  userId     String
+  hospitalId String
+  rating     Int     // 1–5
+  comment    String?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([hospitalId])
+  @@index([userId])
+}
+
+/**
+ * =========================
  * BOOKING (READY FOR FUTURE)
  * =========================
  */
@@ -445,6 +469,8 @@ model Booking {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  confirmedAt DateTime?
+  rescheduleCount Int @default(0)
 
   stripeSessionId String? @unique // prevents duplicate bookings
 

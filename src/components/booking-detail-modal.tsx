@@ -1,22 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, CalendarDays, Clock, MapPin, Phone, User, Package, CreditCard, Stethoscope } from "lucide-react";
+import { X, CalendarDays, Clock, MapPin, Phone, User, Package, CreditCard, Stethoscope, RefreshCw, Lock, PhoneCall, Mail, CheckCircle2 } from "lucide-react";
 import { formatMoneyCents } from "@/lib/money";
+import { RescheduleModal } from "./reschedule-modal";
 
 export type SerializedBooking = {
   id: string;
   status: string;
   scheduledAt: string;
+  createdAt?: string;
+  confirmedAt?: string | null;
+  rescheduleCount?: number;
   slotTime: string | null;
   amountPaid: number | null;
   currency: string | null;
   mode: string;
+  hospitalId: string | null;
+  doctorId: string | null;
   hospital: {
     name: string;
     slug: string;
     phone: string | null;
+    email: string | null;
     location: {
       city: string;
       district: string;
@@ -37,15 +44,23 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; label: string; d
   DRAFT:      { bg: "bg-gray-100",    text: "text-gray-500",    label: "Draft",      dot: "bg-gray-400" },
 };
 
-// Derive a display status from the DB status + scheduled date
-function resolveDisplayStatus(status: string, scheduledAt: string): string {
+function getAppointmentDateTime(scheduledAt: string, slotTime: string | null): Date {
+  const dt = new Date(scheduledAt);
+  if (slotTime) {
+    const start = slotTime.split("-")[0].trim();
+    const [h, m = 0] = start.split(":").map(Number);
+    dt.setHours(h, m, 0, 0);
+  }
+  return dt;
+}
+
+// Derive a display status from DB status + exact appointment datetime.
+function resolveDisplayStatus(status: string, scheduledAt: string, slotTime: string | null): string {
   if (status === "CANCELLED") return "CANCELLED";
   if (status === "DRAFT") return "DRAFT";
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const apptDay = new Date(scheduledAt);
-  apptDay.setHours(0, 0, 0, 0);
-  return apptDay < today ? "COMPLETED" : "UPCOMING";
+
+  const apptTime = getAppointmentDateTime(scheduledAt, slotTime);
+  return apptTime.getTime() < Date.now() ? "COMPLETED" : "UPCOMING";
 }
 
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -54,6 +69,39 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 function formatDate(iso: string) {
   const d = new Date(iso);
   return `${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/** Returns true if the booking was confirmed within the last 30 minutes (reschedule window open).
+ *  If timestamp is missing/invalid, returns true — backend enforces the real rule. */
+function isModifiable(confirmedAt: string | undefined | null): boolean {
+  if (!confirmedAt) return true;
+  const ms = Date.now() - new Date(confirmedAt).getTime();
+  if (isNaN(ms)) return true;
+  return ms <= 30 * 60 * 1000;
+}
+
+/** Returns true if the appointment starts within 30 minutes from now.
+ *  When imminent, no reschedule and no refund. */
+function isAppointmentImminent(scheduledAt: string, slotTime: string | null): boolean {
+  const dt = getAppointmentDateTime(scheduledAt, slotTime);
+  const diff = dt.getTime() - Date.now();
+  return diff >= 0 && diff <= 30 * 60 * 1000;
+}
+
+function isQuickFinalBooking(
+  scheduledAt: string,
+  slotTime: string | null,
+  confirmedAt: string | undefined | null,
+  createdAt: string | undefined | null
+): boolean {
+  const bookingRef = confirmedAt ?? createdAt;
+  if (!bookingRef) return false;
+
+  const bookedAt = new Date(bookingRef).getTime();
+  if (isNaN(bookedAt)) return false;
+
+  const apptAt = getAppointmentDateTime(scheduledAt, slotTime).getTime();
+  return apptAt - bookedAt <= 60 * 60 * 1000;
 }
 
 function formatSlotTime(t: string) {
@@ -79,18 +127,66 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
   );
 }
 
-function BookingDetailPopup({ booking, onClose }: { booking: SerializedBooking; onClose: () => void }) {
-  const st = STATUS_STYLES[resolveDisplayStatus(booking.status, booking.scheduledAt)] ?? STATUS_STYLES.DRAFT;
+function BookingDetailPopup({
+  booking,
+  onClose,
+  onReschedule,
+}: {
+  booking: SerializedBooking;
+  onClose: () => void;
+  onReschedule?: (id: string, newScheduledAt: string, newSlotTime: string) => void;
+}) {
+  const [showReschedule, setShowReschedule] = useState(false);
+  const [rescheduleSuccess, setRescheduleSuccess] = useState<{ scheduledAt: string; slotTime: string } | null>(null);
+  const st = STATUS_STYLES[resolveDisplayStatus(booking.status, booking.scheduledAt, booking.slotTime)] ?? STATUS_STYLES.DRAFT;
   const isPackageBooking = !!booking.package;
   const location = booking.hospital?.location;
-  const locationStr = [location?.addressLine, location?.area, location?.city, location?.district]
-    .filter(Boolean).join(", ") || location?.city || "—";
+  const locationStr = [location?.area, location?.city, location?.district]
+    .filter(Boolean).join(", ") || location?.addressLine || "—";
 
   const price = isPackageBooking
     ? (booking.package!.price != null ? formatMoneyCents(booking.package!.price, booking.package!.currency ?? "eur") : null)
     : (booking.amountPaid != null ? formatMoneyCents(booking.amountPaid, booking.currency ?? "eur") : null);
 
-  return createPortal(
+  const refundContactCard = (
+    <div
+      className="rounded-2xl p-4 space-y-2"
+      style={{ background: "#fdf8f2", border: "1.5px solid rgba(200,169,110,.25)" }}
+    >
+      <p className="text-[0.6rem] font-bold uppercase tracking-widest text-[#c8a96e] mb-1">
+        Need a Refund?
+      </p>
+      <p className="text-xs text-gray-500 leading-relaxed mb-3">
+        We don&apos;t process automatic refunds. Please contact the hospital directly and our support team will assist you.
+      </p>
+      <div className="space-y-2">
+        {booking.hospital?.phone && (
+          <a
+            href={`tel:${booking.hospital.phone}`}
+            className="flex items-center gap-2.5 text-xs font-semibold text-[#0f1e38] hover:text-[#c8a96e] transition-colors"
+          >
+            <div className="h-7 w-7 rounded-lg bg-[#c8a96e]/12 flex items-center justify-center flex-shrink-0">
+              <PhoneCall size={13} className="text-[#c8a96e]" />
+            </div>
+            {booking.hospital.phone}
+          </a>
+        )}
+        {booking.hospital?.email && (
+          <a
+            href={`mailto:${booking.hospital.email}`}
+            className="flex items-center gap-2.5 text-xs font-semibold text-[#0f1e38] hover:text-[#c8a96e] transition-colors"
+          >
+            <div className="h-7 w-7 rounded-lg bg-[#c8a96e]/12 flex items-center justify-center flex-shrink-0">
+              <Mail size={13} className="text-[#c8a96e]" />
+            </div>
+            {booking.hospital.email}
+          </a>
+        )}
+      </div>
+    </div>
+  );
+
+  const portal = createPortal(
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       style={{ background: "rgba(10,18,35,0.72)", backdropFilter: "blur(6px)" }}
@@ -220,15 +316,201 @@ function BookingDetailPopup({ booking, onClose }: { booking: SerializedBooking; 
             )}
           </div>
 
+          {/* ── Actions: only for upcoming bookings ── */}
+          {resolveDisplayStatus(booking.status, booking.scheduledAt, booking.slotTime) === "UPCOMING" && (
+            <div className="pt-4 space-y-3">
+              {isAppointmentImminent(booking.scheduledAt, booking.slotTime) ? (
+                /* Imminent appointment — no reschedule, no refund */
+                <div
+                  className="flex items-start gap-3 rounded-2xl p-4"
+                  style={{ background: "#fef2f2", border: "1.5px solid rgba(220,38,38,.2)" }}
+                >
+                  <div className="h-8 w-8 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Lock size={14} className="text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#0f1e38] mb-0.5">Appointment Starting Soon</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">
+                      Your appointment starts in less than 30 minutes. Rescheduling and refunds are no longer available.
+                    </p>
+                  </div>
+                </div>
+              ) : isQuickFinalBooking(booking.scheduledAt, booking.slotTime, booking.confirmedAt, booking.createdAt) ? (
+                /* Quick booking lock: booked too close to appointment start */
+                <div
+                  className="flex items-start gap-3 rounded-2xl p-4"
+                  style={{ background: "#fef2f2", border: "1.5px solid rgba(220,38,38,.2)" }}
+                >
+                  <div className="h-8 w-8 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Lock size={14} className="text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#0f1e38] mb-0.5">Final Quick Booking</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">
+                      This appointment was booked within 1 hour of the start time. It cannot be rescheduled or refunded.
+                    </p>
+                  </div>
+                </div>
+              ) : (booking.rescheduleCount ?? 0) >= 1 ? (
+                <>
+                  {/* One-time limit reached */}
+                  <div
+                    className="flex items-start gap-3 rounded-2xl p-4"
+                    style={{ background: "#f9f4ee", border: "1.5px solid rgba(200,169,110,.2)" }}
+                  >
+                    <div className="h-8 w-8 rounded-xl bg-[#c8a96e]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Lock size={14} className="text-[#c8a96e]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#0f1e38] mb-0.5">Reschedule Limit Reached</p>
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        You can reschedule this appointment only once. For further changes, please contact the hospital directly.
+                      </p>
+                    </div>
+                  </div>
+
+                  {refundContactCard}
+                </>
+              ) : isModifiable(booking.confirmedAt ?? booking.createdAt) ? (
+                <>
+                  <div
+                    className="rounded-2xl p-3"
+                    style={{ background: "#f8f5ef", border: "1.5px solid rgba(200,169,110,.2)" }}
+                  >
+                    <p className="text-xs font-semibold text-[#6b7a96] leading-relaxed">
+                      You can reschedule only once, so please choose the new time carefully.
+                    </p>
+                  </div>
+
+                  {/* Reschedule button */}
+                  <button
+                    onClick={() => setShowReschedule(true)}
+                    className="w-full flex items-center justify-center gap-2 h-11 rounded-2xl font-bold text-sm transition-all"
+                    style={{
+                      background: "linear-gradient(135deg,#0f1e38 0%,#1a3059 100%)",
+                      color: "#c8a96e",
+                      border: "none",
+                      boxShadow: "0 4px 14px rgba(15,30,56,.25)",
+                    }}
+                  >
+                    <RefreshCw size={15} />
+                    Reschedule Appointment
+                  </button>
+
+                  {refundContactCard}
+                </>
+              ) : (
+                /* Locked notice — 30-min creation window expired */
+                <div
+                  className="flex items-start gap-3 rounded-2xl p-4"
+                  style={{ background: "#f9f4ee", border: "1.5px solid rgba(200,169,110,.2)" }}
+                >
+                  <div className="h-8 w-8 rounded-xl bg-[#c8a96e]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Lock size={14} className="text-[#c8a96e]" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#0f1e38] mb-0.5">Appointment Locked</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">
+                      The 30-minute reschedule window has expired. For any changes, please contact the hospital directly.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
       </div>
     </div>,
     document.body
   );
+
+  return (
+    <>
+      {portal}
+      {showReschedule && (
+        <RescheduleModal
+          booking={booking}
+          onClose={() => setShowReschedule(false)}
+          onSuccess={(newScheduledAt, newSlotTime) => {
+            setShowReschedule(false);
+            onReschedule?.(booking.id, newScheduledAt, newSlotTime);
+            setRescheduleSuccess({ scheduledAt: newScheduledAt, slotTime: newSlotTime });
+          }}
+        />
+      )}
+
+      {rescheduleSuccess && createPortal(
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center p-4"
+          style={{ background: "rgba(10,18,35,0.72)", backdropFilter: "blur(6px)" }}
+          onClick={() => setRescheduleSuccess(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl p-6"
+            style={{ background: "#fff", boxShadow: "0 24px 64px rgba(10,18,35,.35)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-11 w-11 rounded-2xl bg-emerald-50 flex items-center justify-center">
+                <CheckCircle2 size={22} className="text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-emerald-600">Reschedule Confirmed</p>
+                <h4 className="text-lg font-extrabold text-[#0f1e38] leading-tight">Your new appointment is confirmed</h4>
+              </div>
+            </div>
+
+            <div className="rounded-2xl p-4 mb-5" style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+              <p className="text-xs text-gray-500 mb-1">New Date</p>
+              <p className="text-sm font-bold text-[#0f1e38] mb-3">{formatDate(rescheduleSuccess.scheduledAt)}</p>
+              <p className="text-xs text-gray-500 mb-1">New Time</p>
+              <p className="text-sm font-bold text-[#0f1e38]">{formatSlotTime(rescheduleSuccess.slotTime)}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setRescheduleSuccess(null)}
+              className="w-full h-11 rounded-2xl font-bold text-sm"
+              style={{
+                background: "linear-gradient(135deg,#0f1e38 0%,#1a3059 100%)",
+                color: "#c8a96e",
+                border: "none",
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
 }
 
-export function BookingList({ bookings }: { bookings: SerializedBooking[] }) {
+export function BookingList({ bookings: initialBookings }: { bookings: SerializedBooking[] }) {
+  const [bookings, setBookings] = useState<SerializedBooking[]>(initialBookings);
   const [selected, setSelected] = useState<SerializedBooking | null>(null);
+
+  // Sync when parent provides a fresh list (e.g. after Load More)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setBookings(initialBookings); }, [initialBookings]);
+
+  const handleReschedule = (id: string, newScheduledAt: string, newSlotTime: string) => {
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === id
+          ? { ...b, scheduledAt: newScheduledAt, slotTime: newSlotTime, rescheduleCount: (b.rescheduleCount ?? 0) + 1 }
+          : b
+      )
+    );
+    setSelected((prev) =>
+      prev?.id === id
+        ? { ...prev, scheduledAt: newScheduledAt, slotTime: newSlotTime, rescheduleCount: (prev.rescheduleCount ?? 0) + 1 }
+        : prev
+    );
+  };
+
 
   if (bookings.length === 0) {
     return (
@@ -252,7 +534,7 @@ export function BookingList({ bookings }: { bookings: SerializedBooking[] }) {
     <>
       <div className="divide-y divide-gray-50">
         {bookings.map((b) => {
-          const st = STATUS_STYLES[resolveDisplayStatus(b.status, b.scheduledAt)] ?? STATUS_STYLES.DRAFT;
+          const st = STATUS_STYLES[resolveDisplayStatus(b.status, b.scheduledAt, b.slotTime)] ?? STATUS_STYLES.DRAFT;
           const d = new Date(b.scheduledAt);
           const date = `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
           const subtitle = b.package
@@ -290,7 +572,14 @@ export function BookingList({ bookings }: { bookings: SerializedBooking[] }) {
         })}
       </div>
 
-      {selected && <BookingDetailPopup booking={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <BookingDetailPopup
+          booking={selected}
+          onClose={() => setSelected(null)}
+          onReschedule={handleReschedule}
+        />
+      )}
+
     </>
   );
 }
