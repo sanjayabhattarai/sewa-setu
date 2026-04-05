@@ -141,8 +141,8 @@ function BookingDetailPopup({
   const st = STATUS_STYLES[resolveDisplayStatus(booking.status, booking.scheduledAt, booking.slotTime)] ?? STATUS_STYLES.DRAFT;
   const isPackageBooking = !!booking.package;
   const location = booking.hospital?.location;
-  const locationStr = [location?.addressLine, location?.area, location?.city, location?.district]
-    .filter(Boolean).join(", ") || location?.city || "—";
+  const locationStr = [location?.area, location?.city, location?.district]
+    .filter(Boolean).join(", ") || location?.addressLine || "—";
 
   const price = isPackageBooking
     ? (booking.package!.price != null ? formatMoneyCents(booking.package!.price, booking.package!.currency ?? "eur") : null)
@@ -511,6 +511,7 @@ export function BookingList({ bookings: initialBookings }: { bookings: Serialize
     );
   };
 
+
   if (bookings.length === 0) {
     return (
       <div className="py-14 flex flex-col items-center justify-center gap-3 text-center px-6">
@@ -578,6 +579,7 @@ export function BookingList({ bookings: initialBookings }: { bookings: Serialize
           onReschedule={handleReschedule}
         />
       )}
+
     </>
   );
 }
