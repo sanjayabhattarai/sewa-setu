@@ -53,37 +53,6 @@ export async function provisionBooking(
     create: { clerkId: clerkUserId, email: userEmail, fullName: userFullName, country: "NP" },
   });
 
-  // ── 4. FIND OR CREATE PATIENT ────────────────────────────────────
-  const patientFullName = meta.patientName ?? userFullName;
-  let patient = await db.patient.findFirst({
-    where: { userId: dbUser.id, fullName: patientFullName },
-  });
-  if (!patient) {
-    patient = await db.patient.create({
-      data: {
-        userId: dbUser.id,
-        fullName: patientFullName,
-        phone: meta.patientPhone ?? null,
-        gender: meta.patientGender ?? null,
-        disability: meta.patientDisability ?? null,
-        dateOfBirth: meta.patientAge
-          ? new Date(new Date().getFullYear() - parseInt(meta.patientAge, 10), new Date().getMonth(), new Date().getDate())
-          : null,
-      },
-    });
-  } else {
-    // Update gender/disability if provided and not yet set
-    if (meta.patientGender || meta.patientDisability) {
-      patient = await db.patient.update({
-        where: { id: patient.id },
-        data: {
-          ...(meta.patientGender    && !patient.gender     && { gender:     meta.patientGender }),
-          ...(meta.patientDisability && !patient.disability && { disability: meta.patientDisability }),
-        },
-      });
-    }
-  }
-
   // ── 5. RESOLVE HOSPITAL ──────────────────────────────────────────
   const hospitalId = meta.hospitalId;
   if (!hospitalId) throw new Error("Missing hospitalId in Stripe session metadata");
@@ -91,35 +60,98 @@ export async function provisionBooking(
   const hospital = await db.hospital.findUnique({ where: { id: hospitalId } });
   if (!hospital) throw new Error(`Hospital ${hospitalId} not found`);
 
-  // ── 6. CREATE BOOKING ────────────────────────────────────────────
-  const booking = await db.booking.create({
-    data: {
-      stripeSessionId: sessionId,
-      userId: dbUser.id,
-      patientId: patient.id,
-      hospitalId: hospital.id,
-      doctorId: meta.doctorId ?? null,
-      packageId: meta.packageId ?? null,
-      availabilitySlotId: meta.slotId ?? null,
-      mode: (meta.consultationMode === "ONLINE" ? "ONLINE" : "PHYSICAL") as any,
-      scheduledAt: meta.bookingDate ? new Date(meta.bookingDate) : new Date(),
-      slotTime: meta.slotTime ?? null,
-      amountPaid: session.amount_total,
-      currency: session.currency ?? "eur",
-      status: "CONFIRMED" as any,
-      confirmedAt: new Date(),
-      notes:
-        meta.type === "package"
-          ? `Package: ${meta.packageName}`
-          : `Doctor: ${meta.doctorName} | Mode: ${meta.consultationMode}`,
-    },
-    include: {
-      hospital: { select: { name: true } },
-      package: { select: { title: true } },
-      doctor: { select: { fullName: true } },
-      patient: true,
-    },
-  });
+  // ── 4+6. PATIENT FIND-OR-CREATE + BOOKING IN ONE TRANSACTION ────
+  // Running these atomically prevents orphaned patient records if booking
+  // creation fails, and handles the duplicate-session race condition cleanly.
+  const patientFullName = meta.patientName ?? userFullName;
+
+  // DOB: store Jan 1 of the birth year — we know the age but not the exact birthday.
+  const dateOfBirth = meta.patientAge
+    ? new Date(new Date().getFullYear() - parseInt(meta.patientAge, 10), 0, 1)
+    : null;
+
+  let booking: ProvisionedBooking;
+  try {
+    booking = await db.$transaction(async (tx) => {
+      // Look up by name + phone to avoid collapsing different family members with the same name.
+      let patient = await tx.patient.findFirst({
+        where: {
+          userId: dbUser.id,
+          fullName: patientFullName,
+          OR: [{ phone: null }, { phone: meta.patientPhone ?? null }],
+        },
+      });
+
+      if (!patient) {
+        patient = await tx.patient.create({
+          data: {
+            userId: dbUser.id,
+            fullName: patientFullName,
+            phone: meta.patientPhone ?? null,
+            gender: meta.patientGender ?? null,
+            disability: meta.patientDisability ?? null,
+            dateOfBirth,
+          },
+        });
+      } else if (meta.patientGender || meta.patientDisability) {
+        patient = await tx.patient.update({
+          where: { id: patient.id },
+          data: {
+            ...(meta.patientGender    && !patient.gender     && { gender:     meta.patientGender }),
+            ...(meta.patientDisability && !patient.disability && { disability: meta.patientDisability }),
+          },
+        });
+      }
+
+      return tx.booking.create({
+        data: {
+          stripeSessionId: sessionId,
+          userId: dbUser.id,
+          patientId: patient.id,
+          hospitalId: hospital.id,
+          doctorId: meta.doctorId ?? null,
+          packageId: meta.packageId ?? null,
+          availabilitySlotId: meta.slotId ?? null,
+          mode: (meta.consultationMode === "ONLINE" ? "ONLINE" : "PHYSICAL") as any,
+          scheduledAt: meta.bookingDate ? new Date(meta.bookingDate) : new Date(),
+          slotTime: meta.slotTime ?? null,
+          amountPaid: session.amount_total,
+          currency: session.currency ?? "eur",
+          status: "CONFIRMED" as any,
+          confirmedAt: new Date(),
+          notes:
+            meta.type === "package"
+              ? `Package: ${meta.packageName}`
+              : `Doctor: ${meta.doctorName} | Mode: ${meta.consultationMode}`,
+        },
+        include: {
+          hospital: { select: { name: true } },
+          package: { select: { title: true } },
+          doctor: { select: { fullName: true } },
+          patient: true,
+        },
+      });
+    });
+  } catch (err: unknown) {
+    // Unique constraint: two payments completed simultaneously for the same slot+date.
+    // Return the booking that won the race — both users effectively have the same session.
+    if (
+      typeof err === "object" && err !== null && "code" in err &&
+      (err as { code: string }).code === "P2002"
+    ) {
+      const conflicting = await db.booking.findUnique({
+        where: { stripeSessionId: sessionId },
+        include: {
+          hospital: { select: { name: true } },
+          package: { select: { title: true } },
+          doctor: { select: { fullName: true } },
+          patient: true,
+        },
+      });
+      if (conflicting) return conflicting;
+    }
+    throw err;
+  }
 
   console.log(`✅ Booking created: ${booking.id} | ${userEmail} | ${hospital.name}`);
   return booking;

@@ -108,6 +108,7 @@ export async function POST(req: Request) {
     if (packageId) {
       const pkg = await db.hospitalPackage.findUnique({ where: { id: packageId } });
       if (!pkg) return NextResponse.json({ error: "Package not found" }, { status: 404 });
+      if (!pkg.isActive) return NextResponse.json({ error: "This package is no longer available" }, { status: 400 });
       if (!pkg.price || pkg.price <= 0) return NextResponse.json({ error: "Package has no valid price" }, { status: 400 });
       itemName = pkg.title;
       priceCents = pkg.price;
