@@ -236,10 +236,13 @@ export default function SearchPage() {
             {activeFilterCount > 0 && (
               <button
                 onClick={clearAllFilters}
-                className="flex-shrink-0 flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 font-medium transition-colors"
+                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+                style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", color: "rgba(255,255,255,.65)" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,.14)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,.08)")}
               >
                 <X className="h-3 w-3" />
-                <span className="hidden sm:inline">Clear</span>
+                <span className="hidden sm:inline">Clear all</span>
               </button>
             )}
           </div>
@@ -316,42 +319,56 @@ export default function SearchPage() {
       </div>
 
       {/* Results */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-gold border-r-transparent"></div>
-              <p className="mt-4 text-slate font-medium">Loading hospitals...</p>
+          <>
+            <div className="h-5 w-40 rounded-lg bg-gray-200 animate-pulse mb-6" />
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl overflow-hidden border border-navy/7 animate-pulse">
+                  <div className="h-52 bg-gray-200" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-5 w-3/4 bg-gray-200 rounded-lg" />
+                    <div className="h-4 w-1/2 bg-gray-100 rounded-lg" />
+                    <div className="h-4 w-2/3 bg-gray-100 rounded-lg" />
+                    <div className="h-px bg-gray-100 my-2" />
+                    <div className="flex items-center justify-between">
+                      <div className="h-6 w-16 bg-gray-200 rounded-lg" />
+                      <div className="h-9 w-28 bg-gray-200 rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          </>
         ) : error ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-red-200">
-            <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <X className="h-8 w-8 text-red-600" />
+          <div className="text-center py-20 bg-white rounded-3xl border border-red-100"
+            style={{ boxShadow: "0 2px 12px rgba(239,68,68,.06)" }}>
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-red-50">
+              <X className="h-6 w-6 text-red-500" />
             </div>
-            <h3 className="text-lg font-medium text-red-900">{error}</h3>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 text-red-600 font-medium hover:underline"
-            >
+            <h3 className="text-base font-bold text-red-900 mb-1">Something went wrong</h3>
+            <p className="text-sm text-gray-400 mb-4">{error}</p>
+            <button onClick={() => window.location.reload()}
+              className="px-5 py-2 rounded-xl text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
               Try again
             </button>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-slate font-medium">
-                Showing <span className="text-navy font-bold">{hospitals.length}</span>
+            <div className="flex items-center justify-between mb-5">
+              <p className="text-sm text-slate font-medium">
+                <span className="text-navy font-bold">{hospitals.length}</span>
                 {total > hospitals.length && <> of <span className="text-navy font-bold">{total}</span></>}
-                {" "}{hospitals.length === 1 ? "hospital" : "hospitals"}
-                {selectedCity !== "All Cities" && ` in ${selectedCity}`}
-                {selectedType !== "ALL" && ` (${selectedType.charAt(0) + selectedType.slice(1).toLowerCase()})`}
+                {" "}{hospitals.length === 1 ? "result" : "results"}
+                {selectedCity !== "All Cities" && <> in <span className="font-semibold text-navy">{selectedCity}</span></>}
+                {selectedType !== "ALL" && <> · {selectedType.charAt(0) + selectedType.slice(1).toLowerCase()}</>}
               </p>
             </div>
 
             {hospitals.length > 0 ? (
               <>
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {hospitals.map((hospital, index) => (
                     <HospitalCard key={hospital.id} hospital={hospital} index={index} />
                   ))}
@@ -377,21 +394,23 @@ export default function SearchPage() {
                 )}
               </>
             ) : (
-              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gold/30">
-                <div className="bg-gold/8 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-8 w-8 text-gold-dim" />
+              <div className="text-center py-24 bg-white rounded-3xl" style={{ border: "1.5px dashed rgba(200,169,110,.25)" }}>
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  style={{ background: "rgba(200,169,110,.08)" }}>
+                  <Search className="h-7 w-7 text-gold-dim" />
                 </div>
-                <h3 className="text-lg font-medium text-navy">No hospitals found</h3>
-                <p className="text-slate mt-2">
-                  {searchQuery || activeFilterCount > 0 
-                    ? "Try adjusting your search or filters."
-                    : "Start searching to find hospitals near you."}
+                <h3 className="text-base font-bold text-navy mb-1">
+                  {searchQuery || activeFilterCount > 0 ? "No results found" : "Search for hospitals"}
+                </h3>
+                <p className="text-sm text-slate max-w-xs mx-auto">
+                  {searchQuery || activeFilterCount > 0
+                    ? "Try a different search term or remove some filters."
+                    : "Find hospitals, clinics and labs across Nepal."}
                 </p>
                 {(searchQuery || activeFilterCount > 0) && (
-                  <button
-                    onClick={clearAllFilters}
-                    className="mt-4 px-4 py-2 bg-navy text-gold rounded-lg font-medium hover:bg-navy-mid transition-colors"
-                  >
+                  <button onClick={clearAllFilters}
+                    className="mt-5 px-5 py-2 rounded-xl text-sm font-semibold transition-colors"
+                    style={{ background: "#0f1e38", color: "#c8a96e" }}>
                     Clear all filters
                   </button>
                 )}

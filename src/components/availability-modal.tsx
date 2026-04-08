@@ -151,7 +151,11 @@ export function AvailabilityModal({
     onCloseAction();
   };
 
-  const goPrev = () => setPageStart((d) => new Date(d.getTime() - daysToShow * 24 * 60 * 60 * 1000));
+  const goPrev = () => {
+    const todayMidnight = new Date(); todayMidnight.setHours(0, 0, 0, 0);
+    if (pageStart.getTime() <= todayMidnight.getTime()) return;
+    setPageStart((d) => new Date(d.getTime() - daysToShow * 24 * 60 * 60 * 1000));
+  };
   const goNext = () => setPageStart((d) => new Date(d.getTime() + daysToShow * 24 * 60 * 60 * 1000));
 
   // ✅ render conditional AFTER hooks
@@ -209,7 +213,8 @@ export function AvailabilityModal({
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={goPrev}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all"
+                disabled={pageStart <= today}
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ background: "rgba(255,255,255,.1)", color: "#c8a96e", border: "1px solid rgba(200,169,110,.25)" }}
               >
                 <ChevronLeft className="h-3.5 w-3.5" /> Prev

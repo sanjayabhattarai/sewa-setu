@@ -9,6 +9,28 @@ import { X, ChevronRight, ChevronLeft } from "lucide-react";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+/**
+ * Returns the YYYY-MM-DD string of the next occurrence of the given dayOfWeek
+ * (0=Sun … 6=Sat), starting from today. If today is that day, returns today.
+ */
+function nextOccurrenceDateStr(dayOfWeek: number): string {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const diff = (dayOfWeek - now.getDay() + 7) % 7;
+  const target = new Date(now.getTime() + diff * 86400000);
+  const yyyy = target.getFullYear();
+  const mm = String(target.getMonth() + 1).padStart(2, "0");
+  const dd = String(target.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/** Display fee stored in cents as a whole-number currency string (e.g. "€50"). */
+function formatFee(feeMin: number | null | undefined, currency: string | null | undefined): string {
+  if (feeMin == null) return "—";
+  const sym = (currency ?? "eur").toLowerCase() === "eur" ? "€" : (currency ?? "");
+  return `${sym}${Math.round(feeMin / 100)}`;
+}
+
 type Step = "details" | "doctor" | "availability" | "review";
 
 type Props = {
@@ -68,21 +90,19 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
     }
   }, [isOpen, preselectedDoctor]);
 
-  // Fetch booked slots for selected doctor
+  // Fetch booked slots for selected doctor — keep all dates so we can check
+  // against each slot's resolved next-occurrence date, not just today.
   useEffect(() => {
     if (!isOpen || !selectedDoctor) return;
-    const todayStr = new Date().toISOString().slice(0, 10);
     fetch(`/api/availability/booked?doctorId=${selectedDoctor.id}`)
       .then((r) => r.json())
       .then((data: { booked?: { slotId: string; date: string; isYours: boolean }[] }) => {
         const booked = new Set<string>();
         const yours = new Set<string>();
         for (const b of data.booked ?? []) {
-          if (b.date === todayStr) { // this modal always books for today
-            const key = `${b.slotId}::${b.date}`;
-            booked.add(key);
-            if (b.isYours) yours.add(key);
-          }
+          const key = `${b.slotId}::${b.date}`;
+          booked.add(key);
+          if (b.isYours) yours.add(key);
         }
         setBookedSet(booked);
         setYourSet(yours);
@@ -183,10 +203,14 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
           patientPhone: formData.patientPhone,
           buyerEmail: formData.buyerEmail,
           consultationMode: selectedSlot?.mode,
-          slotId: selectedSlot?.id, // ✅ add this (very useful later)
+          slotId: selectedSlot?.id,
           slotTime: `${selectedSlot?.startTime}-${selectedSlot?.endTime}`,
-          bookingDate: new Date().toISOString(),
-          hospitalId: hospital.id, // ✅ add this too
+          // Resolve the actual calendar date for the selected slot's day-of-week.
+          // Sending T00:00:00.000Z avoids any local-timezone midnight-shift on parse.
+          bookingDate: selectedSlot
+            ? `${nextOccurrenceDateStr(selectedSlot.dayOfWeek)}T00:00:00.000Z`
+            : new Date().toISOString(),
+          hospitalId: hospital.id,
         }),
       });
 
@@ -315,7 +339,7 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
                       </p>
                     </div>
                     <p className="font-semibold text-slate-900 shrink-0">
-                      {doctor.feeMin != null ? `${doctor.currency ?? ""} ${doctor.feeMin}` : "—"}
+                      {formatFee(doctor.feeMin, doctor.currency)}
                     </p>
                   </div>
                 </button>
@@ -381,8 +405,8 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
                         return (
                           <div key={`${dayOfWeek}-${time}`} className="px-2 py-2 space-y-1">
                             {slotsAtTime.map((slot) => {
-                              const todayStr = new Date().toISOString().slice(0, 10);
-                              const bookedKey = `${slot.id}::${todayStr}`;
+                              const resolvedDate = nextOccurrenceDateStr(slot.dayOfWeek);
+                              const bookedKey = `${slot.id}::${resolvedDate}`;
                               const isBooked = bookedSet.has(bookedKey);
                               const isYours = yourSet.has(bookedKey);
 
@@ -455,18 +479,16 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
                 <span className="font-semibold text-[#0f1e38]">{selectedSlot.mode}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#0f1e38]/70">Time:</span>
+                <span className="text-[#0f1e38]/70">Date & Time:</span>
                 <span className="font-semibold text-[#0f1e38]">
-                  {DAYS[selectedSlot.dayOfWeek]}, {selectedSlot.startTime}–{selectedSlot.endTime}
+                  {nextOccurrenceDateStr(selectedSlot.dayOfWeek)} ({DAYS[selectedSlot.dayOfWeek]}), {selectedSlot.startTime}–{selectedSlot.endTime}
                 </span>
               </div>
               <div className="h-px bg-[#c8a96e]/30 my-2" />
               <div className="flex justify-between">
                 <span className="text-[#a88b50] font-medium">Total to pay:</span>
                 <span className="text-2xl font-bold text-[#a88b50]">
-                  {selectedDoctor.feeMin != null
-                    ? `${selectedDoctor.currency ?? ""} ${selectedDoctor.feeMin}`
-                    : "—"}
+                  {formatFee(selectedDoctor.feeMin, selectedDoctor.currency)}
                 </span>
               </div>
             </div>

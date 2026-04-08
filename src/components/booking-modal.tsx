@@ -169,7 +169,7 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
           buyerEmail:        formData.buyerEmail,
           patientGender:     formData.patientGender,
           patientDisability: formData.patientDisability,
-          bookingDate:  new Date(selectedDate).toISOString(),
+          bookingDate:  `${selectedDate}T00:00:00.000Z`,
           slotTime:     selectedTime,
         }),
       });
