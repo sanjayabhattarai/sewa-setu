@@ -1,0 +1,27 @@
+/**
+ * Permission matrix — no server imports, safe to use in Client Components.
+ */
+import type { HospitalRole } from "@prisma/client";
+
+const PERMISSIONS = {
+  VIEW_BOOKINGS:       ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION"],
+  CONFIRM_BOOKING:     ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION"],
+  CANCEL_BOOKING:      ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION"],
+  COMPLETE_BOOKING:    ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION"],
+  CHECKIN_BOOKING:     ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION"],
+  RESCHEDULE_BOOKING:  ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION"],
+  VIEW_DOCTORS:        ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION", "CONTENT_EDITOR"],
+  MANAGE_DOCTORS:      ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "CONTENT_EDITOR"],
+  MANAGE_AVAILABILITY: ["HOSPITAL_OWNER", "HOSPITAL_MANAGER"],
+  MANAGE_PACKAGES:     ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "CONTENT_EDITOR"],
+  MODERATE_REVIEWS:    ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "CONTENT_EDITOR"],
+  MANAGE_TEAM:         ["HOSPITAL_OWNER"],
+  VIEW_REPORTS:        ["HOSPITAL_OWNER", "HOSPITAL_MANAGER"],
+  MANAGE_SETTINGS:     ["HOSPITAL_OWNER"],
+} as const;
+
+export type Permission = keyof typeof PERMISSIONS;
+
+export function hasPermission(role: HospitalRole, permission: Permission): boolean {
+  return (PERMISSIONS[permission] as readonly string[]).includes(role);
+}
