@@ -35,6 +35,8 @@ export type SerializedBooking = {
   doctor: { fullName: string } | null;
   package: { title: string; price: number | null; currency: string | null } | null;
   patient: { fullName: string } | null;
+  cancellationReason?: string | null;
+  refundedAt?: string | null;
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string; dot: string }> = {
@@ -68,7 +70,11 @@ const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 function formatDate(iso: string) {
-  const d = new Date(iso);
+  // Slice to the date portion and append local-midnight to avoid UTC-to-local
+  // day-shift for users in negative UTC offsets (e.g. UTC-5 turns midnight UTC
+  // into the previous calendar day).
+  const datePart = iso.slice(0, 10);
+  const d = new Date(datePart + "T00:00:00");
   return `${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
@@ -326,6 +332,39 @@ function BookingDetailPopup({
               />
             )}
           </div>
+
+          {/* ── Cancelled notice ── */}
+          {booking.status === "CANCELLED" && (
+            <div className="pt-4 space-y-2">
+              <div className="flex items-start gap-3 rounded-2xl p-4"
+                style={{ background: "#fef2f2", border: "1.5px solid rgba(220,38,38,.2)" }}>
+                <div className="h-8 w-8 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <X size={14} className="text-red-500" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#0f1e38] mb-0.5">Booking Cancelled</p>
+                  {booking.cancellationReason && (
+                    <p className="text-xs text-gray-500 leading-relaxed">Reason: {booking.cancellationReason}</p>
+                  )}
+                </div>
+              </div>
+              {booking.refundedAt && (
+                <div className="flex items-start gap-3 rounded-2xl p-4"
+                  style={{ background: "rgba(99,102,241,.06)", border: "1.5px solid rgba(99,102,241,.2)" }}>
+                  <div className="h-8 w-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ background: "rgba(99,102,241,.1)" }}>
+                    <CreditCard size={14} className="text-indigo-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#0f1e38] mb-0.5">Refund Issued</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">
+                      Your payment has been refunded. It may take 5–10 business days to appear on your statement.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ── Actions: only for upcoming bookings ── */}
           {resolveDisplayStatus(booking.status, booking.scheduledAt, booking.slotTime) === "UPCOMING" && (

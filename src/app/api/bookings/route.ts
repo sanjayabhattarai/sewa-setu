@@ -39,14 +39,18 @@ export async function GET(req: Request) {
 
   const totalAll = await db.booking.count({ where: { userId: dbUser.id } });
 
-  let raw: Awaited<ReturnType<typeof db.booking.findMany>> = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let raw: any[] = [];
   let total = 0;
 
   if (filter === "upcoming" || filter === "past") {
+    // Limit to a safe cap — filter is JS-side because appointment time combines
+    // scheduledAt (date) + slotTime (string). 500 is generous for any real user.
     const allForUser = await db.booking.findMany({
       where: { userId: dbUser.id },
       include,
       orderBy: { createdAt: "desc" },
+      take: 500,
     });
 
     const now = Date.now();

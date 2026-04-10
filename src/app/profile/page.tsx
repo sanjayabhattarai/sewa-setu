@@ -77,6 +77,8 @@ export default async function ProfilePage() {
     doctor: b.doctor ? { fullName: b.doctor.fullName } : null,
     package: b.package ? { title: b.package.title, price: b.package.price ?? null, currency: b.package.currency ?? null } : null,
     patient: b.patient ? { fullName: b.patient.fullName } : null,
+    cancellationReason: b.cancellationReason ?? null,
+    refundedAt: b.refundedAt?.toISOString() ?? null,
   }));
 
   const userDataForClient = {

@@ -127,6 +127,29 @@ export async function PATCH(
     );
   }
 
+  // Guard 4: reject unreasonably far-future dates (> 1 year)
+  const MAX_FUTURE_MS = 365 * 24 * 60 * 60 * 1000;
+  if (newApptTime.getTime() - Date.now() > MAX_FUTURE_MS) {
+    return NextResponse.json(
+      { error: "Cannot reschedule more than one year in advance." },
+      { status: 400 }
+    );
+  }
+
+  // Guard 5: if a doctor slot is provided, verify it belongs to the booking's doctor
+  if (availabilitySlotId && booking.doctorId) {
+    const slot = await db.availabilitySlot.findFirst({
+      where: { id: availabilitySlotId, doctorId: booking.doctorId },
+      select: { id: true },
+    });
+    if (!slot) {
+      return NextResponse.json(
+        { error: "The selected slot does not belong to the booking's doctor." },
+        { status: 400 }
+      );
+    }
+  }
+
   try {
     const data: Record<string, unknown> = {
       scheduledAt: new Date(scheduledAt),

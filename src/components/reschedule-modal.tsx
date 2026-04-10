@@ -524,8 +524,11 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
                   {PACKAGE_TIME_SLOTS.map((t) => {
                     const isSel = selectedTime === t;
                     const isToday = selectedDate === toDateKey(today);
-                    const [slotHour] = t.split(":").map(Number);
-                    const isExpired = isToday && slotHour <= new Date().getHours();
+                    const [slotHour, slotMin = 0] = t.split(":").map(Number);
+                    const now = new Date();
+                    const slotTotalMins = slotHour * 60 + slotMin;
+                    const nowTotalMins = now.getHours() * 60 + now.getMinutes();
+                    const isExpired = isToday && slotTotalMins <= nowTotalMins;
                     return (
                       <button
                         key={t}
