@@ -193,7 +193,6 @@ export async function writeAuditLog({
   entityId,
   before,
   after,
-  ip,
 }: {
   actorUserId: string;
   hospitalId?: string;
@@ -202,7 +201,6 @@ export async function writeAuditLog({
   entityId: string;
   before?: object;
   after?: object;
-  ip?: string;
 }) {
   await db.auditLog.create({
     data: {
@@ -213,7 +211,6 @@ export async function writeAuditLog({
       entityId,
       before: before ?? undefined,
       after: after ?? undefined,
-      ip: ip ?? null,
     },
   });
 }
