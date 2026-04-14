@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Building2, Users, Star,
-  TrendingUp, Settings, Menu, X, Shield, LogOut, ChevronRight,
+  LayoutDashboard, Building2, Users, Inbox,
+  CalendarDays, TrendingUp, ShieldCheck, Settings,
+  Menu, X, Shield, LogOut, ChevronRight,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; icon: React.ReactNode };
@@ -14,26 +15,24 @@ const NAV: NavItem[] = [
   { label: "Dashboard",  href: "/admin/platform/dashboard",  icon: <LayoutDashboard size={17} /> },
   { label: "Hospitals",  href: "/admin/platform/hospitals",  icon: <Building2 size={17} /> },
   { label: "Users",      href: "/admin/platform/users",      icon: <Users size={17} /> },
-  { label: "Reviews",    href: "/admin/platform/reviews",    icon: <Star size={17} /> },
+  { label: "Inquiries",  href: "/admin/platform/inquiries",  icon: <Inbox size={17} /> },
+  { label: "Bookings",   href: "/admin/platform/bookings",   icon: <CalendarDays size={17} /> },
   { label: "Revenue",    href: "/admin/platform/revenue",    icon: <TrendingUp size={17} /> },
+  { label: "Audit Logs", href: "/admin/platform/audit-logs", icon: <ShieldCheck size={17} /> },
   { label: "Settings",   href: "/admin/platform/settings",   icon: <Settings size={17} /> },
 ];
 
-export default function PlatformShell({
-  user,
-  children,
-}: {
+function Sidebar({ user, pathname, mobile = false, onClose }: {
   user: { fullName: string; email: string };
-  children: React.ReactNode;
+  pathname: string;
+  mobile?: boolean;
+  onClose?: () => void;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
-
-  const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
+  return (
     <div className={`flex flex-col h-full ${mobile ? "" : "hidden lg:flex"}`}
       style={{ width: 240, background: "#0f1e38", flexShrink: 0 }}>
 
-      {/* Identity */}
+      {/* Brand */}
       <div className="px-5 py-5 border-b" style={{ borderColor: "rgba(255,255,255,.08)" }}>
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -54,7 +53,7 @@ export default function PlatformShell({
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link key={item.href} href={item.href}
-              onClick={() => setSidebarOpen(false)}
+              onClick={onClose}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group"
               style={{
                 background: active ? "rgba(200,169,110,.15)" : "transparent",
@@ -88,44 +87,57 @@ export default function PlatformShell({
         </div>
         <a href="/api/auth/sign-out"
           className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold transition-all"
-          style={{ color: "rgba(255,255,255,.35)" }}
+          style={{ color: "rgba(255,255,255,.35)", background: "transparent" }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent"; }}>
+          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent" }}>
           <LogOut size={13} /> Sign Out
         </a>
       </div>
     </div>
   );
+}
+
+export default function PlatformShell({
+  user, children,
+}: {
+  user: { fullName: string; email: string };
+  children: React.ReactNode;
+}) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "#f7f4ef" }}>
-      <Sidebar />
+
+      <Sidebar user={user} pathname={pathname} />
 
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="relative z-10 flex flex-col" style={{ width: 240 }}>
-            <Sidebar mobile />
+            <Sidebar user={user} pathname={pathname} mobile onClose={() => setSidebarOpen(false)} />
           </div>
         </div>
       )}
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile topbar */}
-        <div className="flex items-center gap-3 px-4 h-14 border-b lg:hidden"
-          style={{ background: "#0f1e38", borderColor: "rgba(255,255,255,.08)" }}>
-          <button onClick={() => setSidebarOpen(true)} className="text-white">
-            <Menu size={20} />
+        {/* Top header */}
+        <header className="flex-shrink-0 flex items-center gap-3 px-6 h-16 bg-white border-b border-gray-100">
+          <button onClick={() => setSidebarOpen(true)}
+            className="lg:hidden h-9 w-9 rounded-xl flex items-center justify-center"
+            style={{ background: "#f7f4ef" }}>
+            {sidebarOpen ? <X size={17} className="text-[#0f1e38]" /> : <Menu size={17} className="text-[#0f1e38]" />}
           </button>
-          <p className="text-sm font-bold text-white flex-1">Platform Admin</p>
-          {sidebarOpen && (
-            <button onClick={() => setSidebarOpen(false)} className="text-white">
-              <X size={20} />
-            </button>
-          )}
-        </div>
+          <div className="flex items-center gap-1.5 text-sm">
+            <span className="text-gray-400 font-medium hidden sm:block">Platform</span>
+            <ChevronRight size={13} className="text-gray-300 hidden sm:block" />
+            <span className="font-bold text-[#0f1e38] capitalize">
+              {pathname.split("/").pop()?.replace(/-/g, " ") ?? "Dashboard"}
+            </span>
+          </div>
+        </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="admin-content flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>
