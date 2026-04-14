@@ -20,10 +20,10 @@ type Stats = {
 };
 
 const STATUS_CONFIG: Record<string, { bg: string; color: string; dot: string }> = {
-  REQUESTED:  { bg: "rgba(245,158,11,.12)",  color: "#b45309", dot: "#f59e0b" },
-  CONFIRMED:  { bg: "rgba(59,130,246,.12)",  color: "#1d4ed8", dot: "#3b82f6" },
-  COMPLETED:  { bg: "rgba(16,185,129,.12)",  color: "#065f46", dot: "#10b981" },
-  CANCELLED:  { bg: "rgba(239,68,68,.1)",    color: "#991b1b", dot: "#ef4444" },
+  REQUESTED: { bg: "rgba(245,158,11,.12)",  color: "#b45309", dot: "#f59e0b" },
+  CONFIRMED: { bg: "rgba(59,130,246,.12)",  color: "#1d4ed8", dot: "#3b82f6" },
+  COMPLETED: { bg: "rgba(16,185,129,.12)",  color: "#065f46", dot: "#10b981" },
+  CANCELLED: { bg: "rgba(239,68,68,.1)",    color: "#991b1b", dot: "#ef4444" },
 };
 
 function formatMoney(cents: number) {
@@ -36,23 +36,19 @@ export default function PlatformDashboardPage() {
   const [error, setError] = useState("");
 
   const fetchStats = useCallback(async () => {
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     try {
       const res = await fetch("/api/admin/platform/stats");
       if (!res.ok) throw new Error("Failed");
       setStats(await res.json());
-    } catch {
-      setError("Failed to load dashboard.");
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError("Failed to load dashboard."); }
+    finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 w-full">
 
       <div className="flex items-center justify-between">
         <div>
@@ -85,10 +81,10 @@ export default function PlatformDashboardPage() {
           {/* KPI grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { label: "Hospitals",       value: stats.hospitals.total,              sub: `${stats.hospitals.active} active`,             icon: <Building2 size={18} className="text-[#c8a96e]" />,    alert: stats.hospitals.pendingVerification > 0, alertText: `${stats.hospitals.pendingVerification} pending verification` },
-              { label: "Users",           value: stats.users.total.toLocaleString(), sub: "registered accounts",                          icon: <Users size={18} className="text-[#c8a96e]" />,        alert: false, alertText: "" },
-              { label: "Bookings",        value: stats.bookings.total.toLocaleString(), sub: `${stats.bookings.thisMonth} this month`,      icon: <CalendarDays size={18} className="text-[#c8a96e]" />, alert: stats.memberships.pending > 0, alertText: `${stats.memberships.pending} access requests pending` },
-              { label: "All-time Revenue",value: formatMoney(stats.revenue.total),   sub: `${formatMoney(stats.revenue.thisMonth)} this month`, icon: <TrendingUp size={18} className="text-[#c8a96e]" />,  alert: false, alertText: "" },
+              { label: "Hospitals",        value: stats.hospitals.total,                 sub: `${stats.hospitals.active} active`,              icon: <Building2 size={18} className="text-[#c8a96e]" />,    alert: stats.hospitals.pendingVerification > 0, alertText: `${stats.hospitals.pendingVerification} pending verification` },
+              { label: "Users",            value: stats.users.total.toLocaleString(),    sub: "registered accounts",                           icon: <Users size={18} className="text-[#c8a96e]" />,        alert: false, alertText: "" },
+              { label: "Bookings",         value: stats.bookings.total.toLocaleString(), sub: `${stats.bookings.thisMonth} this month`,          icon: <CalendarDays size={18} className="text-[#c8a96e]" />, alert: stats.memberships.pending > 0, alertText: `${stats.memberships.pending} access requests pending` },
+              { label: "All-time Revenue", value: formatMoney(stats.revenue.total),      sub: `${formatMoney(stats.revenue.thisMonth)} this month`, icon: <TrendingUp size={18} className="text-[#c8a96e]" />,  alert: false, alertText: "" },
             ].map((card) => (
               <div key={card.label} className="bg-white rounded-2xl p-4 border"
                 style={{ borderColor: card.alert ? "rgba(245,158,11,.3)" : "rgba(15,30,56,.07)" }}>
@@ -105,7 +101,7 @@ export default function PlatformDashboardPage() {
             ))}
           </div>
 
-          {/* Alerts */}
+          {/* Alert banners */}
           <div className="grid lg:grid-cols-2 gap-3">
             {stats.memberships.pending > 0 && (
               <Link href="/admin/platform/users?filter=pending"
@@ -137,41 +133,39 @@ export default function PlatformDashboardPage() {
 
           {/* Recent bookings */}
           {stats.recentBookings.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-3">
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
                 <p className="text-sm font-bold text-[#0f1e38]">Recent Bookings</p>
-                <Link href="/admin/platform/hospitals"
+                <Link href="/admin/platform/bookings"
                   className="text-xs font-semibold text-[#c8a96e] flex items-center gap-1 hover:text-[#a88b50]">
-                  All hospitals <ChevronRight size={12} />
+                  View all <ChevronRight size={12} />
                 </Link>
               </div>
-              <div className="space-y-2">
-                {stats.recentBookings.map((b) => {
-                  const st = STATUS_CONFIG[b.status] ?? STATUS_CONFIG.CONFIRMED;
-                  return (
-                    <div key={b.id} className="bg-white rounded-2xl border border-gray-100 p-3 flex items-center gap-4">
-                      <span className="flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-                        style={{ background: st.bg, color: st.color }}>
-                        <span className="h-1.5 w-1.5 rounded-full" style={{ background: st.dot }} />
-                        {b.status.charAt(0) + b.status.slice(1).toLowerCase()}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-[#0f1e38] truncate">
-                          {b.patient ?? "—"} · {b.hospital ?? "—"}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {new Date(b.scheduledAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                        </p>
-                      </div>
-                      {b.amountPaid != null && (
-                        <p className="text-xs font-bold text-[#0f1e38] flex-shrink-0">
-                          {formatMoney(b.amountPaid)}
-                        </p>
-                      )}
+              {stats.recentBookings.map((b) => {
+                const st = STATUS_CONFIG[b.status] ?? STATUS_CONFIG.CONFIRMED;
+                return (
+                  <div key={b.id} className="flex items-center gap-4 px-5 py-3 border-b border-gray-50 last:border-0">
+                    <span className="flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+                      style={{ background: st.bg, color: st.color }}>
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: st.dot }} />
+                      {b.status.charAt(0) + b.status.slice(1).toLowerCase()}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#0f1e38] truncate">
+                        {b.patient ?? "—"} · {b.hospital ?? "—"}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(b.scheduledAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
                     </div>
-                  );
-                })}
-              </div>
+                    {b.amountPaid != null && (
+                      <p className="text-sm font-bold text-[#0f1e38] flex-shrink-0">
+                        {formatMoney(b.amountPaid)}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
