@@ -531,7 +531,8 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                     width: "32px",
                     height: "32px",
                     borderRadius: "8px",
-                    background: "linear-gradient(135deg, #0f9580, #0d6457)",
+                    background: "linear-gradient(135deg, #0f1e38, #1a3059)",
+                    border: "1px solid rgba(200,169,110,0.25)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -570,7 +571,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 {!msg.isEmergency && msg.metadata?.action !== "select_department" && (
                   <div
                     style={{
-                      background: msg.role === "user" ? "linear-gradient(145deg, #0d6457, #0f9580)" : "white",
+                      background: msg.role === "user" ? "linear-gradient(135deg, #0f1e38 0%, #1a3059 100%)" : "white",
                       color: msg.role === "user" ? "white" : "#0f1e38",
                       padding: "12px 16px",
                       borderRadius: msg.role === "user" ? "18px 4px 18px 18px" : "4px 18px 18px 18px",
@@ -579,8 +580,9 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                       whiteSpace: "pre-wrap",
                       wordBreak: "break-word",
                       boxShadow: msg.role === "user"
-                        ? "0 4px 12px rgba(14, 149, 128, 0.2)"
+                        ? "0 4px 12px rgba(15,30,56,0.25)"
                         : "0 2px 8px rgba(0, 0, 0, 0.08)",
+                      border: msg.role === "user" ? "1px solid rgba(200,169,110,0.15)" : "1px solid rgba(200,169,110,0.1)",
                       alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
                       maxWidth: msg.role === "user" ? "60%" : "100%",
                       cursor: msg.metadata ? "pointer" : "default",
@@ -594,7 +596,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 {/* Hospital cards - display when type is symptoms_analyzed */}
                 {msg.type === "symptoms_analyzed" && msg.hospitals && msg.hospitals.length > 0 && (
                   <div style={{ marginTop: "10px", width: "100%" }}>
-                    <p style={{ fontSize: "0.85rem", color: "#7a9a95", marginBottom: "8px", fontWeight: 500 }}>
+                    <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "8px", fontWeight: 500 }}>
                       Recommended hospitals:
                     </p>
                     {msg.hospitals.map((hospital) => (
@@ -603,7 +605,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                         onClick={() => selectHospital(hospital)}
                         style={{
                           background: "#fff",
-                          border: "2px solid #0f9580",
+                          border: "1.5px solid rgba(200,169,110,0.35)",
                           borderRadius: "12px",
                           padding: "12px",
                           marginBottom: "8px",
@@ -613,21 +615,21 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                         }}
                         onMouseEnter={(e) => {
                           const el = e.currentTarget as HTMLDivElement;
-                          el.style.borderColor = "#d4a853";
+                          el.style.borderColor = "rgba(200,169,110,0.7)";
                           el.style.transform = "translateY(-2px)";
-                          el.style.boxShadow = "0 8px 24px rgba(14, 149, 128, 0.2)";
+                          el.style.boxShadow = "0 8px 24px rgba(200,169,110,0.18)";
                         }}
                         onMouseLeave={(e) => {
                           const el = e.currentTarget as HTMLDivElement;
-                          el.style.borderColor = "#0f9580";
+                          el.style.borderColor = "rgba(200,169,110,0.35)";
                           el.style.transform = "translateY(0)";
                           el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
                         }}
                       >
-                        <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0d6457", marginBottom: "4px", textDecoration: "underline" }}>
+                        <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f1e38", marginBottom: "4px", textDecoration: "underline" }}>
                           🏥 {hospital.name}
                         </div>
-                        <div style={{ fontSize: "0.8rem", color: "#7a9a95", display: "flex", alignItems: "center", gap: "4px", marginBottom: "6px" }}>
+                        <div style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "4px", marginBottom: "6px" }}>
                           <MapPin size={12} />
                           {hospital.location}
                         </div>
@@ -654,10 +656,10 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                               <span key={i} style={{
                                 fontSize: "0.7rem",
                                 padding: "2px 8px",
-                                background: "#f0faf8",
-                                color: "#0d6457",
+                                background: "rgba(200,169,110,0.08)",
+                                color: "#a88b50",
                                 borderRadius: "12px",
-                                border: "1px solid rgba(14, 149, 128, 0.2)",
+                                border: "1px solid rgba(200,169,110,0.2)",
                               }}>
                                 {s}
                               </span>
@@ -666,10 +668,10 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                               <span style={{
                                 fontSize: "0.7rem",
                                 padding: "2px 8px",
-                                background: "#f0faf8",
-                                color: "#0d6457",
+                                background: "rgba(200,169,110,0.08)",
+                                color: "#a88b50",
                                 borderRadius: "12px",
-                                border: "1px solid rgba(14, 149, 128, 0.2)",
+                                border: "1px solid rgba(200,169,110,0.2)",
                               }}>
                                 +{hospital.specialties.length - 3}
                               </span>
@@ -678,14 +680,14 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                         )}
 
                         {hospital.departments && hospital.departments.length > 0 && (
-                          <div style={{ marginTop: "6px", fontSize: "0.75rem", color: "#6b7a96" }}>
+                          <div style={{ marginTop: "6px", fontSize: "0.75rem", color: "#64748b" }}>
                             📋 {hospital.departments.length} departments available
                           </div>
                         )}
 
                         <div style={{
                           fontSize: "0.75rem",
-                          color: "#0f9580",
+                          color: "#c8a96e",
                           marginTop: "6px",
                           fontStyle: "italic",
                           textAlign: "right",
@@ -703,24 +705,24 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                     onClick={() => selectDepartment(msg.metadata?.hospital, msg.metadata?.department)}
                     style={{
                       alignSelf: "flex-start",
-                      background: "#0f9580",
-                      color: "white",
+                      background: "linear-gradient(135deg, #e8d5b0 0%, #c8a96e 50%, #a88b50 100%)",
+                      color: "#0f1e38",
                       padding: "10px 16px",
                       borderRadius: "6px",
                       border: "none",
                       fontSize: "0.9rem",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       cursor: "pointer",
                       transition: "all 0.2s",
-                      boxShadow: "0 2px 8px rgba(14, 149, 128, 0.2)",
+                      boxShadow: "0 2px 8px rgba(200,169,110,0.25)",
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.background = "#0d6457";
                       (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)";
+                      (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 16px rgba(200,169,110,0.35)";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.background = "#0f9580";
                       (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+                      (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 2px 8px rgba(200,169,110,0.25)";
                     }}
                   >
                     👉 {msg.content} - Click to view doctors
@@ -737,23 +739,23 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 onClick={startDoctorSearch}
                 style={{
                   padding: "10px 20px",
-                  background: "linear-gradient(135deg, #0f9580, #0d6457)",
-                  color: "white",
+                  background: "linear-gradient(135deg, #e8d5b0 0%, #c8a96e 50%, #a88b50 100%)",
+                  color: "#0f1e38",
                   border: "none",
                   borderRadius: "8px",
                   fontSize: "0.9rem",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   cursor: "pointer",
                   transition: "all 0.2s",
-                  boxShadow: "0 4px 12px rgba(14, 149, 128, 0.2)",
+                  boxShadow: "0 4px 12px rgba(200,169,110,0.25)",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)";
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 16px rgba(14, 149, 128, 0.3)";
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 20px rgba(200,169,110,0.35)";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 12px rgba(14, 149, 128, 0.2)";
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 12px rgba(200,169,110,0.25)";
                 }}
               >
                 🏥 Find Hospitals & Doctors
@@ -769,7 +771,8 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                   width: "32px",
                   height: "32px",
                   borderRadius: "8px",
-                  background: "linear-gradient(135deg, #0f9580, #0d6457)",
+                  background: "linear-gradient(135deg, #0f1e38, #1a3059)",
+                  border: "1px solid rgba(200,169,110,0.25)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -796,7 +799,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                       width: "8px",
                       height: "8px",
                       borderRadius: "50%",
-                      background: "#0f9580",
+                      background: "#c8a96e",
                       animation: `pulse 1.4s ease-in-out infinite`,
                       animationDelay: `${i * 0.2}s`,
                     }}
@@ -851,17 +854,17 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 style={{
                   width: "44px",
                   height: "44px",
-                  background: isLoading || !prompt.trim() ? "rgba(200, 169, 110, 0.3)" : "linear-gradient(145deg, #0d6457, #0f9580)",
+                  background: isLoading || !prompt.trim() ? "rgba(200,169,110,0.25)" : "linear-gradient(135deg, #e8d5b0 0%, #c8a96e 50%, #a88b50 100%)",
                   border: "none",
                   borderRadius: "12px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "white",
+                  color: isLoading || !prompt.trim() ? "#94a3b8" : "#0f1e38",
                   cursor: isLoading || !prompt.trim() ? "not-allowed" : "pointer",
                   flexShrink: 0,
                   transition: "all 0.2s",
-                  boxShadow: isLoading || !prompt.trim() ? "none" : "0 4px 12px rgba(14, 149, 128, 0.2)",
+                  boxShadow: isLoading || !prompt.trim() ? "none" : "0 4px 12px rgba(200,169,110,0.25)",
                 }}
                 title="Send"
               >
@@ -902,13 +905,13 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 style={{
                   minWidth: "80px",
                   height: "44px",
-                  background: isLoading || !problemDescription.trim() ? "rgba(200, 169, 110, 0.3)" : "linear-gradient(145deg, #0d6457, #0f9580)",
+                  background: isLoading || !problemDescription.trim() ? "rgba(200,169,110,0.25)" : "linear-gradient(135deg, #e8d5b0 0%, #c8a96e 50%, #a88b50 100%)",
                   border: "none",
                   borderRadius: "12px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "white",
+                  color: isLoading || !problemDescription.trim() ? "#94a3b8" : "#0f1e38",
                   cursor: isLoading || !problemDescription.trim() ? "not-allowed" : "pointer",
                   flexShrink: 0,
                   transition: "all 0.2s",
@@ -955,7 +958,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 style={{
                   background: "none",
                   border: "none",
-                  color: "#0f9580",
+                  color: "#c8a96e",
                   textDecoration: "underline",
                   cursor: "pointer",
                   fontWeight: 600,
