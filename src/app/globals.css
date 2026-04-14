@@ -98,3 +98,49 @@
 @media print {
   @page { margin: 1cm; }
 }
+
+/* Admin UI polish without theme change */
+.admin-content {
+  --admin-border: rgba(15, 30, 56, 0.09);
+  --admin-card-shadow: 0 8px 20px rgba(15, 30, 56, 0.05);
+}
+
+.admin-content .bg-white {
+  border-color: var(--admin-border) !important;
+  box-shadow: var(--admin-card-shadow);
+}
+
+.admin-content .rounded-2xl,
+.admin-content .rounded-3xl {
+  border-radius: 16px;
+}
+
+.admin-content input,
+.admin-content select,
+.admin-content textarea {
+  border-color: rgba(15, 30, 56, 0.12) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-content input:focus,
+.admin-content select:focus,
+.admin-content textarea:focus {
+  border-color: rgba(200, 169, 110, 0.95) !important;
+  box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.18);
+}
+
+.admin-content .divide-y > * {
+  border-color: rgba(15, 30, 56, 0.07) !important;
+}
+
+.admin-content button {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.admin-content button:hover {
+  filter: saturate(1.04);
+}
+
+.admin-content button:active {
+  transform: translateY(1px);
+}
