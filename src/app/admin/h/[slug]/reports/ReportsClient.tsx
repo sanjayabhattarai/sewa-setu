@@ -203,12 +203,12 @@ export default function ReportsClient({ slug }: { slug: string }) {
               <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
                 Daily Bookings — Last {range} days
               </p>
-              <div className="flex items-end gap-1 h-28 overflow-x-auto pb-1">
+              <div className="flex items-end gap-1 h-28 pb-1 overflow-hidden">
                 {data.dailyChart.map((d) => (
-                  <div key={d.date} className="flex flex-col items-center gap-1 flex-shrink-0 group" style={{ minWidth: 20 }}>
+                  <div key={d.date} className="flex flex-col items-center gap-1 flex-1 min-w-0 group">
                     <div className="relative">
                       <div
-                        className="w-4 rounded-t-sm transition-all group-hover:opacity-80"
+                        className="w-full max-w-[10px] mx-auto rounded-t-sm transition-all group-hover:opacity-80"
                         style={{
                           height: Math.max(4, Math.round((d.bookings / maxBookings) * 96)),
                           background: "linear-gradient(180deg,#c8a96e,#a88b50)",
