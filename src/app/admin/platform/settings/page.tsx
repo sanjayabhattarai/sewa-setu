@@ -1,6 +1,6 @@
 export default function PlatformSettingsPage() {
   return (
-    <div className="max-w-5xl space-y-4">
+    <div className="w-full space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-[#0f1e38]">Settings</h1>
         <p className="text-sm text-gray-400 mt-0.5">Platform configuration — coming soon</p>
