@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import type { HospitalRole } from "@prisma/client";
+import { hasPermission, type Permission } from "@/lib/admin-permissions";
 export { hasPermission, type Permission } from "@/lib/admin-permissions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -193,7 +194,6 @@ export async function writeAuditLog({
   entityId,
   before,
   after,
-  ip,
 }: {
   actorUserId: string;
   hospitalId?: string;
@@ -202,7 +202,6 @@ export async function writeAuditLog({
   entityId: string;
   before?: object;
   after?: object;
-  ip?: string;
 }) {
   await db.auditLog.create({
     data: {
@@ -213,7 +212,6 @@ export async function writeAuditLog({
       entityId,
       before: before ?? undefined,
       after: after ?? undefined,
-      ip: ip ?? null,
     },
   });
 }

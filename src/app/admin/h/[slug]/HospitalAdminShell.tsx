@@ -38,7 +38,7 @@ export default function HospitalAdminShell({
   const pathname = usePathname();
   const base = `/admin/h/${hospital.slug}`;
 
-  const navItems: NavItem[] = [
+  const navItems = ([
     { label: "Dashboard",    href: `${base}/dashboard`,     icon: <LayoutDashboard size={17} /> },
     { label: "Bookings",     href: `${base}/bookings`,      icon: <CalendarCheck size={17} />,   badge: pendingCount || undefined, permission: "VIEW_BOOKINGS" },
     { label: "Doctors",      href: `${base}/doctors`,       icon: <Stethoscope size={17} />,     permission: "VIEW_DOCTORS" },
@@ -48,7 +48,7 @@ export default function HospitalAdminShell({
     { label: "Team",         href: `${base}/team`,          icon: <Users size={17} />,            permission: "MANAGE_TEAM" },
     { label: "Reports",      href: `${base}/reports`,       icon: <BarChart2 size={17} />,        permission: "VIEW_REPORTS" },
     { label: "Settings",     href: `${base}/settings`,      icon: <Settings size={17} />,         permission: "MANAGE_SETTINGS" },
-  ].filter((item) => !item.permission || hasPermission(role, item.permission));
+  ] as NavItem[]).filter((item) => !item.permission || hasPermission(role, item.permission));
 
   const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
     <div
@@ -140,7 +140,7 @@ export default function HospitalAdminShell({
           className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold transition-all"
           style={{ color: "rgba(255,255,255,.35)", background: "transparent" }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent" }}
         >
           <LogOut size={13} /> Sign Out
         </a>
@@ -153,7 +153,6 @@ export default function HospitalAdminShell({
       {/* Desktop sidebar */}
       <Sidebar />
 
-      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
@@ -194,7 +193,7 @@ export default function HospitalAdminShell({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="admin-content flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>

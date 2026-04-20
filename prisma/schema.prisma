@@ -51,6 +51,14 @@ enum BookingStatus {
   COMPLETED
 }
 
+enum PartnerInquiryStatus {
+  NEW
+  REVIEWED
+  CONTACTED
+  ONBOARDED
+  REJECTED
+}
+
 /**
  * =========================
  * ACCOUNTS & PATIENTS
@@ -597,4 +605,31 @@ model Booking {
   @@index([availabilitySlotId])
   @@index([hospitalId, status, scheduledAt]) // for hospital dashboard queries
   @@unique([availabilitySlotId, scheduledAt], name: "unique_slot_occurrence")
+}
+
+/**
+ * =========================
+ * PARTNER INQUIRIES
+ * =========================
+ */
+
+model PartnerInquiry {
+  id           String               @id @default(cuid())
+  hospitalName String
+  type         HospitalType
+  contactName  String
+  email        String
+  phone        String
+  city         String
+  message      String?
+  status       PartnerInquiryStatus @default(NEW)
+  reviewNotes  String?
+  reviewedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
 }

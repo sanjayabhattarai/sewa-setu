@@ -473,23 +473,23 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&display=swap');
 
         :root {
-          --teal-900: #0f3d38;
-          --teal-700: #0d6457;
-          --teal-500: #0f9580;
-          --teal-400: #14b89f;
-          --teal-300: #4dcfba;
-          --teal-100: #d0f5ef;
-          --teal-50:  #f0faf8;
-          --cream:    #fdfaf5;
-          --sand:     #f5f0e8;
-          --warm-100: #ede8de;
-          --text-dark: #1a2e2b;
-          --text-mid:  #3d5752;
-          --text-soft: #7a9a95;
-          --gold:     #d4a853;
+          --teal-900: #07111e;
+          --teal-700: #0f1e38;
+          --teal-500: #c8a96e;
+          --teal-400: #d4b483;
+          --teal-300: #e8d5b0;
+          --teal-100: rgba(200,169,110,0.2);
+          --teal-50:  rgba(200,169,110,0.07);
+          --cream:    #f5f2ed;
+          --sand:     #ede8de;
+          --warm-100: #e2ddd6;
+          --text-dark: #0f1e38;
+          --text-mid:  #334155;
+          --text-soft: #64748b;
+          --gold:     #c8a96e;
           --red:      #dc2626;
           --red-light: #fee2e2;
-          --shadow-teal: rgba(14, 149, 128, 0.22);
+          --shadow-teal: rgba(200,169,110,0.18);
         }
 
         .ss-wrap * {
@@ -531,7 +531,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           position: absolute;
           top: -40px; right: -40px;
           width: 160px; height: 160px;
-          background: radial-gradient(circle, rgba(77,207,186,0.18) 0%, transparent 65%);
+          background: radial-gradient(circle, rgba(200,169,110,0.18) 0%, transparent 65%);
           pointer-events: none;
           z-index: 0;
         }
@@ -681,7 +681,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           flex-direction: column;
           gap: 10px;
           background:
-            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230f9580' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a96e' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
             var(--cream);
           scrollbar-width: thin;
           scrollbar-color: var(--warm-100) transparent;
@@ -704,7 +704,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
 
         .ss-bubble-bot {
           background: #ffffff;
-          border: 1px solid rgba(14,149,128,0.1);
+          border: 1px solid rgba(200,169,110,0.12);
           color: var(--text-dark);
           padding: 11px 15px;
           border-radius: 4px 18px 18px 18px;
@@ -748,7 +748,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
 
         .ss-hospital-card {
           background: white;
-          border: 2px solid var(--teal-500);
+          border: 1.5px solid rgba(200,169,110,0.35);
           border-radius: 12px;
           padding: 12px;
           margin: 8px 0;
@@ -757,9 +757,9 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           width: 100%;
           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
+
         .ss-hospital-card:hover {
-          border-color: var(--gold);
+          border-color: rgba(200,169,110,0.7);
           transform: translateY(-2px);
           box-shadow: 0 8px 24px var(--shadow-teal);
         }
@@ -767,7 +767,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         .ss-hospital-name {
           font-size: 14px;
           font-weight: 700;
-          color: var(--teal-900);
+          color: var(--teal-700);
           text-decoration: underline;
           margin-bottom: 6px;
         }
@@ -812,7 +812,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           display: flex; align-items: center; gap: 5px;
           padding: 12px 15px;
           background: #ffffff;
-          border: 1px solid rgba(14,149,128,0.1);
+          border: 1px solid rgba(200,169,110,0.12);
           border-radius: 4px 18px 18px 18px;
           width: fit-content;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
@@ -895,7 +895,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         }
         .ss-fab:hover {
           transform: scale(1.1) translateY(-2px);
-          box-shadow: 0 8px 28px var(--shadow-teal), 0 0 0 8px rgba(14,149,128,0.08);
+          box-shadow: 0 8px 28px var(--shadow-teal), 0 0 0 8px rgba(200,169,110,0.1);
         }
         .ss-fab:active { transform: scale(0.95); }
 
@@ -904,7 +904,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           position: absolute;
           inset: -5px;
           border-radius: 50%;
-          border: 1.5px solid rgba(14,149,128,0.2);
+          border: 1.5px solid rgba(200,169,110,0.25);
           animation: ssHalo 3s ease-in-out infinite;
         }
         @keyframes ssHalo {
@@ -1093,7 +1093,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
               {/* Symptom Input */}
               {bookingStep === "symptoms" && (
                 <div className="ss-row-bot" style={{ width: "100%" }}>
-                  <div style={{ width: "100%", background: "#f0faf8", borderRadius: "12px", padding: "10px", border: "1px solid rgba(14, 149, 128, 0.2)" }}>
+                  <div style={{ width: "100%", background: "rgba(200,169,110,0.06)", borderRadius: "12px", padding: "10px", border: "1px solid rgba(200,169,110,0.2)" }}>
                     <textarea
                       placeholder="Describe your symptoms in detail (e.g., 'I have severe headache with fever for 3 days')"
                       value={problemDescription}
@@ -1102,12 +1102,13 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
                         width: "100%",
                         padding: "8px 10px",
                         fontSize: "12px",
-                        border: "1px solid #d0f5ef",
+                        border: "1px solid rgba(200,169,110,0.2)",
                         borderRadius: "6px",
                         fontFamily: "Plus Jakarta Sans, sans-serif",
                         outline: "none",
                         minHeight: "80px",
                         resize: "vertical",
+                        color: "#0f1e38",
                       }}
                     />
                     <button
@@ -1119,8 +1120,8 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
                         padding: "8px",
                         fontSize: "12px",
                         fontWeight: "600",
-                        background: isLoading || !problemDescription.trim() ? "#ccc" : "linear-gradient(145deg, #0d6457, #0f9580)",
-                        color: "white",
+                        background: isLoading || !problemDescription.trim() ? "rgba(200,169,110,0.3)" : "linear-gradient(135deg, #e8d5b0 0%, #c8a96e 50%, #a88b50 100%)",
+                        color: isLoading || !problemDescription.trim() ? "#94a3b8" : "#0f1e38",
                         border: "none",
                         borderRadius: "6px",
                         cursor: isLoading || !problemDescription.trim() ? "not-allowed" : "pointer",
