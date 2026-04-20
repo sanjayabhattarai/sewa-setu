@@ -17,6 +17,7 @@ type Appointment = {
   currency: string;
   notes: string | null;
   cancellationReason: string | null;
+  checkedInAt: string | null;
   patient: { fullName: string; phone: string | null; gender: string | null; disability: string | null } | null;
   doctor:  { fullName: string } | null;
   package: { title: string }   | null;

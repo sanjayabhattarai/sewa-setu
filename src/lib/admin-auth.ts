@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import type { HospitalRole } from "@prisma/client";
+import { hasPermission, type Permission } from "@/lib/admin-permissions";
 export { hasPermission, type Permission } from "@/lib/admin-permissions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────

@@ -38,7 +38,7 @@ export default function HospitalAdminShell({
   const pathname = usePathname();
   const base = `/admin/h/${hospital.slug}`;
 
-  const navItems: NavItem[] = [
+  const navItems = ([
     { label: "Dashboard",    href: `${base}/dashboard`,     icon: <LayoutDashboard size={17} /> },
     { label: "Bookings",     href: `${base}/bookings`,      icon: <CalendarCheck size={17} />,   badge: pendingCount || undefined, permission: "VIEW_BOOKINGS" },
     { label: "Doctors",      href: `${base}/doctors`,       icon: <Stethoscope size={17} />,     permission: "VIEW_DOCTORS" },
@@ -48,7 +48,7 @@ export default function HospitalAdminShell({
     { label: "Team",         href: `${base}/team`,          icon: <Users size={17} />,            permission: "MANAGE_TEAM" },
     { label: "Reports",      href: `${base}/reports`,       icon: <BarChart2 size={17} />,        permission: "VIEW_REPORTS" },
     { label: "Settings",     href: `${base}/settings`,      icon: <Settings size={17} />,         permission: "MANAGE_SETTINGS" },
-  ].filter((item) => !item.permission || hasPermission(role, item.permission));
+  ] as NavItem[]).filter((item) => !item.permission || hasPermission(role, item.permission));
 
   const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
     <div
