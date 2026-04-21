@@ -47,11 +47,17 @@ export async function provisionBooking(
   const userFullName = clerkUser.fullName ?? meta.patientName ?? "Unknown";
 
   // ── 3. UPSERT DB USER ────────────────────────────────────────────
-  const dbUser = await db.user.upsert({
-    where: { clerkId: clerkUserId },
-    update: { email: userEmail, fullName: userFullName },
-    create: { clerkId: clerkUserId, email: userEmail, fullName: userFullName, country: "NP" },
+  const existingUser = await db.user.findFirst({
+    where: { OR: [{ clerkId: clerkUserId }, { email: userEmail }] },
   });
+  const dbUser = existingUser
+    ? await db.user.update({
+        where: { id: existingUser.id },
+        data: { clerkId: clerkUserId, email: userEmail, fullName: userFullName },
+      })
+    : await db.user.create({
+        data: { clerkId: clerkUserId, email: userEmail, fullName: userFullName, country: "NP" },
+      });
 
   // ── 5. RESOLVE HOSPITAL ──────────────────────────────────────────
   const hospitalId = meta.hospitalId;
