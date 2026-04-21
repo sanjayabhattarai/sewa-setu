@@ -99,6 +99,7 @@ export async function GET(
       currency: b.currency ?? "eur",
       notes: b.notes ?? null,
       cancellationReason: b.cancellationReason ?? null,
+      checkedInAt: b.checkedInAt?.toISOString() ?? null,
       patient: b.patient ? {
         fullName: b.patient.fullName,
         phone: b.patient.phone ?? null,
