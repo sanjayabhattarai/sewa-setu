@@ -11,53 +11,70 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { FloatingAI } from "@/components/floating-ai";
 import { db } from "@/lib/db";
+import type { ApiHospital } from "@/types/hospital";
+
+async function loadFeaturedHospitals(): Promise<{
+  featuredHospitals: ApiHospital[];
+  featuredHospitalsUnavailable: boolean;
+}> {
+  try {
+    const rawHospitals = await db.hospital.findMany({
+      include: {
+        location: true,
+        media: { where: { isPrimary: true }, take: 1 },
+        packages: {
+          where: { isActive: true },
+          orderBy: [{ price: "asc" }],
+          take: 1,
+        },
+        _count: { select: { reviews: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    });
+
+    const hospitalIds = rawHospitals.map((hospital) => hospital.id);
+    const reviewAggs = hospitalIds.length
+      ? await db.review.groupBy({
+          by: ["hospitalId"],
+          where: { hospitalId: { in: hospitalIds } },
+          _avg: { rating: true },
+          _count: { rating: true },
+        })
+      : [];
+
+    const aggMap = Object.fromEntries(reviewAggs.map((agg) => [agg.hospitalId, agg]));
+
+    const featuredHospitals: ApiHospital[] = rawHospitals.map((hospital) => ({
+      id: hospital.id,
+      slug: hospital.slug,
+      name: hospital.name,
+      type: hospital.type,
+      rating: aggMap[hospital.id]?._avg.rating ? Math.round(aggMap[hospital.id]._avg.rating! * 10) / 10 : 0,
+      reviewCount: aggMap[hospital.id]?._count.rating ?? 0,
+      specialty: hospital.servicesSummary || "General",
+      city: hospital.location.city,
+      district: hospital.location.district,
+      area: hospital.location.area,
+      image: hospital.media[0]?.url || null,
+      fromPrice: hospital.packages[0]?.price ?? null,
+      currency: hospital.packages[0]?.currency ?? "NPR",
+      emergencyAvailable: hospital.emergencyAvailable,
+    }));
+
+    return { featuredHospitals, featuredHospitalsUnavailable: false };
+  } catch (error) {
+    console.error("Failed to load featured hospitals on home page.", error);
+    return { featuredHospitals: [], featuredHospitalsUnavailable: true };
+  }
+}
 
 export default async function Home({
   searchParams,
 }: {
   searchParams?: Promise<{ openAI?: string; conversationId?: string }>;
 }) {
-  const rawHospitals = await db.hospital.findMany({
-    include: {
-      location: true,
-      media: { where: { isPrimary: true }, take: 1 },
-      packages: {
-        where: { isActive: true },
-        orderBy: [{ price: "asc" }],
-        take: 1,
-      },
-      _count: { select: { reviews: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 3,
-  });
-
-  const hospitalIds = rawHospitals.map((h) => h.id);
-  const reviewAggs = await db.review.groupBy({
-    by: ["hospitalId"],
-    where: { hospitalId: { in: hospitalIds } },
-    _avg: { rating: true },
-    _count: { rating: true },
-  });
-  const aggMap = Object.fromEntries(reviewAggs.map((a) => [a.hospitalId, a]));
-
-  const featuredHospitals = rawHospitals.map((h) => ({
-    id: h.id,
-    slug: h.slug,
-    name: h.name,
-    type: h.type,
-    rating: aggMap[h.id]?._avg.rating ? Math.round(aggMap[h.id]._avg.rating! * 10) / 10 : 0,
-    reviewCount: aggMap[h.id]?._count.rating ?? 0,
-    specialty: h.servicesSummary || "General",
-    city: h.location.city,
-    district: h.location.district,
-    area: h.location.area,
-    image: h.media[0]?.url || null,
-    fromPrice: h.packages[0]?.price ?? null,
-    currency: h.packages[0]?.currency ?? "NPR",
-    emergencyAvailable: h.emergencyAvailable,
-  }));
-
+  const { featuredHospitals, featuredHospitalsUnavailable } = await loadFeaturedHospitals();
   const params = await searchParams;
   const shouldOpenAI = params?.openAI === "true";
   const conversationId = params?.conversationId;
@@ -90,35 +107,53 @@ export default async function Home({
                 Top Rated Hospitals
               </h2>
               <p className="mt-3 text-[#6b7a96] text-lg max-w-md">
-                Trusted by thousands of families. Book your checkup today.
+                {featuredHospitalsUnavailable
+                  ? "Featured hospital cards are temporarily unavailable while we reconnect to the database."
+                  : "Trusted by thousands of families. Book your checkup today."}
               </p>
             </div>
-            <Link
-              href="/search"
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-[#a88b50] border border-[rgba(200,169,110,0.3)] hover:bg-[#0f1e38] hover:text-[#c8a96e] hover:border-[#0f1e38] transition-all duration-300"
-            >
-              View All
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            {!featuredHospitalsUnavailable && (
+              <Link
+                href="/search"
+                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-[#a88b50] border border-[rgba(200,169,110,0.3)] hover:bg-[#0f1e38] hover:text-[#c8a96e] hover:border-[#0f1e38] transition-all duration-300"
+              >
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
 
           {/* Cards */}
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredHospitals.map((hospital, index) => (
-              <HospitalCard key={hospital.id} hospital={hospital} index={index} />
-            ))}
-          </div>
+          {featuredHospitals.length > 0 ? (
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredHospitals.map((hospital, index) => (
+                <HospitalCard key={hospital.id} hospital={hospital} index={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-[rgba(15,30,56,0.08)] bg-[#f7f4ef] px-6 py-12 text-center">
+              <p className="text-xl font-bold text-[#0f1e38]">
+                Featured hospitals are temporarily unavailable.
+              </p>
+              <p className="mt-3 max-w-2xl mx-auto text-[#6b7a96] leading-relaxed">
+                The homepage is still working, but the database connection for this section could not be reached just now.
+                Once the connection is back, these cards will load automatically.
+              </p>
+            </div>
+          )}
 
           {/* Mobile view all */}
-          <div className="mt-10 text-center sm:hidden">
-            <Link
-              href="/search"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-[#a88b50] border border-[rgba(200,169,110,0.3)]"
-            >
-              View All Hospitals
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+          {!featuredHospitalsUnavailable && (
+            <div className="mt-10 text-center sm:hidden">
+              <Link
+                href="/search"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-[#a88b50] border border-[rgba(200,169,110,0.3)]"
+              >
+                View All Hospitals
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -145,12 +180,12 @@ export default async function Home({
             Get started today
           </p>
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-[1.1]">
-            Your family's health,{" "}
+            Your family&apos;s health,{" "}
             <span className="gold-shimmer">always within reach.</span>
           </h2>
           <p className="text-lg text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
-            Join thousands of Nepali families abroad who trust Sewa-Setu to
-            bridge the distance when it matters most.
+            Find and coordinate trusted care with Sewa-Setu from Nepal or
+            anywhere else, whenever it matters most.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
