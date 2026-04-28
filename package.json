@@ -34,7 +34,7 @@
     "three": "^0.183.2"
   },
   "devDependencies": {
-    "@prisma/client": "^6.0.0",
+    "@prisma/client": "6.19.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -42,7 +42,7 @@
     "@types/three": "^0.183.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
-    "prisma": "^7.8.0",
+    "prisma": "6.19.2",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
