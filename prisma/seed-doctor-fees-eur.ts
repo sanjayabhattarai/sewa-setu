@@ -1,7 +1,7 @@
 // prisma/seed-doctor-fees.ts
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 /**
  * Fees are stored as cents for Stripe compatibility.
@@ -25,7 +25,7 @@ function pickFeeCents() {
 async function main() {
   console.log("💶 Seeding doctor fees (EUR, no decimals)...");
 
-  const doctors = await prisma.doctor.findMany({
+  const doctors: { id: string }[] = await prisma.doctor.findMany({
     where: OVERWRITE_EXISTING ? {} : { feeMin: null },
     select: { id: true },
   });

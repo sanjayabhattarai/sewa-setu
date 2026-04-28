@@ -1,8 +1,8 @@
-import { PrismaClient, HospitalType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import fs from "node:fs";
 import path from "node:path";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 function slugify(input: string): string {
   return input
@@ -67,7 +67,7 @@ async function main() {
     data: {
       slug: "grande-international-hospital",
       name: "Grande International Hospital",
-      type: HospitalType.HOSPITAL,
+      type: "HOSPITAL",
       locationId: location.id,
       phone: "+977-1-5159266",
       email: "info@grandehospital.com",

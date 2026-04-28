@@ -6,11 +6,11 @@
  * Safe to re-run (upsert everywhere). Does NOT touch Grande Hospital data.
  */
 
-import { PrismaClient, HospitalType, ConsultationMode } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import fs from "node:fs";
 import path from "node:path";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 // ── Availability helpers (same logic as seed-availability.ts) ─────────────
 const pad2 = (n: number) => String(n).padStart(2, "0");
@@ -199,7 +199,7 @@ async function main() {
     create: {
       slug: "charak-memorial-hospital",
       name: "Charak Memorial Hospital",
-      type: HospitalType.HOSPITAL,
+      type: "HOSPITAL",
       locationId: location.id,
       phone: "+977 61 552493",
       email: "info@cmh.com.np",
@@ -279,7 +279,7 @@ async function main() {
           doctorCount++;
         }
 
-        doctorIdByName.set(fullName, doctorId);
+        doctorIdByName.set(fullName, doctorId!);
       }
 
       // ── DoctorHospital link ──────────────────────────────────────────────
@@ -433,12 +433,12 @@ Imaging & Diagnostics
   // Wipe existing slots for CMH only, then re-seed
   await prisma.availabilitySlot.deleteMany({ where: { hospitalId: hospital.id } });
 
-  const cmhDoctors = await prisma.doctor.findMany({
+  const cmhDoctors: { id: string }[] = await prisma.doctor.findMany({
     where: { hospitals: { some: { hospitalId: hospital.id } } },
     select: { id: true },
   });
 
-  type SlotRow = { doctorId: string; hospitalId: string; mode: ConsultationMode; dayOfWeek: number; startTime: string; endTime: string; slotDurationMinutes: number; isActive: boolean };
+  type SlotRow = { doctorId: string; hospitalId: string; mode: "ONLINE" | "PHYSICAL"; dayOfWeek: number; startTime: string; endTime: string; slotDurationMinutes: number; isActive: boolean };
   const rows: SlotRow[] = [];
 
   for (const d of cmhDoctors) {
@@ -447,10 +447,10 @@ Imaging & Diagnostics
       const { physicalTimes, onlineTime } = buildDailySlots(r);
       for (const t of physicalTimes) {
         const st = toMin(t);
-        rows.push({ doctorId: d.id, hospitalId: hospital.id, mode: ConsultationMode.PHYSICAL, dayOfWeek, startTime: toTime(st), endTime: toTime(st + 30), slotDurationMinutes: 30, isActive: true });
+        rows.push({ doctorId: d.id, hospitalId: hospital.id, mode: "PHYSICAL", dayOfWeek, startTime: toTime(st), endTime: toTime(st + 30), slotDurationMinutes: 30, isActive: true });
       }
       const ost = toMin(onlineTime);
-      rows.push({ doctorId: d.id, hospitalId: hospital.id, mode: ConsultationMode.ONLINE, dayOfWeek, startTime: toTime(ost), endTime: toTime(ost + 30), slotDurationMinutes: 30, isActive: true });
+      rows.push({ doctorId: d.id, hospitalId: hospital.id, mode: "ONLINE", dayOfWeek, startTime: toTime(ost), endTime: toTime(ost + 30), slotDurationMinutes: 30, isActive: true });
     }
   }
 
