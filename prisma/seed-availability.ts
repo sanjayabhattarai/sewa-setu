@@ -1,7 +1,14 @@
 // prisma/seed-availability.ts
-import { PrismaClient, ConsultationMode } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+type ConsultationModeType = "ONLINE" | "PHYSICAL";
+
+type AvailabilityDoctor = {
+  id: string;
+  hospitals: { hospitalId: string }[];
+};
+
+const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
 const toTime = (m: number) => `${pad2(Math.floor(m / 60))}:${pad2(m % 60)}`;
@@ -40,7 +47,7 @@ const ONLINE_POOL = ["17:00", "18:00", "19:00", "20:00", "21:00"];
 type SlotRow = {
   doctorId: string;
   hospitalId: string;
-  mode: ConsultationMode;
+  mode: ConsultationModeType;
   dayOfWeek: number;
   startTime: string;
   endTime: string;
@@ -70,7 +77,7 @@ async function main() {
   await prisma.availabilitySlot.deleteMany({});
   console.log("🧹 Cleared old availability.");
 
-  const doctors = await prisma.doctor.findMany({
+  const doctors: AvailabilityDoctor[] = await prisma.doctor.findMany({
     select: {
       id: true,
       hospitals: { select: { hospitalId: true } },
@@ -99,7 +106,7 @@ async function main() {
           rows.push({
             doctorId: d.id,
             hospitalId,
-            mode: ConsultationMode.PHYSICAL,
+            mode: "PHYSICAL",
             dayOfWeek,
             startTime: toTime(st),
             endTime: toTime(st + duration),
@@ -114,7 +121,7 @@ async function main() {
           rows.push({
             doctorId: d.id,
             hospitalId,
-            mode: ConsultationMode.ONLINE,
+            mode: "ONLINE",
             dayOfWeek,
             startTime: toTime(st),
             endTime: toTime(st + duration),

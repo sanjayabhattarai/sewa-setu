@@ -10,7 +10,7 @@
 
 import { PrismaClient } from "@prisma/client";
 
-const db = new PrismaClient();
+const db = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 async function main() {
   const [, , clerkId, email, fullName] = process.argv;
