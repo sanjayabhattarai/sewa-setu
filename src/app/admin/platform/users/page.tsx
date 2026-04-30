@@ -13,10 +13,12 @@ import {
 } from "@/lib/admin-roles";
 
 type Membership = { id: string; role: HospitalRole; status: string; hospitalName: string; hospitalSlug: string };
+type SupportAssignment = { id: string; hospitalId: string; hospitalName: string; hospitalSlug: string };
+type SupportHospital = { id: string; name: string };
 type User = {
   id: string; fullName: string; email: string; phone: string | null;
   role: UserRole; bannedAt: string | null; createdAt: string;
-  bookingCount: number; memberships: Membership[];
+  bookingCount: number; memberships: Membership[]; supportAssignments: SupportAssignment[];
 };
 
 const STATUS_CONFIG: Record<string, { bg: string; color: string }> = {
@@ -38,6 +40,7 @@ const FILTERS = [
 function UsersContent() {
   const searchParams = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
+  const [supportHospitals, setSupportHospitals] = useState<SupportHospital[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -58,6 +61,7 @@ function UsersContent() {
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
       setUsers(data.users); setTotal(data.total); setHasMore(data.hasMore);
+      setSupportHospitals(data.supportAssignableHospitals ?? []);
     } catch { setError("Failed to load users."); }
     finally { setLoading(false); }
   }, [search, filter, page]);
@@ -100,6 +104,34 @@ function UsersContent() {
       if (!res.ok) throw new Error("Failed");
       await fetchUsers(search, filter, page);
     } catch { setError("Action failed."); }
+    finally { setActionLoading(null); }
+  };
+
+  const handleAssignSupport = async (userId: string, hospitalId: string) => {
+    if (!hospitalId) return;
+    setActionLoading(userId + "assign");
+    try {
+      const res = await fetch("/api/admin/platform/users", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ASSIGN_SUPPORT", userId, hospitalId }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      await fetchUsers(search, filter, page);
+    } catch { setError("Failed to assign support hospital."); }
+    finally { setActionLoading(null); }
+  };
+
+  const handleUnassignSupport = async (assignmentId: string) => {
+    if (!confirm("Remove this support assignment?")) return;
+    setActionLoading(assignmentId + "unassign");
+    try {
+      const res = await fetch("/api/admin/platform/users", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "UNASSIGN_SUPPORT", assignmentId }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      await fetchUsers(search, filter, page);
+    } catch { setError("Failed to remove support assignment."); }
     finally { setActionLoading(null); }
   };
 
@@ -206,10 +238,49 @@ function UsersContent() {
 
                     <td className="px-4 py-3.5 align-top break-words">
                       {user.role !== "USER" ? (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: "rgba(200,169,110,.15)", color: "#a88b50" }}>
-                          {PLATFORM_ROLE_LABELS[user.role] ?? user.role}
-                        </span>
+                        <div className="space-y-2">
+                          <span className="inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ background: "rgba(200,169,110,.15)", color: "#a88b50" }}>
+                            {PLATFORM_ROLE_LABELS[user.role] ?? user.role}
+                          </span>
+                          {user.role === "PLATFORM_SUPPORT" && (
+                            <div className="space-y-1.5">
+                              {user.supportAssignments.length === 0 ? (
+                                <p className="text-[11px] text-gray-400">No assigned hospitals</p>
+                              ) : (
+                                user.supportAssignments.map((assignment) => (
+                                  <div key={assignment.id} className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                                      style={{ background: "rgba(15,30,56,.06)", color: "#6b7a96" }}>
+                                      {assignment.hospitalName}
+                                    </span>
+                                    <button
+                                      onClick={() => handleUnassignSupport(assignment.id)}
+                                      disabled={actionLoading === assignment.id + "unassign"}
+                                      className="text-[10px] font-bold text-red-500 disabled:opacity-40"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))
+                              )}
+                              <select
+                                value=""
+                                disabled={actionLoading === user.id + "assign"}
+                                onChange={(e) => handleAssignSupport(user.id, e.target.value)}
+                                className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none"
+                                style={{ background: "#f7f4ef", border: "1px solid rgba(15,30,56,.1)", color: "#6b7a96" }}
+                              >
+                                <option value="">Assign hospital...</option>
+                                {supportHospitals
+                                  .filter((hospital) => !user.supportAssignments.some((assignment) => assignment.hospitalId === hospital.id))
+                                  .map((hospital) => (
+                                    <option key={hospital.id} value={hospital.id}>{hospital.name}</option>
+                                  ))}
+                              </select>
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         <span className="text-xs font-semibold text-[#6b7a96]">Standard User</span>
                       )}

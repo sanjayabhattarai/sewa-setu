@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import type { HospitalRole } from "@prisma/client";
+import type { HospitalRole, UserRole } from "@prisma/client";
 import { hasPermission, type Permission } from "@/lib/admin-permissions";
-import { isPlatformAdmin } from "@/lib/admin-roles";
+import { isPlatformAdmin, isPlatformStaff } from "@/lib/admin-roles";
 export { hasPermission, type Permission } from "@/lib/admin-permissions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -13,7 +13,7 @@ export type AdminUser = {
   clerkId: string;
   fullName: string;
   email: string;
-  role: string;
+  role: UserRole;
 };
 
 export type HospitalAccessContext = {
@@ -23,6 +23,12 @@ export type HospitalAccessContext = {
     hospitalId: string;
     role: HospitalRole;
   };
+};
+
+export type PlatformAccessContext = {
+  user: AdminUser;
+  isAdmin: boolean;
+  assignedHospitalIds: string[];
 };
 
 
@@ -56,6 +62,48 @@ export async function requirePlatformAdmin(options?: { apiMode?: boolean }): Pro
   }
 
   return user;
+}
+
+/**
+ * Use for platform routes that may be accessed by either PLATFORM_ADMIN or
+ * PLATFORM_SUPPORT. Support users are always scoped to explicit assignments.
+ */
+export async function requirePlatformStaff(options?: { apiMode?: boolean }): Promise<PlatformAccessContext> {
+  const { userId: clerkId } = await auth();
+
+  if (!clerkId) {
+    if (options?.apiMode) throw new Error("UNAUTHORIZED");
+    redirect("/sign-in");
+  }
+
+  const user = await db.user.findUnique({
+    where: { clerkId },
+    select: { id: true, clerkId: true, fullName: true, email: true, role: true, bannedAt: true },
+  });
+
+  if (!user || user.bannedAt) {
+    if (options?.apiMode) throw new Error("UNAUTHORIZED");
+    redirect("/");
+  }
+
+  if (!isPlatformStaff(user.role)) {
+    if (options?.apiMode) throw new Error("FORBIDDEN");
+    redirect("/");
+  }
+
+  const isAdmin = isPlatformAdmin(user.role);
+  const assignments = isAdmin
+    ? []
+    : await db.supportAssignment.findMany({
+        where: { supportUserId: user.id, isActive: true },
+        select: { hospitalId: true },
+      });
+
+  return {
+    user,
+    isAdmin,
+    assignedHospitalIds: assignments.map((assignment) => assignment.hospitalId),
+  };
 }
 
 // ─── Hospital Access Guard ────────────────────────────────────────────────────

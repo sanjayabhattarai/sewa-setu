@@ -42,6 +42,11 @@ export async function GET(req: Request) {
           include: { hospital: { select: { name: true, slug: true } } },
           orderBy: { createdAt: "desc" },
         },
+        supportAssignments: {
+          where: { isActive: true },
+          include: { hospital: { select: { id: true, name: true, slug: true } } },
+          orderBy: { createdAt: "asc" },
+        },
         _count: { select: { bookings: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -67,10 +72,21 @@ export async function GET(req: Request) {
         hospitalName: m.hospital.name,
         hospitalSlug: m.hospital.slug,
       })),
+      supportAssignments: u.supportAssignments.map((assignment) => ({
+        id: assignment.id,
+        hospitalId: assignment.hospital.id,
+        hospitalName: assignment.hospital.name,
+        hospitalSlug: assignment.hospital.slug,
+      })),
     })),
     total,
     page,
     hasMore: page * pageSize < total,
+    supportAssignableHospitals: await db.hospital.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
   });
 }
 
@@ -87,13 +103,15 @@ export async function PATCH(req: Request) {
     action?: string;
     userId?: string;
     membershipId?: string;
+    hospitalId?: string;
+    assignmentId?: string;
     rejectedReason?: string;
   };
   try { body = await req.json(); } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { action, userId, membershipId, rejectedReason } = body;
+  const { action, userId, membershipId, hospitalId, assignmentId, rejectedReason } = body;
 
   if (action === "APPROVE_MEMBERSHIP" || action === "REJECT_MEMBERSHIP") {
     if (!membershipId) return NextResponse.json({ error: "membershipId required" }, { status: 400 });
@@ -141,6 +159,64 @@ export async function PATCH(req: Request) {
       entityId: userId,
       before: { bannedAt: user.bannedAt },
       after: { bannedAt: action === "BAN_USER" ? new Date() : null },
+    });
+
+    return NextResponse.json({ success: true });
+  }
+
+  if (action === "ASSIGN_SUPPORT") {
+    if (!userId || !hospitalId) {
+      return NextResponse.json({ error: "userId and hospitalId required" }, { status: 400 });
+    }
+
+    const [user, hospital] = await Promise.all([
+      db.user.findUnique({ where: { id: userId } }),
+      db.hospital.findUnique({ where: { id: hospitalId } }),
+    ]);
+    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!hospital) return NextResponse.json({ error: "Hospital not found" }, { status: 404 });
+    if (user.role !== "PLATFORM_SUPPORT") {
+      return NextResponse.json({ error: "Only platform support users can be assigned to hospitals" }, { status: 400 });
+    }
+
+    const assignment = await db.supportAssignment.upsert({
+      where: { supportUserId_hospitalId: { supportUserId: userId, hospitalId } },
+      update: { isActive: true, assignedById: actor.id },
+      create: { supportUserId: userId, hospitalId, assignedById: actor.id },
+    });
+
+    await writeAuditLog({
+      actorUserId: actor.id,
+      hospitalId,
+      action: "SUPPORT_ASSIGNED",
+      entity: "SupportAssignment",
+      entityId: assignment.id,
+      after: { supportUserId: userId, hospitalId },
+    });
+
+    return NextResponse.json({ success: true });
+  }
+
+  if (action === "UNASSIGN_SUPPORT") {
+    if (!assignmentId) {
+      return NextResponse.json({ error: "assignmentId required" }, { status: 400 });
+    }
+
+    const assignment = await db.supportAssignment.findUnique({ where: { id: assignmentId } });
+    if (!assignment) return NextResponse.json({ error: "Assignment not found" }, { status: 404 });
+
+    await db.supportAssignment.update({
+      where: { id: assignmentId },
+      data: { isActive: false },
+    });
+
+    await writeAuditLog({
+      actorUserId: actor.id,
+      hospitalId: assignment.hospitalId,
+      action: "SUPPORT_UNASSIGNED",
+      entity: "SupportAssignment",
+      entityId: assignment.id,
+      before: { supportUserId: assignment.supportUserId, hospitalId: assignment.hospitalId },
     });
 
     return NextResponse.json({ success: true });

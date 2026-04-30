@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requirePlatformAdmin } from "@/lib/admin-auth";
+import { requirePlatformStaff } from "@/lib/admin-auth";
 import PlatformShell from "./PlatformShell";
 
 export default async function PlatformLayout({
@@ -9,7 +9,8 @@ export default async function PlatformLayout({
 }) {
   let user;
   try {
-    user = await requirePlatformAdmin();
+    const ctx = await requirePlatformStaff();
+    user = ctx.user;
   } catch {
     redirect("/");
   }

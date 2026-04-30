@@ -17,6 +17,7 @@ type Stats = {
     id: string; status: string; scheduledAt: string; createdAt: string;
     hospital: string | null; patient: string | null; amountPaid: number | null;
   }[];
+  scope: "platform" | "assigned";
 };
 
 const STATUS_CONFIG: Record<string, { bg: string; color: string; dot: string }> = {
@@ -59,7 +60,9 @@ export default function PlatformDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-extrabold text-[#0f1e38]">Platform Overview</h1>
-          <p className="text-sm text-gray-400 mt-0.5">All hospitals · All bookings · Full access</p>
+          <p className="text-sm text-gray-400 mt-0.5">
+            {stats?.scope === "assigned" ? "Assigned hospitals · Operational visibility" : "All hospitals · All bookings · Full access"}
+          </p>
         </div>
         <button onClick={fetchStats}
           className="flex items-center gap-2 px-3 h-9 rounded-xl text-xs font-semibold transition-all"
@@ -88,9 +91,11 @@ export default function PlatformDashboardPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
               { label: "Hospitals",        value: stats.hospitals.total,                 sub: `${stats.hospitals.active} active`,              icon: <Building2 size={18} className="text-[#c8a96e]" />,    alert: stats.hospitals.pendingVerification > 0, alertText: `${stats.hospitals.pendingVerification} pending verification` },
-              { label: "Users",            value: stats.users.total.toLocaleString(),    sub: "registered accounts",                           icon: <Users size={18} className="text-[#c8a96e]" />,        alert: false, alertText: "" },
               { label: "Bookings",         value: stats.bookings.total.toLocaleString(), sub: `${stats.bookings.thisMonth} this month`,          icon: <CalendarDays size={18} className="text-[#c8a96e]" />, alert: stats.memberships.pending > 0, alertText: `${stats.memberships.pending} access requests pending` },
-              { label: "All-time Revenue", value: formatMoney(stats.revenue.total),      sub: `${formatMoney(stats.revenue.thisMonth)} this month`, icon: <TrendingUp size={18} className="text-[#c8a96e]" />,  alert: false, alertText: "" },
+              ...(stats.scope === "platform" ? [
+                { label: "Users",            value: stats.users.total.toLocaleString(),    sub: "registered accounts",                           icon: <Users size={18} className="text-[#c8a96e]" />,        alert: false, alertText: "" },
+                { label: "All-time Revenue", value: formatMoney(stats.revenue.total),      sub: `${formatMoney(stats.revenue.thisMonth)} this month`, icon: <TrendingUp size={18} className="text-[#c8a96e]" />,  alert: false, alertText: "" },
+              ] : []),
             ].map((card) => (
               <div key={card.label} className="bg-white rounded-2xl p-4 border"
                 style={{ borderColor: card.alert ? "rgba(245,158,11,.3)" : "rgba(15,30,56,.07)" }}>
@@ -109,7 +114,7 @@ export default function PlatformDashboardPage() {
 
           {/* Alert banners */}
           <div className="grid lg:grid-cols-2 gap-3">
-            {stats.memberships.pending > 0 && (
+            {stats.scope === "platform" && stats.memberships.pending > 0 && (
               <Link href="/admin/platform/users?filter=pending"
                 className="flex items-center justify-between p-4 rounded-2xl transition-all hover:shadow-sm"
                 style={{ background: "rgba(245,158,11,.08)", border: "1.5px solid rgba(245,158,11,.25)" }}>

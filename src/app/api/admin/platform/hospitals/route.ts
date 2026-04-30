@@ -1,27 +1,28 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin, writeAuditLog } from "@/lib/admin-auth";
+import { requirePlatformAdmin, requirePlatformStaff, writeAuditLog } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
-  let actor;
-  try { actor = await requirePlatformAdmin({ apiMode: true }); }
+  let ctx;
+  try { ctx = await requirePlatformStaff({ apiMode: true }); }
   catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "UNAUTHORIZED";
-    return NextResponse.json({ error: msg }, { status: 401 });
+    return NextResponse.json({ error: msg }, { status: msg === "FORBIDDEN" ? 403 : 401 });
   }
-
-  void actor;
 
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") ?? "";
   const page   = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const pageSize = 20;
 
-  const where = search
-    ? { OR: [{ name: { contains: search, mode: "insensitive" as const } }, { slug: { contains: search, mode: "insensitive" as const } }] }
-    : {};
+  const where = {
+    ...(ctx.isAdmin ? {} : { id: { in: ctx.assignedHospitalIds } }),
+    ...(search
+      ? { OR: [{ name: { contains: search, mode: "insensitive" as const } }, { slug: { contains: search, mode: "insensitive" as const } }] }
+      : {}),
+  };
 
   const [total, hospitals] = await Promise.all([
     db.hospital.count({ where }),
@@ -30,6 +31,14 @@ export async function GET(req: Request) {
       include: {
         location: { select: { city: true, district: true } },
         _count: { select: { bookings: true, doctors: true, memberships: true } },
+        supportAssignments: {
+          where: { isActive: true },
+          select: {
+            id: true,
+            supportUser: { select: { id: true, fullName: true, email: true } },
+          },
+          orderBy: { createdAt: "asc" },
+        },
       },
       orderBy: { name: "asc" },
       skip: (page - 1) * pageSize,
@@ -49,10 +58,18 @@ export async function GET(req: Request) {
       bookingCount: h._count.bookings,
       doctorCount: h._count.doctors,
       staffCount: h._count.memberships,
+      supportAssignments: h.supportAssignments.map((assignment) => ({
+        id: assignment.id,
+        userId: assignment.supportUser.id,
+        fullName: assignment.supportUser.fullName,
+        email: assignment.supportUser.email,
+      })),
     })),
     total,
     page,
     hasMore: page * pageSize < total,
+    canManage: ctx.isAdmin,
+    scope: ctx.isAdmin ? "platform" : "assigned",
   });
 }
 

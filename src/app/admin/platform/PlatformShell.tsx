@@ -1,33 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Building2, Users, Inbox,
   CalendarDays, TrendingUp, ShieldCheck, Settings,
   Menu, X, Shield, LogOut, ChevronRight,
 } from "lucide-react";
+import type { UserRole } from "@prisma/client";
+import { PLATFORM_ROLE_LABELS, isPlatformAdmin } from "@/lib/admin-roles";
 
-type NavItem = { label: string; href: string; icon: React.ReactNode };
+type NavItem = { label: string; href: string; icon: React.ReactNode; adminOnly?: boolean };
 
 const NAV: NavItem[] = [
   { label: "Dashboard",  href: "/admin/platform/dashboard",  icon: <LayoutDashboard size={17} /> },
   { label: "Hospitals",  href: "/admin/platform/hospitals",  icon: <Building2 size={17} /> },
-  { label: "Users",      href: "/admin/platform/users",      icon: <Users size={17} /> },
-  { label: "Inquiries",  href: "/admin/platform/inquiries",  icon: <Inbox size={17} /> },
-  { label: "Bookings",   href: "/admin/platform/bookings",   icon: <CalendarDays size={17} /> },
-  { label: "Revenue",    href: "/admin/platform/revenue",    icon: <TrendingUp size={17} /> },
-  { label: "Audit Logs", href: "/admin/platform/audit-logs", icon: <ShieldCheck size={17} /> },
-  { label: "Settings",   href: "/admin/platform/settings",   icon: <Settings size={17} /> },
+  { label: "Users",      href: "/admin/platform/users",      icon: <Users size={17} />, adminOnly: true },
+  { label: "Inquiries",  href: "/admin/platform/inquiries",  icon: <Inbox size={17} />, adminOnly: true },
+  { label: "Bookings",   href: "/admin/platform/bookings",   icon: <CalendarDays size={17} />, adminOnly: true },
+  { label: "Revenue",    href: "/admin/platform/revenue",    icon: <TrendingUp size={17} />, adminOnly: true },
+  { label: "Audit Logs", href: "/admin/platform/audit-logs", icon: <ShieldCheck size={17} />, adminOnly: true },
+  { label: "Settings",   href: "/admin/platform/settings",   icon: <Settings size={17} />, adminOnly: true },
 ];
 
 function Sidebar({ user, pathname, mobile = false, onClose }: {
-  user: { fullName: string; email: string };
+  user: { fullName: string; email: string; role: UserRole };
   pathname: string;
   mobile?: boolean;
   onClose?: () => void;
 }) {
+  const isAdmin = isPlatformAdmin(user.role);
+  const navItems = NAV.filter((item) => isAdmin || !item.adminOnly);
+
   return (
     <div className={`flex flex-col h-full ${mobile ? "" : "hidden lg:flex"}`}
       style={{ width: 240, background: "#0f1e38", flexShrink: 0 }}>
@@ -42,14 +47,16 @@ function Sidebar({ user, pathname, mobile = false, onClose }: {
           <div>
             <p className="text-sm font-bold text-white">Sewa-Setu</p>
             <p className="text-[10px] font-bold uppercase tracking-widest"
-              style={{ color: "rgba(255,255,255,.35)" }}>Platform Admin</p>
+              style={{ color: "rgba(255,255,255,.35)" }}>
+              {isAdmin ? "Platform Admin" : "Platform Support"}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-        {NAV.map((item) => {
+        {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link key={item.href} href={item.href}
@@ -82,7 +89,9 @@ function Sidebar({ user, pathname, mobile = false, onClose }: {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold text-white truncate">{user.fullName}</p>
-            <p className="text-[10px]" style={{ color: "rgba(255,255,255,.35)" }}>Super Admin</p>
+            <p className="text-[10px]" style={{ color: "rgba(255,255,255,.35)" }}>
+              {PLATFORM_ROLE_LABELS[user.role]}
+            </p>
           </div>
         </div>
         <a href="/api/auth/sign-out"
@@ -100,11 +109,20 @@ function Sidebar({ user, pathname, mobile = false, onClose }: {
 export default function PlatformShell({
   user, children,
 }: {
-  user: { fullName: string; email: string };
+  user: { fullName: string; email: string; role: UserRole };
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const isAdmin = isPlatformAdmin(user.role);
+  const allowedSupportPath = pathname === "/admin/platform/dashboard" || pathname === "/admin/platform/hospitals";
+
+  useEffect(() => {
+    if (!isAdmin && !allowedSupportPath) {
+      router.replace("/admin/platform/dashboard");
+    }
+  }, [allowedSupportPath, isAdmin, router]);
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "#f7f4ef" }}>
