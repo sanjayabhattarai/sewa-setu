@@ -57,6 +57,8 @@ function formatDate(iso: string) {
 export default function PlatformInquiriesPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [total, setTotal] = useState(0);
+  const [canFinalize, setCanFinalize] = useState(false);
+  const [scope, setScope] = useState<"platform" | "assigned">("platform");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -78,6 +80,8 @@ export default function PlatformInquiriesPage() {
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
       setInquiries(data.inquiries); setTotal(data.total); setHasMore(data.hasMore);
+      setCanFinalize(!!data.canFinalize);
+      setScope(data.scope ?? "platform");
     } catch { setError("Failed to load inquiries."); }
     finally { setLoading(false); }
   }, [search, filter, page]);
@@ -123,7 +127,7 @@ export default function PlatformInquiriesPage() {
         <div>
           <h1 className="text-xl font-extrabold text-[#0f1e38]">Partner Inquiries</h1>
           <p className="text-sm text-gray-400 mt-0.5">
-            {total} inquir{total !== 1 ? "ies" : "y"} in onboarding pipeline
+            {total} inquir{total !== 1 ? "ies" : "y"} {scope === "assigned" ? "in assigned support scope" : "in onboarding pipeline"}
           </p>
         </div>
         <button
@@ -225,7 +229,9 @@ export default function PlatformInquiriesPage() {
               <tbody>
                 {inquiries.map((inq) => {
                   const st = STATUS_CONFIG[inq.status];
-                  const actions = NEXT_ACTIONS[inq.status] ?? [];
+                  const actions = (NEXT_ACTIONS[inq.status] ?? []).filter((action) =>
+                    canFinalize || action.status === "REVIEWED" || action.status === "CONTACTED"
+                  );
                   const isExpanded = expandedId === inq.id;
 
                   return (

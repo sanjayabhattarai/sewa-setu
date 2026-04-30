@@ -17,7 +17,7 @@ const NAV: NavItem[] = [
   { label: "Dashboard",  href: "/admin/platform/dashboard",  icon: <LayoutDashboard size={17} /> },
   { label: "Hospitals",  href: "/admin/platform/hospitals",  icon: <Building2 size={17} /> },
   { label: "Users",      href: "/admin/platform/users",      icon: <Users size={17} />, adminOnly: true },
-  { label: "Inquiries",  href: "/admin/platform/inquiries",  icon: <Inbox size={17} />, adminOnly: true },
+  { label: "Inquiries",  href: "/admin/platform/inquiries",  icon: <Inbox size={17} /> },
   { label: "Bookings",   href: "/admin/platform/bookings",   icon: <CalendarDays size={17} />, adminOnly: true },
   { label: "Revenue",    href: "/admin/platform/revenue",    icon: <TrendingUp size={17} />, adminOnly: true },
   { label: "Audit Logs", href: "/admin/platform/audit-logs", icon: <ShieldCheck size={17} />, adminOnly: true },
@@ -116,7 +116,10 @@ export default function PlatformShell({
   const pathname = usePathname();
   const router = useRouter();
   const isAdmin = isPlatformAdmin(user.role);
-  const allowedSupportPath = pathname === "/admin/platform/dashboard" || pathname === "/admin/platform/hospitals";
+  const allowedSupportPath =
+    pathname === "/admin/platform/dashboard" ||
+    pathname === "/admin/platform/hospitals" ||
+    pathname === "/admin/platform/inquiries";
 
   useEffect(() => {
     if (!isAdmin && !allowedSupportPath) {
