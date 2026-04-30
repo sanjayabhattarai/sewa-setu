@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function GET(req: Request) {
   const { userId: clerkId } = await auth();
   let dbUserId: string | null = null;
   if (clerkId) {
-    const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } });
+    const u = await ensureClerkUserInDb(clerkId);
     dbUserId = u?.id ?? null;
   }
 
@@ -66,7 +67,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "hospitalId and rating (1–5) are required" }, { status: 400 });
   }
 
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } });
+  const dbUser = await ensureClerkUserInDb(clerkId);
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   const hospital = await db.hospital.findUnique({ where: { id: hospitalId }, select: { id: true } });

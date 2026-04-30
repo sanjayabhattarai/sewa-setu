@@ -3,11 +3,14 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { Building2, ChevronRight } from "lucide-react";
-import { HOSPITAL_ROLE_LABELS, isPlatformAdmin } from "@/lib/admin-roles";
+import { HOSPITAL_ROLE_LABELS, isPlatformStaff } from "@/lib/admin-roles";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 export default async function SelectHospitalPage() {
   const { userId: clerkId } = await auth();
   if (!clerkId) redirect("/sign-in");
+
+  await ensureClerkUserInDb(clerkId);
 
   const user = await db.user.findUnique({
     where: { clerkId },
@@ -24,7 +27,7 @@ export default async function SelectHospitalPage() {
   });
 
   if (!user) redirect("/sign-in");
-  if (isPlatformAdmin(user.role)) redirect("/admin/platform/dashboard");
+  if (isPlatformStaff(user.role)) redirect("/admin/platform/dashboard");
   if (user.memberships.length === 0) redirect("/admin/request-access");
   if (user.memberships.length === 1) redirect(`/admin/h/${user.memberships[0].hospital.slug}/dashboard`);
 

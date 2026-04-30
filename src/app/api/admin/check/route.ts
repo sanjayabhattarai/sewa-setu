@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
-import { isPlatformAdmin } from "@/lib/admin-roles";
+import { isPlatformStaff } from "@/lib/admin-roles";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 // Returns the admin destination href for the signed-in user, or null if no access.
 // Used by the navbar to conditionally show an Admin Panel link.
 export async function GET() {
   const { userId: clerkId } = await auth();
   if (!clerkId) return NextResponse.json({ href: null });
+
+  await ensureClerkUserInDb(clerkId);
 
   const user = await db.user.findUnique({
     where: { clerkId },
@@ -24,7 +27,7 @@ export async function GET() {
 
   if (!user || user.bannedAt) return NextResponse.json({ href: null });
 
-  if (isPlatformAdmin(user.role)) {
+  if (isPlatformStaff(user.role)) {
     return NextResponse.json({ href: "/admin/platform/dashboard" });
   }
 

@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 const API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
 
@@ -631,17 +632,9 @@ export async function PUT(req: Request) {
       );
     }
 
-    // Find or create the DB user from the authenticated Clerk user
-    let dbUser = await db.user.findUnique({ where: { clerkId: clerkUserId } });
+    const dbUser = await ensureClerkUserInDb(clerkUserId);
     if (!dbUser) {
-      dbUser = await db.user.create({
-        data: {
-          clerkId: clerkUserId,
-          email: buyerEmail,
-          fullName: patientName,
-          country: "NP",
-        },
-      });
+      return NextResponse.json({ error: "Unable to sync signed-in user" }, { status: 500 });
     }
 
     let patient = await db.patient.findFirst({

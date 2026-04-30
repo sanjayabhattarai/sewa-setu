@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import type { HospitalRole, UserRole } from "@prisma/client";
 import { hasPermission, type Permission } from "@/lib/admin-permissions";
 import { isPlatformAdmin, isPlatformStaff } from "@/lib/admin-roles";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 export { hasPermission, type Permission } from "@/lib/admin-permissions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -46,6 +47,8 @@ export async function requirePlatformAdmin(options?: { apiMode?: boolean }): Pro
     redirect("/sign-in");
   }
 
+  await ensureClerkUserInDb(clerkId);
+
   const user = await db.user.findUnique({
     where: { clerkId },
     select: { id: true, clerkId: true, fullName: true, email: true, role: true, bannedAt: true },
@@ -75,6 +78,8 @@ export async function requirePlatformStaff(options?: { apiMode?: boolean }): Pro
     if (options?.apiMode) throw new Error("UNAUTHORIZED");
     redirect("/sign-in");
   }
+
+  await ensureClerkUserInDb(clerkId);
 
   const user = await db.user.findUnique({
     where: { clerkId },
@@ -125,6 +130,8 @@ export async function requireHospitalAccess(
     redirect("/sign-in");
   }
 
+  await ensureClerkUserInDb(clerkId);
+
   const user = await db.user.findUnique({
     where: { clerkId },
     select: { id: true, clerkId: true, fullName: true, email: true, role: true, bannedAt: true },
@@ -133,27 +140,6 @@ export async function requireHospitalAccess(
   if (!user || user.bannedAt) {
     if (options?.apiMode) throw new Error("UNAUTHORIZED");
     redirect("/sign-in");
-  }
-
-  // Platform admins currently pass through to hospital workspaces.
-  // Long term, this should be replaced with a controlled break-glass flow.
-  if (isPlatformAdmin(user.role)) {
-    const hospital = await db.hospital.findUnique({
-      where: { slug: hospitalSlug },
-      select: { id: true },
-    });
-    if (!hospital) {
-      if (options?.apiMode) throw new Error("NOT_FOUND");
-      redirect("/admin");
-    }
-    return {
-      user,
-      membership: {
-        id: "platform",
-        hospitalId: hospital.id,
-        role: "OWNER",
-      },
-    };
   }
 
   // Look up hospital membership
@@ -196,6 +182,8 @@ export async function resolveAdminRedirect(): Promise<string> {
   const { userId: clerkId } = await auth();
   if (!clerkId) return "/sign-in";
 
+  await ensureClerkUserInDb(clerkId);
+
   const user = await db.user.findUnique({
     where: { clerkId },
     select: {
@@ -211,8 +199,8 @@ export async function resolveAdminRedirect(): Promise<string> {
 
   if (!user || user.bannedAt) return "/sign-in";
 
-  // Platform admin goes to platform dashboard
-  if (isPlatformAdmin(user.role)) {
+  // Platform staff goes to platform dashboard
+  if (isPlatformStaff(user.role)) {
     return "/admin/platform/dashboard";
   }
 

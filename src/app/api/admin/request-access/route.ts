@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import type { HospitalRole } from "@prisma/client";
 import { ACCESS_REQUEST_ROLES } from "@/lib/admin-roles";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 const VALID_ROLES: HospitalRole[] = [...ACCESS_REQUEST_ROLES];
 
@@ -25,10 +26,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
   }
 
-  const user = await db.user.findUnique({
-    where: { clerkId },
-    select: { id: true, bannedAt: true },
-  });
+  const user = await ensureClerkUserInDb(clerkId);
 
   if (!user || user.bannedAt) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

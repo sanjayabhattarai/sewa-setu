@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
   const pageSize = Math.min(20, Math.max(5, parseInt(searchParams.get("pageSize") || "10", 10)));
 
-  const dbUser = await db.user.findUnique({ where: { clerkId } });
+  const dbUser = await ensureClerkUserInDb(clerkId);
   if (!dbUser) return NextResponse.json({ bookings: [], total: 0, hasMore: false });
 
   const include = {
