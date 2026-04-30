@@ -144,3 +144,16 @@
 .admin-content button:active {
   transform: translateY(1px);
 }
+
+.admin-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-content th {
+  white-space: nowrap;
+}
+
+.admin-content td {
+  vertical-align: top;
+}

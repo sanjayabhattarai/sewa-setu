@@ -158,7 +158,7 @@ function UsersContent() {
   };
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-6 w-full max-w-7xl">
 
       <div className="flex items-center justify-between gap-4">
         <div>
@@ -174,7 +174,7 @@ function UsersContent() {
         </button>
       </div>
 
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex gap-3 flex-wrap items-center">
         <div className="flex items-center gap-2 h-10 rounded-xl px-3 bg-white flex-1 min-w-48 border border-gray-100">
           <Search size={13} className="text-gray-400 flex-shrink-0" />
           <input value={searchInput} onChange={(e) => handleSearch(e.target.value)}
@@ -218,22 +218,22 @@ function UsersContent() {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="w-full">
-            <table className="w-full table-fixed text-sm">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[1180px] text-sm">
               <thead style={{ background: "#f7f4ef" }}>
                 <tr>
-                  <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">User</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Role</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Joined</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Memberships</th>
-                  <th className="text-right px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Actions</th>
+                  <th className="w-[28%] text-left px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">User</th>
+                  <th className="w-[26%] text-left px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Platform Role</th>
+                  <th className="w-[12%] text-left px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Joined</th>
+                  <th className="w-[24%] text-left px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Hospital Access</th>
+                  <th className="w-[10%] text-right px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id} className="border-t border-gray-100 align-top" style={{ opacity: user.bannedAt ? 0.7 : 1 }}>
-                    <td className="px-4 py-3.5 align-top break-words">
-                      <div className="flex items-center gap-3">
+                    <td className="px-5 py-4 align-top">
+                      <div className="flex items-start gap-3 min-w-0">
                         <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
                           style={{
                             background: isPlatformStaff(user.role)
@@ -242,7 +242,7 @@ function UsersContent() {
                           }}>
                           {user.fullName.charAt(0).toUpperCase()}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-bold text-[#0f1e38] leading-tight">{user.fullName}</p>
                             {user.bannedAt && (
@@ -250,7 +250,7 @@ function UsersContent() {
                                 style={{ background: "rgba(239,68,68,.08)", color: "#dc2626" }}>Banned</span>
                             )}
                           </div>
-                          <p className="text-xs" style={{ color: "#8a9ab5" }}>{user.email}</p>
+                          <p className="text-xs break-all" style={{ color: "#8a9ab5" }}>{user.email}</p>
                           <p className="text-[11px]" style={{ color: "#bfcbd9" }}>
                             {user.bookingCount} booking{user.bookingCount !== 1 ? "s" : ""}
                           </p>
@@ -258,14 +258,14 @@ function UsersContent() {
                       </div>
                     </td>
 
-                    <td className="px-4 py-3.5 align-top break-words">
+                    <td className="px-5 py-4 align-top">
                       {user.role !== "USER" ? (
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           <select
                             value={user.role}
                             disabled={actionLoading === user.id + "role"}
                             onChange={(e) => handlePlatformRoleChange(user.id, e.target.value as UserRole)}
-                            className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none disabled:opacity-50"
+                            className="h-8 w-full max-w-[220px] rounded-lg px-2 text-xs font-semibold outline-none disabled:opacity-50"
                             style={{ background: "rgba(200,169,110,.15)", border: "1px solid rgba(200,169,110,.2)", color: "#a88b50" }}
                           >
                             {PLATFORM_ROLE_OPTIONS.map((role) => (
@@ -278,7 +278,7 @@ function UsersContent() {
                                 <p className="text-[11px] text-gray-400">No assigned hospitals</p>
                               ) : (
                                 user.supportAssignments.map((assignment) => (
-                                  <div key={assignment.id} className="flex items-center gap-1.5 flex-wrap">
+                                  <div key={assignment.id} className="flex items-center gap-2">
                                     <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                                       style={{ background: "rgba(15,30,56,.06)", color: "#6b7a96" }}>
                                       {assignment.hospitalName}
@@ -297,7 +297,7 @@ function UsersContent() {
                                 value=""
                                 disabled={actionLoading === user.id + "assign"}
                                 onChange={(e) => handleAssignSupport(user.id, e.target.value)}
-                                className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none"
+                                className="h-8 w-full max-w-[220px] rounded-lg px-2 text-xs font-semibold outline-none"
                                 style={{ background: "#f7f4ef", border: "1px solid rgba(15,30,56,.1)", color: "#6b7a96" }}
                               >
                                 <option value="">Assign hospital...</option>
@@ -315,7 +315,7 @@ function UsersContent() {
                           value={user.role}
                           disabled={actionLoading === user.id + "role"}
                           onChange={(e) => handlePlatformRoleChange(user.id, e.target.value as UserRole)}
-                          className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none disabled:opacity-50"
+                          className="h-8 w-full max-w-[220px] rounded-lg px-2 text-xs font-semibold outline-none disabled:opacity-50"
                           style={{ background: "#f7f4ef", border: "1px solid rgba(15,30,56,.1)", color: "#6b7a96" }}
                         >
                           {PLATFORM_ROLE_OPTIONS.map((role) => (
@@ -325,11 +325,11 @@ function UsersContent() {
                       )}
                     </td>
 
-                    <td className="px-4 py-3.5 align-top break-words">
+                    <td className="px-5 py-4 align-top">
                       <span className="text-xs font-semibold text-[#0f1e38]">{formatDate(user.createdAt)}</span>
                     </td>
 
-                    <td className="px-4 py-3.5 align-top break-words">
+                    <td className="px-5 py-4 align-top">
                       {user.memberships.length === 0 ? (
                         <span className="text-xs text-gray-400">No memberships</span>
                       ) : (
@@ -338,19 +338,21 @@ function UsersContent() {
                             const st = STATUS_CONFIG[m.status] ?? STATUS_CONFIG.PENDING;
                             const busy = actionLoading?.startsWith(m.id);
                             return (
-                              <div key={m.id} className="flex items-center gap-2 flex-wrap p-2 rounded-lg" style={{ background: "rgba(15,30,56,.03)" }}>
-                                <span className="text-xs font-bold text-[#0f1e38]">{m.hospitalName}</span>
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                                  style={{ background: "rgba(15,30,56,.06)", color: "#6b7a96" }}>
-                                  {HOSPITAL_ROLE_LABELS[m.role] ?? m.role}
-                                </span>
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                  style={{ background: st.bg, color: st.color }}>
-                                  {m.status.charAt(0) + m.status.slice(1).toLowerCase()}
-                                </span>
+                              <div key={m.id} className="p-2 rounded-lg" style={{ background: "rgba(15,30,56,.03)" }}>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-xs font-bold text-[#0f1e38]">{m.hospitalName}</span>
+                                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                                    style={{ background: "rgba(15,30,56,.06)", color: "#6b7a96" }}>
+                                    {HOSPITAL_ROLE_LABELS[m.role] ?? m.role}
+                                  </span>
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                    style={{ background: st.bg, color: st.color }}>
+                                    {m.status.charAt(0) + m.status.slice(1).toLowerCase()}
+                                  </span>
+                                </div>
 
                                 {m.status === "PENDING" && (
-                                  <>
+                                  <div className="mt-2 flex items-center gap-2">
                                     <button onClick={() => handleMembership(m.id, "APPROVE_MEMBERSHIP")} disabled={!!busy}
                                       className="flex items-center gap-1 h-7 px-2 rounded-lg text-[11px] font-bold disabled:opacity-50"
                                       style={{ background: "rgba(16,185,129,.1)", color: "#059669" }}>
@@ -363,7 +365,7 @@ function UsersContent() {
                                       <XCircle size={10} />
                                       {actionLoading === m.id + "REJECT_MEMBERSHIP" ? "..." : "Reject"}
                                     </button>
-                                  </>
+                                  </div>
                                 )}
                               </div>
                             );
@@ -372,7 +374,7 @@ function UsersContent() {
                       )}
                     </td>
 
-                    <td className="px-4 py-3.5 text-right align-top break-words">
+                    <td className="px-5 py-4 text-right align-top">
                       <button onClick={() => handleBan(user.id, !!user.bannedAt)}
                         disabled={actionLoading === user.id + "ban" || user.id === currentUserId || isPlatformAdmin(user.role)}
                         className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-bold disabled:opacity-30 transition-all"
