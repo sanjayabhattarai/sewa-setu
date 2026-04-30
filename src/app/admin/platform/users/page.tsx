@@ -263,7 +263,7 @@ function UsersContent() {
                         <div className="space-y-2">
                           <select
                             value={user.role}
-                            disabled={user.id === currentUserId || actionLoading === user.id + "role"}
+                            disabled={actionLoading === user.id + "role"}
                             onChange={(e) => handlePlatformRoleChange(user.id, e.target.value as UserRole)}
                             className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none disabled:opacity-50"
                             style={{ background: "rgba(200,169,110,.15)", border: "1px solid rgba(200,169,110,.2)", color: "#a88b50" }}
@@ -313,7 +313,7 @@ function UsersContent() {
                       ) : (
                         <select
                           value={user.role}
-                          disabled={user.id === currentUserId || actionLoading === user.id + "role"}
+                          disabled={actionLoading === user.id + "role"}
                           onChange={(e) => handlePlatformRoleChange(user.id, e.target.value as UserRole)}
                           className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none disabled:opacity-50"
                           style={{ background: "#f7f4ef", border: "1px solid rgba(15,30,56,.1)", color: "#6b7a96" }}

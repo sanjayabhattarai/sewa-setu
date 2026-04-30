@@ -135,8 +135,15 @@ const ACTION_CONFIG: Record<string, { bg: string; color: string }> = {
   BAN_USER: { bg: "rgba(239,68,68,.1)", color: "#b91c1c" },
   UNBAN_USER: { bg: "rgba(16,185,129,.08)", color: "#059669" },
   HOSPITAL_VERIFIED: { bg: "rgba(200,169,110,.15)", color: "#a88b50" },
-  HOSPITAL_ACTIVATED: { bg: "rgba(16,185,129,.1)", color: "#065f46" },
-  HOSPITAL_DEACTIVATED: { bg: "rgba(239,68,68,.08)", color: "#dc2626" },
+  HOSPITAL_UNVERIFIED: { bg: "rgba(245,158,11,.1)", color: "#b45309" },
+  HOSPITAL_REACTIVATED: { bg: "rgba(16,185,129,.1)", color: "#065f46" },
+  HOSPITAL_SUSPENDED: { bg: "rgba(239,68,68,.08)", color: "#dc2626" },
+  HOSPITAL_CREATED_FROM_INQUIRY: { bg: "rgba(16,185,129,.1)", color: "#065f46" },
+  HOSPITAL_LINKED_FROM_INQUIRY: { bg: "rgba(14,165,233,.1)", color: "#0284c7" },
+  INITIAL_OWNER_ASSIGNED: { bg: "rgba(16,185,129,.1)", color: "#065f46" },
+  INQUIRY_ONBOARDED: { bg: "rgba(16,185,129,.1)", color: "#065f46" },
+  INQUIRY_TRIAGED: { bg: "rgba(245,158,11,.1)", color: "#b45309" },
+  INQUIRY_NOTES_UPDATED: { bg: "rgba(14,165,233,.1)", color: "#0284c7" },
 };
 
 function getStyle(action: string) {
@@ -184,6 +191,7 @@ function fmtDateTime(iso: string) {
 export default function PlatformAuditLogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [hospitals, setHospitals] = useState<{ id: string; name: string }[]>([]);
+  const [scope, setScope] = useState<"platform" | "assigned">("platform");
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -210,7 +218,8 @@ export default function PlatformAuditLogsPage() {
         setLogs(data.logs);
         setTotal(data.total);
         setHasMore(data.hasMore);
-        if (data.hospitals?.length) setHospitals(data.hospitals);
+        setScope(data.scope ?? "platform");
+        setHospitals(data.hospitals ?? []);
       } catch {
         setError("Failed to load audit logs.");
       } finally {
@@ -244,6 +253,7 @@ export default function PlatformAuditLogsPage() {
           <h1 className="text-xl font-extrabold text-[#0f1e38]">Audit Logs</h1>
           <p className="text-sm text-gray-400 mt-0.5">
             {total.toLocaleString()} action{total !== 1 ? "s" : ""} recorded
+            {scope === "assigned" ? " in assigned support scope" : ""}
           </p>
         </div>
         <button

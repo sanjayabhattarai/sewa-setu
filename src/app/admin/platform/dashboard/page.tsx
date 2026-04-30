@@ -163,7 +163,7 @@ export default function PlatformDashboardPage() {
                     </span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-[#0f1e38] truncate">
-                        {b.patient ?? "—"} · {b.hospital ?? "—"}
+                        Patient restricted · {b.hospital ?? "-"}
                       </p>
                       <p className="text-xs text-gray-400">
                         {new Date(b.scheduledAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}

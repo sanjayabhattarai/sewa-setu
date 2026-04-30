@@ -5,7 +5,6 @@ import {
   Building2, Search, RefreshCw, AlertCircle,
   BadgeCheck, ToggleLeft, ToggleRight, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import Link from "next/link";
 
 type Hospital = {
   id: string; name: string; slug: string; type: string;
@@ -201,13 +200,6 @@ export default function PlatformHospitalsPage() {
                   <div className="flex items-center gap-2 flex-wrap lg:justify-end">
                     {canManage ? (
                       <>
-                        <Link href={`/admin/h/${h.slug}/dashboard`}
-                          className="h-8 px-3 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all"
-                          style={{ background: "#f7f4ef", color: "#6b7a96" }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(200,169,110,.1)"; e.currentTarget.style.color = "#c8a96e"; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = "#f7f4ef"; e.currentTarget.style.color = "#6b7a96"; }}>
-                          View
-                        </Link>
                         <button onClick={() => handleVerification(h)} disabled={actionLoading === h.id + "verified"}
                           className="flex items-center gap-1 h-8 px-2.5 rounded-xl text-xs font-semibold disabled:opacity-50"
                           style={{ background: h.verified ? "rgba(245,158,11,.08)" : "rgba(99,102,241,.08)", color: h.verified ? "#b45309" : "#4338ca" }}>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { SignOutButton } from "@clerk/nextjs";
 import {
   LayoutDashboard, Building2, Users, Inbox,
   CalendarDays, TrendingUp, ShieldCheck, Settings,
@@ -20,7 +21,7 @@ const NAV: NavItem[] = [
   { label: "Inquiries",  href: "/admin/platform/inquiries",  icon: <Inbox size={17} /> },
   { label: "Bookings",   href: "/admin/platform/bookings",   icon: <CalendarDays size={17} />, adminOnly: true },
   { label: "Revenue",    href: "/admin/platform/revenue",    icon: <TrendingUp size={17} />, adminOnly: true },
-  { label: "Audit Logs", href: "/admin/platform/audit-logs", icon: <ShieldCheck size={17} />, adminOnly: true },
+  { label: "Audit Logs", href: "/admin/platform/audit-logs", icon: <ShieldCheck size={17} /> },
   { label: "Settings",   href: "/admin/platform/settings",   icon: <Settings size={17} />, adminOnly: true },
 ];
 
@@ -94,13 +95,15 @@ function Sidebar({ user, pathname, mobile = false, onClose }: {
             </p>
           </div>
         </div>
-        <a href="/api/auth/sign-out"
+        <SignOutButton redirectUrl="/">
+          <button
           className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold transition-all"
           style={{ color: "rgba(255,255,255,.35)", background: "transparent" }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent" }}>
-          <LogOut size={13} /> Sign Out
-        </a>
+            <LogOut size={13} /> Sign Out
+          </button>
+        </SignOutButton>
       </div>
     </div>
   );
@@ -119,7 +122,8 @@ export default function PlatformShell({
   const allowedSupportPath =
     pathname === "/admin/platform/dashboard" ||
     pathname === "/admin/platform/hospitals" ||
-    pathname === "/admin/platform/inquiries";
+    pathname === "/admin/platform/inquiries" ||
+    pathname === "/admin/platform/audit-logs";
 
   useEffect(() => {
     if (!isAdmin && !allowedSupportPath) {

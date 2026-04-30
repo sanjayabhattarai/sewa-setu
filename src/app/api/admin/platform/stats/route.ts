@@ -51,7 +51,6 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       include: {
         hospital: { select: { name: true } },
-        patient:  { select: { fullName: true } },
       },
     }),
   ]);
@@ -71,7 +70,7 @@ export async function GET() {
       scheduledAt: b.scheduledAt.toISOString(),
       createdAt: b.createdAt.toISOString(),
       hospital: b.hospital?.name ?? null,
-      patient: ctx.isAdmin ? b.patient?.fullName ?? null : null,
+      patient: null,
       amountPaid: ctx.isAdmin ? b.amountPaid ?? null : null,
     })),
     scope: ctx.isAdmin ? "platform" : "assigned",

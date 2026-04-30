@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 type Inquiry = {
-  id: string; hospitalName: string; type: "HOSPITAL" | "CLINIC" | "LAB";
+  id: string; hospitalId: string | null; hospitalName: string; type: "HOSPITAL" | "CLINIC" | "LAB";
   contactName: string; email: string; phone: string; city: string;
   message: string | null; status: "NEW" | "REVIEWED" | "CONTACTED" | "ONBOARDED" | "REJECTED";
   reviewNotes: string | null; reviewedAt: string | null; createdAt: string;
@@ -39,7 +39,7 @@ const TYPE_LABELS: Record<string, string> = {
 const NEXT_ACTIONS: Record<string, { status: string; label: string; color: string; bg: string }[]> = {
   NEW:       [{ status: "REVIEWED",  label: "Mark Reviewed",  color: "#b45309", bg: "rgba(245,158,11,.1)"  }, { status: "REJECTED", label: "Reject", color: "#dc2626", bg: "rgba(239,68,68,.07)" }],
   REVIEWED:  [{ status: "CONTACTED", label: "Mark Contacted", color: "#0284c7", bg: "rgba(14,165,233,.1)"  }, { status: "REJECTED", label: "Reject", color: "#dc2626", bg: "rgba(239,68,68,.07)" }],
-  CONTACTED: [{ status: "ONBOARDED", label: "Mark Onboarded", color: "#059669", bg: "rgba(16,185,129,.1)" }, { status: "REJECTED", label: "Reject", color: "#dc2626", bg: "rgba(239,68,68,.07)" }],
+  CONTACTED: [{ status: "ONBOARDED", label: "Approve + Create", color: "#059669", bg: "rgba(16,185,129,.1)" }, { status: "REJECTED", label: "Reject", color: "#dc2626", bg: "rgba(239,68,68,.07)" }],
   ONBOARDED: [],
   REJECTED:  [{ status: "NEW", label: "Reopen", color: "#4f46e5", bg: "rgba(99,102,241,.1)" }],
 };
@@ -95,16 +95,22 @@ export default function PlatformInquiriesPage() {
   };
 
   const handleAction = async (id: string, status: string) => {
+    if (status === "ONBOARDED" && !window.confirm("Approve onboarding and create the hospital with an initial OWNER membership?")) return;
+    if (status === "REJECTED" && !window.confirm("Reject this onboarding inquiry?")) return;
+
     setActionLoading(id + status);
     try {
       const res = await fetch("/api/admin/platform/inquiries", {
         method: "PATCH", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status, reviewNotes: notesDraft[id] }),
       });
-      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed");
       await fetchInquiries(search, filter, page);
       setExpandedId(null);
-    } catch { setError("Action failed."); }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Action failed.");
+    }
     finally { setActionLoading(null); }
   };
 
@@ -115,9 +121,12 @@ export default function PlatformInquiriesPage() {
         method: "PATCH", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: currentStatus, reviewNotes: notesDraft[id] ?? "" }),
       });
-      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed");
       await fetchInquiries(search, filter, page);
-    } catch { setError("Failed to save notes."); }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save notes.");
+    }
     finally { setActionLoading(null); }
   };
 
@@ -255,6 +264,11 @@ export default function PlatformInquiriesPage() {
                           >
                             {TYPE_LABELS[inq.type] ?? inq.type}
                           </span>
+                          {inq.hospitalId && (
+                            <p className="text-[11px] font-semibold text-emerald-600 mt-1">
+                              Hospital record created
+                            </p>
+                          )}
                         </td>
 
                         <td className="px-4 py-3.5 align-top break-words">

@@ -182,9 +182,6 @@ export async function PATCH(req: Request) {
 
     const user = await db.user.findUnique({ where: { id: userId } });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-    if (user.id === actor.id) {
-      return NextResponse.json({ error: "You cannot change your own platform role" }, { status: 400 });
-    }
 
     if (user.role === "PLATFORM_ADMIN" && role !== "PLATFORM_ADMIN") {
       const adminCount = await db.user.count({ where: { role: "PLATFORM_ADMIN", bannedAt: null } });
