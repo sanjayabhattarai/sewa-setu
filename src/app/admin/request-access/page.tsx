@@ -2,7 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import RequestAccessClient from "./RequestAccessClient";
-import { isPlatformAdmin } from "@/lib/admin-roles";
+import { isPlatformStaff } from "@/lib/admin-roles";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 export default async function RequestAccessPage({
   searchParams,
@@ -11,6 +12,8 @@ export default async function RequestAccessPage({
 }) {
   const { userId: clerkId } = await auth();
   if (!clerkId) redirect("/sign-in");
+
+  await ensureClerkUserInDb(clerkId);
 
   const params = await searchParams;
 
@@ -30,7 +33,7 @@ export default async function RequestAccessPage({
 
   if (!user) redirect("/sign-in");
 
-  if (isPlatformAdmin(user.role)) {
+  if (isPlatformStaff(user.role)) {
     redirect("/admin/platform/dashboard");
   }
 

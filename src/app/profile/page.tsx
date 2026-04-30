@@ -9,6 +9,7 @@ import { SignOutButton } from "@clerk/nextjs";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { BookingList, type SerializedBooking } from "@/components/booking-detail-modal";
 import { db } from "@/lib/db";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 export const revalidate = 0;
 
@@ -24,6 +25,8 @@ function getAppointmentDateTime(scheduledAt: Date, slotTime: string | null): Dat
 export default async function ProfilePage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+
+  await ensureClerkUserInDb(user.id);
 
   const dbUser = await db.user.findUnique({ where: { clerkId: user.id } });
 
@@ -302,14 +305,13 @@ export default async function ProfilePage() {
 
         {/* ── SIGN OUT ── */}
         <div className="pt-2 flex justify-center">
-          <SignOutButton redirectUrl="/">
-            <button
-              className="group flex items-center justify-center gap-2 px-10 py-3 rounded-2xl font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ background: "#fff", color: "#e53e3e", border: "1.5px solid rgba(229,62,62,.25)", boxShadow: "0 2px 10px rgba(229,62,62,.08)" }}>
-              <LogOut size={15} className="transition-transform group-hover:-translate-x-0.5" />
+          <div className="group flex items-center justify-center gap-2 px-10 py-3 rounded-2xl font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+            style={{ background: "#fff", color: "#e53e3e", border: "1.5px solid rgba(229,62,62,.25)", boxShadow: "0 2px 10px rgba(229,62,62,.08)" }}>
+            <LogOut size={15} className="transition-transform group-hover:-translate-x-0.5" />
+            <SignOutButton redirectUrl="/">
               Sign Out
-            </button>
-          </SignOutButton>
+            </SignOutButton>
+          </div>
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { ensureClerkUserInDb } from "@/lib/clerk-user-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ export async function GET(
   const { userId: clerkId } = await auth();
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } });
+  const dbUser = await ensureClerkUserInDb(clerkId);
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   const booking = await db.booking.findFirst({
@@ -66,7 +67,7 @@ export async function PATCH(
     return NextResponse.json({ error: "scheduledAt and slotTime are required" }, { status: 400 });
   }
 
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } });
+  const dbUser = await ensureClerkUserInDb(clerkId);
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   const booking = await db.booking.findFirst({

@@ -5,12 +5,14 @@ import {
   Building2, Search, RefreshCw, AlertCircle,
   BadgeCheck, ToggleLeft, ToggleRight, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import Link from "next/link";
 
 type Hospital = {
   id: string; name: string; slug: string; type: string;
-  verified: boolean; isActive: boolean; location: string | null;
+  verified: boolean; verifiedAt: string | null;
+  isActive: boolean; suspendedAt: string | null; suspensionReason: string | null;
+  location: string | null;
   bookingCount: number; doctorCount: number; staffCount: number;
+  supportAssignments: { id: string; userId: string; fullName: string; email: string }[];
 };
 
 export default function PlatformHospitalsPage() {
@@ -18,6 +20,8 @@ export default function PlatformHospitalsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [canManage, setCanManage] = useState(false);
+  const [scope, setScope] = useState<"platform" | "assigned">("platform");
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -34,6 +38,8 @@ export default function PlatformHospitalsPage() {
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
       setHospitals(data.hospitals); setTotal(data.total); setHasMore(data.hasMore);
+      setCanManage(!!data.canManage);
+      setScope(data.scope ?? "platform");
     } catch { setError("Failed to load hospitals."); }
     finally { setLoading(false); }
   }, [search, page]);
@@ -46,17 +52,42 @@ export default function PlatformHospitalsPage() {
     searchRef.current = setTimeout(() => { setSearch(val); setPage(1); }, 350);
   };
 
-  const handleToggle = async (hospital: Hospital, field: "verified" | "isActive") => {
-    setActionLoading(hospital.id + field);
+  const updateHospital = async (
+    hospital: Hospital,
+    payload: { verified?: boolean; isActive?: boolean; suspensionReason?: string },
+    loadingKey: string,
+  ) => {
+    setActionLoading(hospital.id + loadingKey);
     try {
       const res = await fetch("/api/admin/platform/hospitals", {
         method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hospitalId: hospital.id, [field]: !hospital[field] }),
+        body: JSON.stringify({ hospitalId: hospital.id, ...payload }),
       });
-      if (!res.ok) throw new Error("Failed");
-      setHospitals((prev) => prev.map((h) => h.id === hospital.id ? { ...h, [field]: !hospital[field] } : h));
-    } catch { setError("Failed to update hospital."); }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed");
+      setHospitals((prev) => prev.map((h) => (
+        h.id === hospital.id ? { ...h, ...data.hospital } : h
+      )));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update hospital.");
+    }
     finally { setActionLoading(null); }
+  };
+
+  const handleVerification = async (hospital: Hospital) => {
+    await updateHospital(hospital, { verified: !hospital.verified }, "verified");
+  };
+
+  const handleActivation = async (hospital: Hospital) => {
+    if (hospital.isActive) {
+      const reason = window.prompt("Suspension reason");
+      if (!reason?.trim()) return;
+      await updateHospital(hospital, { isActive: false, suspensionReason: reason }, "active");
+      return;
+    }
+
+    if (!window.confirm("Reactivate this hospital?")) return;
+    await updateHospital(hospital, { isActive: true }, "active");
   };
 
   return (
@@ -64,7 +95,9 @@ export default function PlatformHospitalsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-extrabold text-[#0f1e38]">Hospitals</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{total} hospital{total !== 1 ? "s" : ""} on the platform</p>
+          <p className="text-sm text-gray-400 mt-0.5">
+            {total} hospital{total !== 1 ? "s" : ""} {scope === "assigned" ? "assigned to you" : "on the platform"}
+          </p>
         </div>
         <button onClick={() => fetchHospitals()}
           className="flex items-center gap-2 px-3 h-9 rounded-xl text-xs font-semibold transition-all"
@@ -121,6 +154,11 @@ export default function PlatformHospitalsPage() {
                       <p className="font-bold text-[#0f1e38] leading-tight break-words">{h.name}</p>
                       <p className="text-[11px] text-gray-400 break-all">/{h.slug}</p>
                       <p className="text-xs text-gray-500 mt-0.5 break-words">{h.location ?? h.type}</p>
+                      {h.supportAssignments.length > 0 && canManage && (
+                        <p className="text-[11px] text-gray-400 mt-1 break-words">
+                          Support: {h.supportAssignments.map((assignment) => assignment.fullName).join(", ")}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -149,31 +187,35 @@ export default function PlatformHospitalsPage() {
                     <div className="flex items-center gap-1.5">
                       <div className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: h.isActive ? "#10b981" : "#ef4444" }} />
                       <span className="text-xs font-semibold" style={{ color: h.isActive ? "#059669" : "#dc2626" }}>
-                        {h.isActive ? "Active" : "Inactive"}
+                        {h.isActive ? "Active" : h.suspendedAt ? "Suspended" : "Inactive"}
                       </span>
                     </div>
+                    {!h.isActive && h.suspensionReason && (
+                      <p className="text-[11px] text-gray-400 leading-snug break-words">
+                        {h.suspensionReason}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2 flex-wrap lg:justify-end">
-                    <Link href={`/admin/h/${h.slug}/dashboard`}
-                      className="h-8 px-3 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all"
-                      style={{ background: "#f7f4ef", color: "#6b7a96" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(200,169,110,.1)"; e.currentTarget.style.color = "#c8a96e"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "#f7f4ef"; e.currentTarget.style.color = "#6b7a96"; }}>
-                      View
-                    </Link>
-                    <button onClick={() => handleToggle(h, "verified")} disabled={actionLoading === h.id + "verified"}
-                      className="flex items-center gap-1 h-8 px-2.5 rounded-xl text-xs font-semibold disabled:opacity-50"
-                      style={{ background: h.verified ? "rgba(245,158,11,.08)" : "rgba(99,102,241,.08)", color: h.verified ? "#b45309" : "#4338ca" }}>
-                      <BadgeCheck size={12} />
-                      {actionLoading === h.id + "verified" ? "..." : h.verified ? "Unverify" : "Verify"}
-                    </button>
-                    <button onClick={() => handleToggle(h, "isActive")} disabled={actionLoading === h.id + "isActive"}
-                      className="flex items-center gap-1 h-8 px-2.5 rounded-xl text-xs font-semibold disabled:opacity-50"
-                      style={{ background: h.isActive ? "rgba(239,68,68,.06)" : "rgba(16,185,129,.08)", color: h.isActive ? "#dc2626" : "#059669" }}>
-                      {h.isActive ? <ToggleLeft size={13} /> : <ToggleRight size={13} />}
-                      {actionLoading === h.id + "isActive" ? "..." : h.isActive ? "Disable" : "Enable"}
-                    </button>
+                    {canManage ? (
+                      <>
+                        <button onClick={() => handleVerification(h)} disabled={actionLoading === h.id + "verified"}
+                          className="flex items-center gap-1 h-8 px-2.5 rounded-xl text-xs font-semibold disabled:opacity-50"
+                          style={{ background: h.verified ? "rgba(245,158,11,.08)" : "rgba(99,102,241,.08)", color: h.verified ? "#b45309" : "#4338ca" }}>
+                          <BadgeCheck size={12} />
+                          {actionLoading === h.id + "verified" ? "..." : h.verified ? "Unverify" : "Verify"}
+                        </button>
+                        <button onClick={() => handleActivation(h)} disabled={actionLoading === h.id + "active"}
+                          className="flex items-center gap-1 h-8 px-2.5 rounded-xl text-xs font-semibold disabled:opacity-50"
+                          style={{ background: h.isActive ? "rgba(239,68,68,.06)" : "rgba(16,185,129,.08)", color: h.isActive ? "#dc2626" : "#059669" }}>
+                          {h.isActive ? <ToggleLeft size={13} /> : <ToggleRight size={13} />}
+                          {actionLoading === h.id + "active" ? "..." : h.isActive ? "Suspend" : "Reactivate"}
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-xs font-semibold text-gray-400">Read-only support scope</span>
+                    )}
                   </div>
                 </div>
               </div>

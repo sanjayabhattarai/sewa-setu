@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { requireHospitalAccess, writeAuditLog } from "@/lib/admin-auth";
+import { hasPermission, type Permission } from "@/lib/admin-permissions";
 import { db } from "@/lib/db";
+import type { BookingStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
+
+const BOOKING_STATUSES: BookingStatus[] = ["DRAFT", "REQUESTED", "CONFIRMED", "CANCELLED", "COMPLETED"];
+const VALID_ACTIONS = ["CONFIRM", "COMPLETE", "CANCEL", "CHECKIN"] as const;
+type BookingAction = (typeof VALID_ACTIONS)[number];
+const ACTION_PERMISSIONS = {
+  CONFIRM: "CONFIRM_BOOKING",
+  COMPLETE: "COMPLETE_BOOKING",
+  CANCEL: "CANCEL_BOOKING",
+  CHECKIN: "CHECKIN_BOOKING",
+} satisfies Record<BookingAction, Permission>;
+
+function isBookingAction(action: string): action is BookingAction {
+  return (VALID_ACTIONS as readonly string[]).includes(action);
+}
 
 // GET /api/admin/h/[slug]/bookings — paginated booking list with filters
 export async function GET(
@@ -29,10 +45,19 @@ export async function GET(
 
   const where: Record<string, unknown> = { hospitalId };
 
-  if (status !== "all") where.status = status.toUpperCase();
+  if (status !== "all") {
+    const normalizedStatus = status.toUpperCase() as BookingStatus;
+    if (!BOOKING_STATUSES.includes(normalizedStatus)) {
+      return NextResponse.json({ error: "Invalid status filter" }, { status: 400 });
+    }
+    where.status = normalizedStatus;
+  }
 
   if (date) {
     const d = new Date(date);
+    if (Number.isNaN(d.getTime())) {
+      return NextResponse.json({ error: "Invalid date filter" }, { status: 400 });
+    }
     const start = new Date(d); start.setHours(0, 0, 0, 0);
     const end   = new Date(d); end.setHours(23, 59, 59, 999);
     where.scheduledAt = { gte: start, lte: end };
@@ -101,7 +126,7 @@ export async function PATCH(
   const { slug } = await params;
 
   let ctx;
-  try { ctx = await requireHospitalAccess(slug, "CONFIRM_BOOKING", { apiMode: true }); }
+  try { ctx = await requireHospitalAccess(slug, undefined, { apiMode: true }); }
   catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "UNAUTHORIZED";
     return NextResponse.json({ error: msg }, { status: msg === "FORBIDDEN" ? 403 : 401 });
@@ -117,9 +142,13 @@ export async function PATCH(
     return NextResponse.json({ error: "bookingId and action are required" }, { status: 400 });
   }
 
-  const VALID_ACTIONS = ["CONFIRM", "COMPLETE", "CANCEL", "CHECKIN"];
-  if (!VALID_ACTIONS.includes(action)) {
+  if (!isBookingAction(action)) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  }
+
+  const requiredPermission = ACTION_PERMISSIONS[action];
+  if (!hasPermission(ctx.membership.role, requiredPermission)) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
   }
 
   if (action === "CANCEL" && !reason?.trim()) {

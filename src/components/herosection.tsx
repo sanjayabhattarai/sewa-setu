@@ -35,8 +35,8 @@ export function HeroSection() {
           alt=""
           fill
           priority
-          sizes="75vw"
-          className="absolute right-0 top-1 h-full w-auto max-w-[75%] object-cover object-right"
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full object-cover object-center lg:object-right"
           style={{
             maskImage:
               "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 15%, black 40%), linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",

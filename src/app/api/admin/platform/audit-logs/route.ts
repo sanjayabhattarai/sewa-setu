@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/admin-auth";
+import { requirePlatformStaff } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/platform/audit-logs?page=&search=&entity=&hospitalId=
 export async function GET(req: NextRequest) {
-  try { await requirePlatformAdmin({ apiMode: true }); }
+  let ctx;
+  try { ctx = await requirePlatformStaff({ apiMode: true }); }
   catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "UNAUTHORIZED";
-    return NextResponse.json({ error: msg }, { status: 401 });
+    return NextResponse.json({ error: msg }, { status: msg === "FORBIDDEN" ? 403 : 401 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -18,6 +19,10 @@ export async function GET(req: NextRequest) {
   const entity     = searchParams.get("entity") ?? "all";
   const hospitalId = searchParams.get("hospitalId") ?? "";
   const PAGE_SIZE  = 30;
+  const assignedHospitalIds = ctx.assignedHospitalIds;
+  const supportHospitalFilter = hospitalId
+    ? (assignedHospitalIds.includes(hospitalId) ? hospitalId : { in: [] as string[] })
+    : { in: assignedHospitalIds };
 
   // If searching by actor name/email, resolve actor IDs first
   let actorIds: string[] | null = null;
@@ -36,7 +41,9 @@ export async function GET(req: NextRequest) {
 
   const where = {
     ...(entity !== "all" ? { entity } : {}),
-    ...(hospitalId ? { hospitalId } : {}),
+    ...(ctx.isAdmin
+      ? (hospitalId ? { hospitalId } : {})
+      : { hospitalId: supportHospitalFilter }),
     ...(actorIds !== null ? { actorUserId: { in: actorIds } } : {}),
   };
 
@@ -49,7 +56,10 @@ export async function GET(req: NextRequest) {
       take: PAGE_SIZE,
     }),
     db.hospital.findMany({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        ...(ctx.isAdmin ? {} : { id: { in: assignedHospitalIds } }),
+      },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
     }),
@@ -92,5 +102,6 @@ export async function GET(req: NextRequest) {
     total,
     hasMore: page * PAGE_SIZE < total,
     hospitals,
+    scope: ctx.isAdmin ? "platform" : "assigned",
   });
 }

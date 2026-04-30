@@ -5,6 +5,8 @@ import { BookingStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
+const BOOKING_STATUSES: BookingStatus[] = ["DRAFT", "REQUESTED", "CONFIRMED", "CANCELLED", "COMPLETED"];
+
 // GET /api/admin/platform/bookings?page=&search=&status=&hospitalId=&from=&to=
 export async function GET(req: NextRequest) {
   try { await requirePlatformAdmin({ apiMode: true }); }
@@ -25,7 +27,11 @@ export async function GET(req: NextRequest) {
   const where: Record<string, unknown> = {};
 
   if (status !== "all") {
-    where.status = status as BookingStatus;
+    const normalizedStatus = status.toUpperCase() as BookingStatus;
+    if (!BOOKING_STATUSES.includes(normalizedStatus)) {
+      return NextResponse.json({ error: "Invalid status filter" }, { status: 400 });
+    }
+    where.status = normalizedStatus;
   }
 
   if (hospitalId) {
@@ -33,15 +39,20 @@ export async function GET(req: NextRequest) {
   }
 
   if (from || to) {
+    const fromDate = from ? new Date(from) : null;
+    const toDate = to ? new Date(to + "T23:59:59.999Z") : null;
+    if ((fromDate && Number.isNaN(fromDate.getTime())) || (toDate && Number.isNaN(toDate.getTime()))) {
+      return NextResponse.json({ error: "Invalid date filter" }, { status: 400 });
+    }
     where.scheduledAt = {
-      ...(from ? { gte: new Date(from) } : {}),
-      ...(to   ? { lte: new Date(to + "T23:59:59.999Z") } : {}),
+      ...(fromDate ? { gte: fromDate } : {}),
+      ...(toDate   ? { lte: toDate } : {}),
     };
   }
 
   if (search) {
     where.OR = [
-      { patient:  { fullName: { contains: search, mode: "insensitive" } } },
+      { id:       { contains: search, mode: "insensitive" } },
       { hospital: { name:     { contains: search, mode: "insensitive" } } },
       { doctor:   { fullName: { contains: search, mode: "insensitive" } } },
     ];
@@ -66,12 +77,9 @@ export async function GET(req: NextRequest) {
         cancelledAt: true,
         cancellationReason: true,
         stripeRefundId: true,
-        notes: true,
         hospital: { select: { id: true, name: true, slug: true } },
-        patient:  { select: { fullName: true } },
         doctor:   { select: { fullName: true } },
         package:  { select: { title: true } },
-        user:     { select: { email: true } },
       },
     }),
     // For the hospital filter dropdown
@@ -95,12 +103,9 @@ export async function GET(req: NextRequest) {
       cancelledAt: b.cancelledAt?.toISOString() ?? null,
       cancellationReason: b.cancellationReason ?? null,
       refunded: !!b.stripeRefundId,
-      notes: b.notes ?? null,
       hospital: b.hospital ? { id: b.hospital.id, name: b.hospital.name, slug: b.hospital.slug } : null,
-      patient: b.patient?.fullName ?? null,
       doctor: b.doctor?.fullName ?? null,
       package: b.package?.title ?? null,
-      userEmail: b.user?.email ?? null,
     })),
     total,
     hasMore: page * PAGE_SIZE < total,

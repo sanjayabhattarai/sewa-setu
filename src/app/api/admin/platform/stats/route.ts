@@ -1,18 +1,28 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/admin-auth";
+import { requirePlatformStaff } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  try { await requirePlatformAdmin({ apiMode: true }); }
+  let ctx;
+  try { ctx = await requirePlatformStaff({ apiMode: true }); }
   catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "UNAUTHORIZED";
-    return NextResponse.json({ error: msg }, { status: 401 });
+    return NextResponse.json({ error: msg }, { status: msg === "FORBIDDEN" ? 403 : 401 });
   }
 
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const hospitalScope = ctx.isAdmin ? undefined : { in: ctx.assignedHospitalIds };
+  const hospitalWhere = ctx.isAdmin ? {} : { id: hospitalScope };
+  const bookingWhere = ctx.isAdmin ? {} : { hospitalId: hospitalScope };
+  const activeHospitalWhere = ctx.isAdmin
+    ? { isActive: true }
+    : { id: hospitalScope, isActive: true };
+  const pendingVerificationWhere = ctx.isAdmin
+    ? { verified: false, isActive: true }
+    : { id: hospitalScope, verified: false, isActive: true };
 
   const [
     totalHospitals,
@@ -26,21 +36,21 @@ export async function GET() {
     revenueMonth,
     recentBookings,
   ] = await Promise.all([
-    db.hospital.count(),
-    db.hospital.count({ where: { isActive: true } }),
-    db.hospital.count({ where: { verified: false, isActive: true } }),
-    db.user.count(),
-    db.booking.count(),
-    db.booking.count({ where: { createdAt: { gte: monthStart } } }),
-    db.hospitalMembership.count({ where: { status: "PENDING" } }),
-    db.booking.aggregate({ where: { status: { in: ["CONFIRMED", "COMPLETED"] } }, _sum: { amountPaid: true } }),
-    db.booking.aggregate({ where: { status: { in: ["CONFIRMED", "COMPLETED"] }, createdAt: { gte: monthStart } }, _sum: { amountPaid: true } }),
+    db.hospital.count({ where: hospitalWhere }),
+    db.hospital.count({ where: activeHospitalWhere }),
+    db.hospital.count({ where: pendingVerificationWhere }),
+    ctx.isAdmin ? db.user.count() : Promise.resolve(0),
+    db.booking.count({ where: bookingWhere }),
+    db.booking.count({ where: { ...bookingWhere, createdAt: { gte: monthStart } } }),
+    db.hospitalMembership.count({ where: { ...bookingWhere, status: "PENDING" } }),
+    db.booking.aggregate({ where: { ...bookingWhere, status: { in: ["CONFIRMED", "COMPLETED"] } }, _sum: { amountPaid: true } }),
+    db.booking.aggregate({ where: { ...bookingWhere, status: { in: ["CONFIRMED", "COMPLETED"] }, createdAt: { gte: monthStart } }, _sum: { amountPaid: true } }),
     db.booking.findMany({
+      where: bookingWhere,
       take: 5,
       orderBy: { createdAt: "desc" },
       include: {
         hospital: { select: { name: true } },
-        patient:  { select: { fullName: true } },
       },
     }),
   ]);
@@ -60,8 +70,9 @@ export async function GET() {
       scheduledAt: b.scheduledAt.toISOString(),
       createdAt: b.createdAt.toISOString(),
       hospital: b.hospital?.name ?? null,
-      patient: b.patient?.fullName ?? null,
-      amountPaid: b.amountPaid ?? null,
+      patient: null,
+      amountPaid: ctx.isAdmin ? b.amountPaid ?? null : null,
     })),
+    scope: ctx.isAdmin ? "platform" : "assigned",
   });
 }

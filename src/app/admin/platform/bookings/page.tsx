@@ -14,9 +14,7 @@ import {
   Stethoscope,
   Wifi,
   MapPin,
-  ReceiptText,
 } from "lucide-react";
-import Link from "next/link";
 
 type Hospital = { id: string; name: string };
 type Booking = {
@@ -31,12 +29,9 @@ type Booking = {
   cancelledAt: string | null;
   cancellationReason: string | null;
   refunded: boolean;
-  notes: string | null;
   hospital: { id: string; name: string; slug: string } | null;
-  patient: string | null;
   doctor: string | null;
   package: string | null;
-  userEmail: string | null;
 };
 
 const STATUS_CONFIG: Record<
@@ -234,7 +229,7 @@ export default function PlatformBookingsPage() {
             <input
               value={searchInput}
               onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search patient, hospital, doctor..."
+              placeholder="Search booking ID, hospital, doctor..."
               className="flex-1 text-sm outline-none bg-transparent text-[#0f1e38] placeholder-gray-400"
             />
           </div>
@@ -336,7 +331,7 @@ export default function PlatformBookingsPage() {
                     Schedule
                   </th>
                   <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">
-                    Patient
+                    Booking
                   </th>
                   <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">
                     Hospital / Doctor
@@ -382,10 +377,10 @@ export default function PlatformBookingsPage() {
                             </div>
                             <div>
                               <p className="text-xs font-bold text-[#0f1e38]">
-                                {b.patient ?? "Unknown patient"}
+                                Patient restricted
                               </p>
                               <p className="text-[11px] text-gray-400">
-                                {b.userEmail ?? "No email"}
+                                {b.id.slice(0, 10)}
                               </p>
                             </div>
                           </div>
@@ -440,15 +435,6 @@ export default function PlatformBookingsPage() {
 
                         <td className="px-4 py-3.5 text-right align-top break-words">
                           <div className="inline-flex items-center gap-2">
-                            {b.hospital && (
-                              <Link
-                                href={`/admin/h/${b.hospital.slug}/bookings`}
-                                className="flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-bold transition-all"
-                                style={{ background: "#f7f4ef", color: "#6b7a96" }}
-                              >
-                                <ReceiptText size={11} /> Manage
-                              </Link>
-                            )}
                             <button
                               onClick={() =>
                                 setExpandedId((prev) => (prev === b.id ? null : b.id))
@@ -483,8 +469,7 @@ export default function PlatformBookingsPage() {
                                     (b.slotTime ? ` ${b.slotTime}` : ""),
                                 },
                                 { label: "Created", value: fmtDateTime(b.createdAt) },
-                                { label: "Patient", value: b.patient ?? "-" },
-                                { label: "User Email", value: b.userEmail ?? "-" },
+                                { label: "Patient data", value: "Restricted" },
                                 { label: "Doctor", value: b.doctor ?? "-" },
                                 { label: "Package", value: b.package ?? "-" },
                                 {
@@ -536,21 +521,6 @@ export default function PlatformBookingsPage() {
                                     Cancelled at {fmtDateTime(b.cancelledAt)}
                                   </p>
                                 )}
-                              </div>
-                            )}
-
-                            {b.notes && (
-                              <div
-                                className="mt-3 p-3 rounded-xl"
-                                style={{
-                                  background: "#fff",
-                                  border: "1px solid rgba(15,30,56,.08)",
-                                }}
-                              >
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
-                                  Patient notes
-                                </p>
-                                <p className="text-sm text-[#0f1e38]">{b.notes}</p>
                               </div>
                             )}
                           </td>

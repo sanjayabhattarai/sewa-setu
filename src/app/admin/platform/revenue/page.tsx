@@ -12,7 +12,6 @@ import {
   CalendarRange,
   Percent,
 } from "lucide-react";
-import Link from "next/link";
 
 type Monthly = { label: string; revenue: number; bookings: number };
 
@@ -232,7 +231,6 @@ export default function PlatformRevenuePage() {
                       <th className="text-right px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Net Revenue</th>
                       <th className="text-right px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Bookings</th>
                       <th className="text-right px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Share</th>
-                      <th className="text-right px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -292,15 +290,6 @@ export default function PlatformRevenuePage() {
                               </div>
                               <span className="text-[10px] font-bold text-gray-400">{share}%</span>
                             </div>
-                          </td>
-                          <td className="px-4 py-3.5 text-right break-words">
-                            <Link
-                              href={`/admin/h/${h.slug}/reports`}
-                              className="text-[11px] font-semibold transition-colors hover:text-[#c8a96e]"
-                              style={{ color: "#6b7a96" }}
-                            >
-                              View
-                            </Link>
                           </td>
                         </tr>
                       );
