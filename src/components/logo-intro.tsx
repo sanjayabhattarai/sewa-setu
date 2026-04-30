@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -19,6 +19,22 @@ const T = {
 
 // High-end cinematic easing (Apple-like fluid motion)
 const luxEase = [0.16, 1, 0.3, 1] as const;
+
+function subscribeToHydration() {
+  return () => {};
+}
+
+function getMountedSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+function useHasMounted() {
+  return useSyncExternalStore(subscribeToHydration, getMountedSnapshot, getServerSnapshot);
+}
 
 function pseudoRandom(seed: number) {
   const x = Math.sin(seed * 12.9898) * 43758.5453123;
@@ -180,6 +196,7 @@ function BrandName() {
 ───────────────────────────────────────────────────────────────────────────── */
 export function LogoIntro({ onDoneAction }: { onDoneAction: () => void }) {
   const [exiting, setExiting] = useState(false);
+  const mounted = useHasMounted();
   const prefersReducedMotion = useReducedMotion();
 
   const dismiss = useCallback(() => {
@@ -189,15 +206,17 @@ export function LogoIntro({ onDoneAction }: { onDoneAction: () => void }) {
   }, [exiting, onDoneAction]);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
-      onDoneAction();
-      return;
-    }
+    if (!mounted || !prefersReducedMotion) return;
+    onDoneAction();
+  }, [mounted, prefersReducedMotion, onDoneAction]);
+
+  useEffect(() => {
+    if (!mounted || prefersReducedMotion) return;
     const t = setTimeout(dismiss, T.autoClose);
     return () => clearTimeout(t);
-  }, [dismiss, prefersReducedMotion, onDoneAction]);
+  }, [mounted, dismiss, prefersReducedMotion]);
 
-  if (prefersReducedMotion) return null;
+  if (!mounted || prefersReducedMotion) return null;
 
   return (
     <AnimatePresence>
