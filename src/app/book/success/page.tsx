@@ -75,23 +75,30 @@ function SuccessContent() {
   const [status, setStatus]   = useState<"loading" | "success" | "error">("loading");
   const [booking, setBooking] = useState<BookingData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [origin, setOrigin]   = useState("");
-
-  useEffect(() => { setOrigin(window.location.origin); }, []);
+  const origin = typeof window === "undefined" ? "" : window.location.origin;
 
   useEffect(() => {
-    if (!sessionId) { setStatus("error"); setErrorMsg("No session ID found."); return; }
-    fetch("/api/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId }),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (res.ok) { setStatus("success"); setBooking(data.booking); }
-        else { setStatus("error"); setErrorMsg(data.error ?? "Unable to verify payment."); }
+    const timeoutId = window.setTimeout(() => {
+      if (!sessionId) {
+        setStatus("error");
+        setErrorMsg("No session ID found.");
+        return;
+      }
+
+      fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
       })
-      .catch(() => { setStatus("error"); setErrorMsg("Network error. Please try again."); });
+        .then(async (res) => {
+          const data = await res.json();
+          if (res.ok) { setStatus("success"); setBooking(data.booking); }
+          else { setStatus("error"); setErrorMsg(data.error ?? "Unable to verify payment."); }
+        })
+        .catch(() => { setStatus("error"); setErrorMsg("Network error. Please try again."); });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [sessionId]);
 
   if (status === "loading") {

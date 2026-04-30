@@ -27,8 +27,6 @@ function AllBookingsContent() {
   const [transitioning, setTransitioning] = useState(false); // fade on tab switch
   const [loadingMore, setLoadingMore] = useState(false);
 
-  useEffect(() => { setPage(1); }, [filter]);
-
   useEffect(() => {
     const load = async () => {
       if (page === 1 && initialLoad) {
@@ -92,7 +90,10 @@ function AllBookingsContent() {
             {TABS.map((tab) => (
               <button
                 key={tab.value}
-                onClick={() => setFilter(tab.value)}
+                onClick={() => {
+                  setFilter(tab.value);
+                  setPage(1);
+                }}
                 className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
                   filter === tab.value
                     ? "bg-gold text-navy"

@@ -38,7 +38,7 @@ export function WhyChooseUsSection() {
             Built for families far from home
           </h2>
           <p className="text-lg text-slate max-w-xl mx-auto leading-relaxed">
-            Every feature designed around one mission — making distance disappear when your family's health is on the line.
+            Every feature designed around one mission — making distance disappear when your family&apos;s health is on the line.
           </p>
         </div>
 

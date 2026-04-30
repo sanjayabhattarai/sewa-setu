@@ -277,8 +277,6 @@ const DEPARTMENT_SECONDARY: Record<string, string[]> = {
 
 async function matchSymptomsToDepartments(symptoms: string) {
   const text = symptoms.toLowerCase();
-  const words = text.split(/\s+/);
-  
   // Track matched body regions
   const matchedBodyRegions: string[] = [];
   const matchedBodyDepartments: Set<string> = new Set();
@@ -415,7 +413,7 @@ async function findHospitalsWithDepartments(matchedDepartments: Array<{departmen
         departments: [],
         minPrice: dept.hospital.packages[0]?.price ?? null,
         specialties: [],
-        services: dept.hospital.packages.map((p: any) => p.title),
+        services: dept.hospital.packages.map((p) => p.title),
       });
     }
     
@@ -428,8 +426,8 @@ async function findHospitalsWithDepartments(matchedDepartments: Array<{departmen
     });
     
     // Add specialties from doctors
-    dept.doctors.forEach((dd: any) => {
-      dd.doctor.specialties.forEach((s: any) => {
+    dept.doctors.forEach((dd) => {
+      dd.doctor.specialties.forEach((s) => {
         if (!hospitalData.specialties.includes(s.specialty.name)) {
           hospitalData.specialties.push(s.specialty.name);
         }
@@ -484,7 +482,7 @@ export async function POST(req: Request) {
       })));
       
       let analysisText = "";
-      let matchedDepts = matches.map(m => ({ department: m.department, confidence: m.confidence }));
+      const matchedDepts = matches.map(m => ({ department: m.department, confidence: m.confidence }));
       
       // Get AI analysis if available
       if (ai) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, Send, MessageCircle, Stethoscope, Loader2, MapPin, AlertTriangle } from "lucide-react";
 
@@ -9,111 +9,149 @@ interface FloatingAIProps {
   conversationId?: string;
 }
 
+type DepartmentOption = {
+  id: string;
+  name: string;
+  slug: string;
+  doctorCount: number;
+};
+
+type HospitalOption = {
+  id: string;
+  name: string;
+  slug: string;
+  location: string;
+  minPrice: number;
+  specialties: string[];
+  departments: DepartmentOption[];
+  matchedDepartment?: string;
+};
+
+type MatchedDepartment = {
+  department: string;
+  confidence: number;
+  matchedKeywords: string[];
+};
+
+type MessageMetadata = {
+  action?: string;
+  hospital?: HospitalOption;
+  department?: DepartmentOption;
+};
+
+type BookingData = {
+  patientName: string;
+  patientAge: string;
+  patientPhone: string;
+  buyerEmail: string;
+};
+
+type StoredConversation = {
+  messages?: Message[];
+  bookingStep?: BookingStep;
+  selectedHospital?: HospitalOption | null;
+  selectedDepartment?: DepartmentOption | null;
+  problemDescription?: string;
+  bookingData?: BookingData;
+  lastUpdated?: string;
+};
+
 type Message = {
   role: "user" | "bot";
   content: string;
   type?: "chat" | "booking_intent" | "symptoms_analyzed" | "confirmation" | "error";
-  hospitals?: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    location: string;
-    minPrice: number;
-    specialties: string[];
-    departments: Array<{
-      id: string;
-      name: string;
-      slug: string;
-      doctorCount: number;
-    }>;
-    matchedDepartment?: string;
-  }>;
-  matchedDepartments?: Array<{
-    department: string;
-    confidence: number;
-    matchedKeywords: string[];
-  }>;
+  hospitals?: HospitalOption[];
+  matchedDepartments?: MatchedDepartment[];
   isEmergency?: boolean;
   nextStep?: string;
-  metadata?: {
-    action?: string;
-    hospital?: any;
-    department?: any;
-  };
+  metadata?: MessageMetadata;
 };
 
 type BookingStep = "chat" | "symptoms" | "hospital_selection" | "confirmation";
 
 // Storage key for conversation
 const STORAGE_KEY = "sewaSetu_chat_history";
+const EMPTY_BOOKING_DATA: BookingData = {
+  patientName: "",
+  patientAge: "",
+  patientPhone: "",
+  buyerEmail: "",
+};
+const INITIAL_GREETING: Message = {
+  role: "bot",
+  content: "Namaste! I&apos;m your Sewa-Setu health assistant. Tell me your symptoms or health concerns, and I&apos;ll recommend the right hospital and specialist for you.",
+  type: "chat",
+};
+
+function createConversationId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `conv_${crypto.randomUUID()}`;
+  }
+
+  return `conv_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+}
 
 export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(autoOpen);
   const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => (conversationId ? [] : [INITIAL_GREETING]));
   const [isLoading, setIsLoading] = useState(false);
   const [bookingStep, setBookingStep] = useState<BookingStep>("chat");
-  const [selectedHospital, setSelectedHospital] = useState<any>(null);
-  const [selectedDepartment, setSelectedDepartment] = useState<any>(null);
+  const [selectedHospital, setSelectedHospital] = useState<HospitalOption | null>(null);
+  const [selectedDepartment, setSelectedDepartment] = useState<DepartmentOption | null>(null);
   const [problemDescription, setProblemDescription] = useState("");
   const [currentConversationId, setCurrentConversationId] = useState<string>(conversationId || "");
   
-  const [bookingData, setBookingData] = useState({
-    patientName: "",
-    patientAge: "",
-    patientPhone: "",
-    buyerEmail: "",
-  });
+  const [bookingData, setBookingData] = useState<BookingData>(EMPTY_BOOKING_DATA);
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Generate a new conversation ID if needed
-  const generateConversationId = () => {
-    return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const ensureConversationId = () => {
+    if (currentConversationId) return currentConversationId;
+    const newId = createConversationId();
+    setCurrentConversationId(newId);
+    return newId;
   };
 
   // Load saved conversation when component mounts or conversationId changes
   useEffect(() => {
-    if (conversationId) {
-      try {
-        console.log("[FloatingAI] Loading conversation:", conversationId);
-        const saved = localStorage.getItem(`${STORAGE_KEY}_${conversationId}`);
-        if (saved) {
-          const conversation = JSON.parse(saved);
-          console.log("[FloatingAI] Loaded conversation data:", conversation);
-          
-          // Restore all state
-          setMessages(conversation.messages || []);
-          setBookingStep(conversation.bookingStep || "chat");
-          setSelectedHospital(conversation.selectedHospital || null);
-          setSelectedDepartment(conversation.selectedDepartment || null);
-          setProblemDescription(conversation.problemDescription || "");
-          setBookingData(conversation.bookingData || {
-            patientName: "",
-            patientAge: "",
-            patientPhone: "",
-            buyerEmail: "",
-          });
-          setCurrentConversationId(conversationId);
-        } else {
-          console.log("[FloatingAI] No saved conversation found for ID:", conversationId);
-          setCurrentConversationId(conversationId);
+    const timeoutId = window.setTimeout(() => {
+      if (conversationId) {
+        try {
+          console.log("[FloatingAI] Loading conversation:", conversationId);
+          const saved = localStorage.getItem(`${STORAGE_KEY}_${conversationId}`);
+          if (saved) {
+            const conversation = JSON.parse(saved) as StoredConversation;
+            console.log("[FloatingAI] Loaded conversation data:", conversation);
+
+            setMessages(conversation.messages || []);
+            setBookingStep(conversation.bookingStep || "chat");
+            setSelectedHospital(conversation.selectedHospital || null);
+            setSelectedDepartment(conversation.selectedDepartment || null);
+            setProblemDescription(conversation.problemDescription || "");
+            setBookingData(conversation.bookingData || EMPTY_BOOKING_DATA);
+            setCurrentConversationId(conversationId);
+          } else {
+            console.log("[FloatingAI] No saved conversation found for ID:", conversationId);
+            setCurrentConversationId(conversationId);
+          }
+        } catch (error) {
+          console.error("[FloatingAI] Failed to load conversation:", error);
         }
-      } catch (error) {
-        console.error("[FloatingAI] Failed to load conversation:", error);
+      } else if (!currentConversationId) {
+        setCurrentConversationId(createConversationId());
       }
-    } else {
-      // Generate new ID for new conversation
-      setCurrentConversationId(generateConversationId());
-    }
-  }, [conversationId]);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [conversationId, currentConversationId]);
 
   // Save conversation state whenever it changes
   useEffect(() => {
     if (currentConversationId && messages.length > 0) {
       try {
-        const conversation = {
+        const conversation: StoredConversation = {
           messages,
           bookingStep,
           selectedHospital,
@@ -139,21 +177,24 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
 
   // Handle autoOpen prop
   useEffect(() => {
-    if (autoOpen) {
-      setIsOpen(true);
-    }
+    if (!autoOpen) return;
+    const timeoutId = window.setTimeout(() => setIsOpen(true), 0);
+    return () => window.clearTimeout(timeoutId);
   }, [autoOpen]);
 
   // Add initial greeting only if no messages and not loading from conversation
   useEffect(() => {
     if (isOpen && messages.length === 0 && !conversationId) {
-      setMessages([
+      const timeoutId = window.setTimeout(() => {
+        setMessages([
         {
           role: "bot",
           content: "Namaste! 🙏 I'm your Sewa-Setu health assistant. Tell me your symptoms or health concerns, and I'll recommend the right hospital and specialist for you.",
           type: "chat",
         },
-      ]);
+        ]);
+      }, 0);
+      return () => window.clearTimeout(timeoutId);
     } else if (isOpen && messages.length > 0 && conversationId) {
       // Log that we restored conversation
       console.log("[FloatingAI] Restored conversation with", messages.length, "messages");
@@ -164,6 +205,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     if (!prompt.trim()) return;
 
     const userMsg = prompt;
+    const activeConversationId = ensureConversationId();
     setPrompt("");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setIsLoading(true);
@@ -175,7 +217,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         body: JSON.stringify({ 
           prompt: userMsg, 
           action: "chat",
-          conversationId: currentConversationId
+          conversationId: activeConversationId
         }),
       });
 
@@ -190,7 +232,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
       } else {
         setMessages((prev) => [...prev, { role: "bot", content: data.text, type: "chat" }]);
       }
-    } catch (e) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: "Connection error. Please try again.", type: "error" },
@@ -204,6 +246,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     if (!problemDescription.trim()) return;
 
     const userMsg = problemDescription;
+    const activeConversationId = ensureConversationId();
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setIsLoading(true);
 
@@ -214,7 +257,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         body: JSON.stringify({ 
           prompt: userMsg, 
           action: "analyze_symptoms",
-          conversationId: currentConversationId
+          conversationId: activeConversationId
         }),
       });
 
@@ -249,7 +292,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           ]);
         }
       }
-    } catch (e) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: "Failed to analyze symptoms. Please try again.", type: "error" },
@@ -259,7 +302,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     }
   };
 
-  const selectHospital = (hospital: any) => {
+  const selectHospital = (hospital: HospitalOption) => {
     console.log("[Floating AI] Selecting hospital:", hospital.name);
     
     // If hospital has departments, let user choose
@@ -267,7 +310,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
       setSelectedHospital(hospital);
       
       // Show department selection
-      const deptList = hospital.departments.map((d: any) => 
+      const deptList = hospital.departments.map((d: DepartmentOption) =>
         `• ${d.name} (${d.doctorCount} doctors)`
       ).join('\n');
       
@@ -281,7 +324,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
       ]);
       
       // Add clickable department buttons
-      hospital.departments.forEach((dept: any) => {
+      hospital.departments.forEach((dept: DepartmentOption) => {
         setTimeout(() => {
           setMessages((prev) => [
             ...prev,
@@ -300,15 +343,16 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     }
   };
 
-  const selectDepartment = (hospital: any, department: any) => {
+  const selectDepartment = (hospital: HospitalOption, department: DepartmentOption) => {
     setSelectedDepartment(department);
     navigateToHospital(hospital, department);
   };
 
-  const navigateToHospital = (hospital: any, department: any) => {
+  const navigateToHospital = (hospital: HospitalOption, department: DepartmentOption | null) => {
     // Build URL with department parameter for deep linking
     let url = `/hospital/${hospital.slug}`;
     const params = new URLSearchParams();
+    const activeConversationId = ensureConversationId();
     
     if (department) {
       params.set("department", department.id);
@@ -322,7 +366,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     
     // Add flag and conversation ID to indicate this navigation came from AI
     params.set("from", "ai");
-    params.set("conversationId", currentConversationId);
+    params.set("conversationId", activeConversationId);
     
     const queryString = params.toString();
     if (queryString) {
@@ -330,11 +374,11 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     }
     
     console.log("[Floating AI] Navigating to:", url);
-    console.log("[Floating AI] With conversation ID:", currentConversationId);
+    console.log("[Floating AI] With conversation ID:", activeConversationId);
     
     // Save one last time before navigation
-    if (currentConversationId && messages.length > 0) {
-      const conversation = {
+    if (messages.length > 0) {
+      const conversation: StoredConversation = {
         messages,
         bookingStep,
         selectedHospital,
@@ -343,7 +387,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         bookingData,
         lastUpdated: new Date().toISOString(),
       };
-      localStorage.setItem(`${STORAGE_KEY}_${currentConversationId}`, JSON.stringify(conversation));
+      localStorage.setItem(`${STORAGE_KEY}_${activeConversationId}`, JSON.stringify(conversation));
     }
     
     router.push(url);
@@ -353,11 +397,12 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
   const submitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!bookingData.patientName || !bookingData.patientAge || !bookingData.patientPhone || !bookingData.buyerEmail) {
+    if (!selectedHospital || !bookingData.patientName || !bookingData.patientAge || !bookingData.patientPhone || !bookingData.buyerEmail) {
       alert("Please fill in all fields");
       return;
     }
 
+    const activeConversationId = ensureConversationId();
     setIsLoading(true);
 
     try {
@@ -373,7 +418,7 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
           problemDescription,
           hospitalServiceId: null,
           departmentId: selectedDepartment?.id,
-          conversationId: currentConversationId,
+          conversationId: activeConversationId,
         }),
       });
 
@@ -393,19 +438,14 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
         setSelectedHospital(null);
         setSelectedDepartment(null);
         setProblemDescription("");
-        setBookingData({
-          patientName: "",
-          patientAge: "",
-          patientPhone: "",
-          buyerEmail: "",
-        });
+        setBookingData(EMPTY_BOOKING_DATA);
       } else {
         setMessages((prev) => [
           ...prev,
           { role: "bot", content: `Booking failed: ${data.error}` },
         ]);
       }
-    } catch (error) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: "Failed to create booking. Please try again." },
@@ -414,10 +454,11 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
       setIsLoading(false);
     }
   };
+  void submitBooking;
 
   // Handle custom message actions
-  const handleMessageClick = (msg: any) => {
-    if (msg.metadata?.action === "select_department") {
+  const handleMessageClick = (msg: Message) => {
+    if (msg.metadata?.action === "select_department" && msg.metadata.hospital && msg.metadata.department) {
       selectDepartment(msg.metadata.hospital, msg.metadata.department);
     }
   };
@@ -429,15 +470,10 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
     setSelectedHospital(null);
     setSelectedDepartment(null);
     setProblemDescription("");
-    setBookingData({
-      patientName: "",
-      patientAge: "",
-      patientPhone: "",
-      buyerEmail: "",
-    });
+    setBookingData(EMPTY_BOOKING_DATA);
     
     // Generate new ID
-    const newId = generateConversationId();
+    const newId = createConversationId();
     setCurrentConversationId(newId);
     
     // Clear old storage
@@ -455,17 +491,20 @@ export function FloatingAI({ autoOpen = false, conversationId }: FloatingAIProps
       );
       
       if (!hasWelcomeBack) {
-        setMessages((prev) => [
+        const timeoutId = window.setTimeout(() => {
+          setMessages((prev) => [
           ...prev,
           {
             role: "bot",
             content: "Welcome back! 👋 I see you're continuing your health consultation. Feel free to ask more questions or book an appointment.",
             type: "chat",
           },
-        ]);
+          ]);
+        }, 0);
+        return () => window.clearTimeout(timeoutId);
       }
     }
-  }, [isOpen, messages.length, conversationId, autoOpen]);
+  }, [isOpen, messages, conversationId, autoOpen]);
 
   return (
     <>

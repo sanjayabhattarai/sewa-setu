@@ -4,7 +4,6 @@
 import type { ApiAvailabilitySlot, ApiDoctor } from "@/types/hospital";
 import { Badge } from "@/components/ui/badge";
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 type Props = {

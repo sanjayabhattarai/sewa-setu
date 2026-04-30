@@ -20,14 +20,14 @@ function useAdminHref() {
   const [href, setHref] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isSignedIn) { setHref(null); return; }
+    if (!isSignedIn) return;
     fetch("/api/admin/check")
       .then((r) => r.json())
       .then((d) => setHref(d.href ?? null))
       .catch(() => null);
   }, [isSignedIn]);
 
-  return href;
+  return isSignedIn ? href : null;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -39,7 +39,7 @@ function NavAvatar() {
     <Link href="/profile">
       <div className="h-8 w-8 rounded-full overflow-hidden flex items-center justify-center cursor-pointer ring-2 ring-gold/40 hover:ring-gold transition-all bg-gold/15">
         {user?.imageUrl
-          ? <img src={user.imageUrl} alt={user.fullName ?? ""} className="h-full w-full object-cover" />
+          ? <Image loader={({ src }) => src} unoptimized src={user.imageUrl} alt={user.fullName ?? ""} width={32} height={32} className="h-full w-full object-cover" />
           : <span className="text-[11px] font-black text-gold">{initials}</span>
         }
       </div>

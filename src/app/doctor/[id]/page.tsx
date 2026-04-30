@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -22,7 +23,7 @@ type DoctorData = {
   education: string | null;
   bio: string | null;
   languages: string[];
-  consultationModes: string[];
+  consultationModes: ("ONLINE" | "PHYSICAL")[];
   licenseNumber: string | null;
   feeMin: number | null;
   feeMax: number | null;
@@ -119,9 +120,13 @@ export default function DoctorProfilePage() {
             {/* Avatar */}
 
             <div className="relative flex-shrink-0">
-              <img
+              <Image
+                loader={({ src }) => src}
+                unoptimized
                 src={doctor.image ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.fullName)}&background=1a3059&color=c8a96e&size=160&bold=true`}
                 alt={doctor.fullName}
+                width={144}
+                height={144}
                 className="w-36 h-36 rounded-3xl object-cover"
                 style={{ boxShadow: "0 0 0 3px rgba(200,169,110,.35), 0 24px 48px rgba(0,0,0,.35)" }}
               />
@@ -258,7 +263,7 @@ export default function DoctorProfilePage() {
                         style={{ border: "1px solid rgba(200,169,110,.12)", background: "#fdf9f5" }}>
                         <div className="h-9 w-9 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center">
                           {h.image
-                            ? <img src={h.image} alt={h.name} className="h-full w-full object-cover" />
+                            ? <Image loader={({ src }) => src} unoptimized src={h.image} alt={h.name} width={36} height={36} className="h-full w-full object-cover" />
                             : <Building2 size={14} className="text-gray-300" />}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -392,7 +397,7 @@ export default function DoctorProfilePage() {
             education: doctor.education ?? null,
             bio: doctor.bio ?? null,
             languages: doctor.languages,
-            consultationModes: doctor.consultationModes as any,
+            consultationModes: doctor.consultationModes,
             licenseNumber: doctor.licenseNumber ?? null,
             feeMin: doctor.feeMin ?? null,
             feeMax: doctor.feeMax ?? null,

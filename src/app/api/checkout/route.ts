@@ -92,8 +92,6 @@ export async function POST(req: Request) {
     // ── SERVER-SIDE PRICE LOOKUP ──────────────────────────────────────
     let itemName: string;
     let priceCents: number;
-    let itemHospitalId: string;
-
     const metadata: Record<string, string> = {
       clerkUserId,
       patientName: sanitizedName,
@@ -112,7 +110,6 @@ export async function POST(req: Request) {
       if (!pkg.price || pkg.price <= 0) return NextResponse.json({ error: "Package has no valid price" }, { status: 400 });
       itemName = pkg.title;
       priceCents = pkg.price;
-      itemHospitalId = pkg.hospitalId;
       metadata.type = "package";
       metadata.packageId = pkg.id;
       metadata.packageName = pkg.title;
@@ -125,7 +122,6 @@ export async function POST(req: Request) {
       if (!doctor.feeMin || doctor.feeMin <= 0) return NextResponse.json({ error: "Doctor has no valid consultation fee" }, { status: 400 });
       itemName = `Consultation — ${doctor.fullName}`;
       priceCents = doctor.feeMin;
-      itemHospitalId = hospitalId ?? "";
       metadata.type = "doctor";
       metadata.doctorId = doctor.id;
       metadata.doctorName = doctor.fullName;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import Stripe from "stripe";
 import { provisionBooking } from "@/lib/booking";
 
 export const dynamic = "force-dynamic";
@@ -7,15 +7,12 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   try {
     // ── 1. VALIDATE SESSION ID ────────────────────────────────────────
-    const StripeModule = await import("stripe");
-    const Stripe = StripeModule.default;
-
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) {
       return NextResponse.json({ error: "Config error" }, { status: 500 });
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-12-15.clover" as any });
+    const stripe = new Stripe(stripeKey, { apiVersion: "2026-02-25.clover" });
 
     const { sessionId } = await req.json();
     if (!sessionId) {
@@ -42,7 +39,10 @@ export async function POST(req: Request) {
   }
 }
 
-function formatBookingResponse(booking: any, session: any) {
+function formatBookingResponse(
+  booking: Awaited<ReturnType<typeof provisionBooking>>,
+  session: Stripe.Checkout.Session
+) {
   const meta = session?.metadata ?? {};
   const doctorConsultationTitle = booking.doctor?.fullName
     ? `Consultation — ${booking.doctor.fullName}`

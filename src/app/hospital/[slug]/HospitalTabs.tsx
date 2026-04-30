@@ -1,26 +1,16 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { ApiDoctor } from "@/types/hospital";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
-import { PackageAccordion } from "@/components/package-accordion";
 import { PackageCard } from "@/components/package-card";
 import { DoctorCard } from "@/components/doctor-card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ReviewsSection } from "@/components/reviews-section";
+import type { UiPackage } from "@/types/package";
 import * as lucideReact from "lucide-react";
 type TabKey = "overview" | "services" | "doctors" | "departments" | "contact";
-
-type UiPackage = {
-  id: string;
-  name: string;
-  price: number;
-  discount?: string;
-  features: string[];
-};
 
 type Props = {
   hospital: ApiHospitalDetails;
@@ -44,34 +34,45 @@ export function HospitalTabs({
 
   const urlTab = searchParams.get("tab") as TabKey | null;
   const validTabs: TabKey[] = ["overview", "services", "doctors", "departments", "contact"];
+  const initialTab =
+    initialDepartmentId
+      ? "departments"
+      : urlTab && validTabs.includes(urlTab)
+        ? urlTab
+        : "overview";
   const [tab, setTab] = useState<TabKey>(
-    urlTab && validTabs.includes(urlTab) ? urlTab : "overview"
+    initialTab
   );
 
-  function switchTab(next: TabKey) {
+  const switchTab = useCallback((next: TabKey) => {
     setTab(next);
     const params = new URLSearchParams(window.location.search);
     params.set("tab", next);
     router.replace(`${window.location.pathname}?${params.toString()}`, { scroll: false });
-  }
+  }, [router]);
 
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(initialDepartmentId || null);
   const [highlightedDeptId, setHighlightedDeptId] = useState<string | null>(initialDepartmentId || null);
 
   // Handle initial department selection
   useEffect(() => {
-    if (initialDepartmentId) {
+    if (!initialDepartmentId) return;
+
+    const activateId = window.setTimeout(() => {
       switchTab("departments");
       setSelectedDeptId(initialDepartmentId);
       setHighlightedDeptId(initialDepartmentId);
-      
-      const timer = setTimeout(() => {
-        setHighlightedDeptId(null);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [initialDepartmentId]);
+    }, 0);
+
+    const clearId = window.setTimeout(() => {
+      setHighlightedDeptId(null);
+    }, 3000);
+
+    return () => {
+      window.clearTimeout(activateId);
+      window.clearTimeout(clearId);
+    };
+  }, [initialDepartmentId, switchTab]);
 
   const selectedDept = useMemo(() => {
     if (!selectedDeptId) return null;
@@ -483,7 +484,7 @@ export function HospitalTabs({
 
               <div className="ht-head" style={{ marginBottom: ".4rem" }}>
                 <div className="ht-icon"><lucideReact.Sparkles size={17} /></div>
-                <div className="ht-title">Hospital's Vision</div>
+                <div className="ht-title">Hospital&apos;s Vision</div>
               </div>
               <p className="ht-prose">{hospital.servicesSummary || "More details will be added soon."}</p>
 
@@ -570,7 +571,7 @@ export function HospitalTabs({
             {packages.length ? (
               <div style={{ display:"grid", gap:".75rem", gridTemplateColumns:"repeat(auto-fill, minmax(255px,1fr))" }}>
                 {packages.map((pkg, i) => (
-                  <PackageCard key={pkg.id} pkg={pkg as any} hospitalName={hospital.name} hospitalId={hospital.id} featured={i === 1} />
+                  <PackageCard key={pkg.id} pkg={pkg} hospitalName={hospital.name} hospitalId={hospital.id} featured={i === 1} />
                 ))}
               </div>
             ) : (
@@ -707,7 +708,12 @@ export function HospitalTabs({
                   <option value="ALL">All Departments</option>
                   {allSpecialties.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select className="ht-select" style={{ flex:1 }} value={sort} onChange={(e) => setSort(e.target.value as any)}>
+                <select
+                  className="ht-select"
+                  style={{ flex:1 }}
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value === "FEE_DESC" ? "FEE_DESC" : "FEE_ASC")}
+                >
                   <option value="FEE_ASC">Fee: Low → High</option>
                   <option value="FEE_DESC">Fee: High → Low</option>
                 </select>

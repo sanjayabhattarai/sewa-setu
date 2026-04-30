@@ -22,6 +22,17 @@ const TIME_SLOTS = ["09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+function createInitialFormData(prefilledBuyerEmail = "") {
+  return {
+    patientName: "",
+    patientAge: "",
+    patientPhone: "",
+    buyerEmail: prefilledBuyerEmail,
+    patientGender: "",
+    patientDisability: "none",
+  };
+}
+
 function pad2(n: number) { return String(n).padStart(2,"0"); }
 function toDateKey(d: Date) { return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
 function to12h(t: string) {
@@ -53,43 +64,43 @@ const slideVariants = {
 };
 
 export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, selectedPackage, packageId }: BookingModalProps) {
+  if (!isOpen || typeof document === "undefined") return null;
+
+  return (
+    <BookingModalDialog
+      key={`${hospitalId ?? hospitalName}:${packageId ?? selectedPackage.id}`}
+      isOpen={isOpen}
+      onClose={onClose}
+      hospitalName={hospitalName}
+      hospitalId={hospitalId}
+      selectedPackage={selectedPackage}
+      packageId={packageId}
+    />
+  );
+}
+
+function BookingModalDialog({ onClose, hospitalName, hospitalId, selectedPackage, packageId }: BookingModalProps) {
   const { isSignedIn, user } = useUser();
-  const [isMounted, setIsMounted] = useState(false);
+  const signedInEmail = user?.primaryEmailAddress?.emailAddress ?? "";
   const [step, setStep] = useState<"schedule" | "details">("schedule");
   const [direction, setDirection] = useState(1);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [formData, setFormData] = useState({
-    patientName: "",
-    patientAge: "",
-    patientPhone: "",
-    buyerEmail: "",
-    patientGender: "",
-    patientDisability: "none",
-  });
+  const [formData, setFormData] = useState(() => createInitialFormData(signedInEmail));
   const [pageStart, setPageStart] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0,0,0,0);
     return d;
   });
-
-  useEffect(() => { setIsMounted(true); }, []);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const email = user?.primaryEmailAddress?.emailAddress;
-    if (email) setFormData(p => ({ ...p, buyerEmail: email }));
-  }, [isOpen, user?.primaryEmailAddress?.emailAddress]);
+  const buyerEmail = formData.buyerEmail || signedInEmail;
 
   useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") handleClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [onClose]);
 
   const weekDates = useMemo(() => {
     const days: Date[] = [];
@@ -114,24 +125,16 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
     patientName:  touched.patientName  ? getFieldError("patientName",  formData.patientName)  : "",
     patientAge:   touched.patientAge   ? getFieldError("patientAge",   formData.patientAge)   : "",
     patientPhone: touched.patientPhone ? getFieldError("patientPhone", formData.patientPhone) : "",
-    buyerEmail:   touched.buyerEmail   ? getFieldError("buyerEmail",   formData.buyerEmail)   : "",
-  }), [touched, formData]);
+    buyerEmail:   touched.buyerEmail   ? getFieldError("buyerEmail",   buyerEmail)   : "",
+  }), [buyerEmail, touched, formData]);
 
   const formValid =
     !getFieldError("patientName",  formData.patientName)  &&
     !getFieldError("patientAge",   formData.patientAge)   &&
     !getFieldError("patientPhone", formData.patientPhone) &&
-    !getFieldError("buyerEmail",   formData.buyerEmail);
+    !getFieldError("buyerEmail",   buyerEmail);
 
   const handleClose = () => {
-    setStep("schedule");
-    setDirection(1);
-    setSelectedDate("");
-    setSelectedTime("");
-    setTouched({});
-    setFormData({ patientName: "", patientAge: "", patientPhone: "", buyerEmail: "", patientGender: "", patientDisability: "none" });
-    setIsLoading(false);
-    setPageStart(() => { const d = new Date(); d.setHours(0,0,0,0); return d; });
     onClose();
   };
 
@@ -166,7 +169,7 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
           patientName:  formData.patientName,
           patientAge:        formData.patientAge,
           patientPhone:      formData.patientPhone,
-          buyerEmail:        formData.buyerEmail,
+          buyerEmail,
           patientGender:     formData.patientGender,
           patientDisability: formData.patientDisability,
           bookingDate:  `${selectedDate}T00:00:00.000Z`,
@@ -182,8 +185,6 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
       setIsLoading(false);
     }
   };
-
-  if (!isOpen || !isMounted) return null;
 
   const selDateObj = selectedDate ? new Date(selectedDate + "T00:00:00") : null;
   const selDateDisplay = selDateObj
@@ -629,7 +630,7 @@ export function BookingModal({ isOpen, onClose, hospitalName, hospitalId, select
                         <Input
                           id="bm-email"
                           type="email"
-                          value={formData.buyerEmail}
+                          value={buyerEmail}
                           onChange={(e) => setFormData(p => ({ ...p, buyerEmail: e.target.value }))}
                           onBlur={() => handleBlur("buyerEmail")}
                           placeholder="you@example.com"

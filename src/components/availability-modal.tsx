@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -19,6 +19,17 @@ const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 type BookingStep = "slots" | "details";
 
+function createInitialFormData() {
+  return {
+    patientName: "",
+    patientAge: "",
+    patientPhone: "",
+    buyerEmail: "",
+    patientGender: "",
+    patientDisability: "none",
+  };
+}
+
 type Props = {
   doctor: ApiDoctor;
   slots: ApiAvailabilitySlot[]; // windows from DB
@@ -31,56 +42,53 @@ type Props = {
 };
 
 export function AvailabilityModal({
+  isOpen,
   doctor,
   slots,
-  isOpen,
   onCloseAction,
-  onBookAction,
+  daysToShow = 7,
+}: Props) {
+  if (!isOpen || typeof document === "undefined") return null;
+
+  return (
+    <AvailabilityModalDialog
+      key={doctor.id}
+      doctor={doctor}
+      slots={slots}
+      isOpen={isOpen}
+      onCloseAction={onCloseAction}
+      daysToShow={daysToShow}
+    />
+  );
+}
+
+function AvailabilityModalDialog({
+  doctor,
+  slots,
+  onCloseAction,
   daysToShow = 7,
 }: Props) {
   // ✅ hooks must be unconditional
   const { isSignedIn } = useUser();
-  const [isMounted, setIsMounted] = useState(false);
   const [selectedOcc, setSelectedOcc] = useState<Occurrence | null>(null);
   const [bookingStep, setBookingStep] = useState<BookingStep>("slots");
   const [isLoading, setIsLoading] = useState(false);
   // booked slot sets: keys are `${slotId}::${date}`
   const [bookedSet, setBookedSet] = useState<Set<string>>(new Set());
   const [yourSet, setYourSet] = useState<Set<string>>(new Set());
-  const [formData, setFormData] = useState({
-    patientName: "",
-    patientAge: "",
-    patientPhone: "",
-    buyerEmail: "",
-    patientGender: "",
-    patientDisability: "none",
-  });
+  const [formData, setFormData] = useState(createInitialFormData);
   const [pageStart, setPageStart] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   });
 
-  // Ensure we only render on client
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Reset selection when closing or switching doctor
-  useEffect(() => {
-    if (!isOpen) setSelectedOcc(null);
-  }, [isOpen]);
-
-  useEffect(() => {
-    setSelectedOcc(null);
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    setPageStart(d);
-  }, [doctor.id]);
+  const close = () => {
+    onCloseAction();
+  };
 
   // Fetch booked slots for this doctor whenever modal opens or doctor changes
   useEffect(() => {
-    if (!isOpen) return;
     fetch(`/api/availability/booked?doctorId=${doctor.id}`)
       .then((r) => r.json())
       .then((data: { booked?: { slotId: string; date: string; isYours: boolean }[] }) => {
@@ -95,21 +103,19 @@ export function AvailabilityModal({
         setYourSet(yours);
       })
       .catch(() => {/* fail silently, don't block UI */});
-  }, [isOpen, doctor.id]);
+  }, [doctor.id]);
 
   // Handle Escape key to close modal
   useEffect(() => {
-    if (!isOpen) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        close();
+        onCloseAction();
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  }, [onCloseAction]);
 
   // Convert API slot -> WindowSlot for availability.ts
   const windowSlots: WindowSlot[] = useMemo(() => {
@@ -137,29 +143,12 @@ export function AvailabilityModal({
     return dateKeys.some((k) => (rolling.occurrencesByDate[k]?.length ?? 0) > 0);
   }, [dateKeys, rolling.occurrencesByDate]);
 
-  const close = () => {
-    setSelectedOcc(null);
-    setBookingStep("slots");
-    setFormData({
-      patientName: "",
-      patientAge: "",
-      patientPhone: "",
-      buyerEmail: "",
-      patientGender: "",
-      patientDisability: "none",
-    });
-    onCloseAction();
-  };
-
   const goPrev = () => {
     const todayMidnight = new Date(); todayMidnight.setHours(0, 0, 0, 0);
     if (pageStart.getTime() <= todayMidnight.getTime()) return;
     setPageStart((d) => new Date(d.getTime() - daysToShow * 24 * 60 * 60 * 1000));
   };
   const goNext = () => setPageStart((d) => new Date(d.getTime() + daysToShow * 24 * 60 * 60 * 1000));
-
-  // ✅ render conditional AFTER hooks
-  if (!isOpen || !isMounted) return null;
 
   /* ── helpers ────────────────────────────────── */
   const today = new Date();

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Heart, Shield, Zap, Globe, Search, CalendarCheck } from "lucide-react";
 import Link from "next/link";
@@ -14,12 +15,9 @@ const trustItems = [
 ];
 
 export function HeroSection() {
-  const [showIntro, setShowIntro] = useState(false);
-
-  useEffect(() => {
-    const seen = sessionStorage.getItem("ss-intro");
-    if (!seen) setShowIntro(true);
-  }, []);
+  const [showIntro, setShowIntro] = useState(
+    () => typeof window !== "undefined" && !window.sessionStorage.getItem("ss-intro")
+  );
 
   const handleIntroDone = () => {
     sessionStorage.setItem("ss-intro", "1");
@@ -32,9 +30,12 @@ export function HeroSection() {
 
       <section className="relative min-h-[92vh] overflow-hidden bg-[#0a1628] pt-5 sm:pt-6">
 
-        <img
+        <Image
           src="/herosectionmain.svg"
           alt=""
+          fill
+          priority
+          sizes="75vw"
           className="absolute right-0 top-1 h-full w-auto max-w-[75%] object-cover object-right"
           style={{
             maskImage:

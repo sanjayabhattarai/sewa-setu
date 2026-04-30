@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { BookingStatus, ConsultationMode } from "@prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 
@@ -118,12 +119,15 @@ export async function provisionBooking(
           doctorId: meta.doctorId ?? null,
           packageId: meta.packageId ?? null,
           availabilitySlotId: meta.slotId ?? null,
-          mode: (meta.consultationMode === "ONLINE" ? "ONLINE" : "PHYSICAL") as any,
+          mode:
+            meta.consultationMode === "ONLINE"
+              ? ConsultationMode.ONLINE
+              : ConsultationMode.PHYSICAL,
           scheduledAt: meta.bookingDate ? new Date(meta.bookingDate) : new Date(),
           slotTime: meta.slotTime ?? null,
           amountPaid: session.amount_total,
           currency: session.currency ?? "eur",
-          status: "CONFIRMED" as any,
+          status: BookingStatus.CONFIRMED,
           confirmedAt: new Date(),
           notes:
             meta.type === "package"

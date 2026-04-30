@@ -45,7 +45,7 @@ export function TestimonialsSection() {
           <p className="text-xs font-semibold tracking-[0.2em] uppercase text-gold-dim mb-4">Testimonials</p>
           <h2 className="text-4xl md:text-5xl font-bold text-navy mb-4">What families say</h2>
           <p className="text-slate text-lg">
-            Real stories from people who trust Sewa-Setu for their family's{" "}
+            Real stories from people who trust Sewa-Setu for their family&apos;s{" "}
             <span className="text-gold font-medium">health</span>
           </p>
         </div>

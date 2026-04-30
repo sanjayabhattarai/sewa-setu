@@ -54,7 +54,7 @@ function ParticleField() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
     const ctx = canvas.getContext("2d")!;
     let w = canvas.width = canvas.offsetWidth * 2;
     let h = canvas.height = canvas.offsetHeight * 2;
@@ -121,20 +121,26 @@ function ParticleField() {
    ANIMATED COUNTER
    ═══════════════════════════════════════════════════════════ */
 function AnimCounter({ value, duration = 1500 }: { value: string; duration?: number }) {
-  const [display, setDisplay] = useState("0");
   const numericPart = value.replace(/[^0-9.]/g, "");
   const suffix = value.replace(/[0-9.,]/g, "");
   const hasComma = value.includes(",");
+  const [display, setDisplay] = useState(() => {
+    const target = parseFloat(numericPart.replace(",", ""));
+    return isNaN(target) ? value : "0";
+  });
 
   useEffect(() => {
     const target = parseFloat(numericPart.replace(",", ""));
-    if (isNaN(target)) { setDisplay(value); return; }
+    if (isNaN(target)) return;
+
     const start = performance.now();
+    let frameId = 0;
+
     function tick(now: number) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      let current = eased * target;
+      const current = eased * target;
       if (hasComma) {
         setDisplay(Math.round(current).toLocaleString() + suffix);
       } else if (value.includes(".")) {
@@ -142,10 +148,12 @@ function AnimCounter({ value, duration = 1500 }: { value: string; duration?: num
       } else {
         setDisplay(Math.round(current) + suffix);
       }
-      if (progress < 1) requestAnimationFrame(tick);
+      if (progress < 1) frameId = requestAnimationFrame(tick);
     }
-    requestAnimationFrame(tick);
-  }, [value]);
+    frameId = requestAnimationFrame(tick);
+
+    return () => cancelAnimationFrame(frameId);
+  }, [duration, hasComma, numericPart, suffix, value]);
 
   return <span>{display}</span>;
 }
@@ -260,7 +268,11 @@ export default function PartnerPage() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      res.ok ? setDone(true) : setError((await res.json()).error || "Something went wrong.");
+      if (res.ok) {
+        setDone(true);
+      } else {
+        setError((await res.json()).error || "Something went wrong.");
+      }
     } catch { setError("Network error. Please try again."); }
     finally { setLoading(false); }
   }
@@ -278,7 +290,6 @@ export default function PartnerPage() {
       background: `linear-gradient(160deg, ${NAVY} 0%, #0a1628 50%, #0d1f3c 100%)`,
       fontFamily: "'DM Sans', 'Outfit', sans-serif",
     }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -326,8 +337,6 @@ export default function PartnerPage() {
   /* ─── MAIN ─── */
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "row" }}>
 
         {/* ══════════════════════════════════════════════
@@ -506,7 +515,7 @@ export default function PartnerPage() {
                   <div style={{
                     fontSize: 9, fontWeight: 800, color: "#475569",
                     textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12,
-                  }}>Today's Appointments</div>
+                  }}>Today&apos;s Appointments</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {MOCK_APPOINTMENTS.map((a, i) => (
                       <motion.div

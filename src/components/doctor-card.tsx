@@ -2,6 +2,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AvailabilityModal } from "@/components/availability-modal";
@@ -100,7 +101,7 @@ export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAct
 
   const educationText = useMemo(() => {
     // Your API already uses `doctor.education` based on your schema.
-    return cleanEducation((doctor as any).education ?? null);
+    return cleanEducation(doctor.education ?? null);
   }, [doctor]);
 
   const feeText = formatFeeWholeEUR(doctor.feeMin ?? null, doctor.currency ?? "eur");
@@ -113,9 +114,13 @@ export function DoctorCard({ doctor, slots = [], departmentName, onSelectSlotAct
         {/* Top: photo + name + fee */}
         <div className="flex items-start gap-3">
           <div className="relative flex-shrink-0">
-            <img
+            <Image
+              loader={({ src }) => src}
+              unoptimized
               src={doctor.image ?? "https://picsum.photos/seed/doctor/200/200"}
               alt={doctor.fullName}
+              width={64}
+              height={64}
               className="h-16 w-16 rounded-xl object-cover border-2 border-navy/10 group-hover:border-gold transition-colors"
             />
             {doctor.verified && (

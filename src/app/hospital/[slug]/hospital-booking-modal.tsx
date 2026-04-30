@@ -41,7 +41,22 @@ type Props = {
 };
 
 export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselectedDoctor }: Props) {
-  const [step, setStep] = useState<Step>("details");
+  if (!isOpen) return null;
+
+  return (
+    <HospitalBookingModalDialog
+      key={`${hospital.id}:${preselectedDoctor?.id ?? "default"}`}
+      hospital={hospital}
+      onCloseAction={onCloseAction}
+      preselectedDoctor={preselectedDoctor}
+    />
+  );
+}
+
+type HospitalBookingModalDialogProps = Omit<Props, "isOpen">;
+
+function HospitalBookingModalDialog({ hospital, onCloseAction, preselectedDoctor }: HospitalBookingModalDialogProps) {
+  const [step, setStep] = useState<Step>(preselectedDoctor ? "availability" : "details");
   const [formData, setFormData] = useState({
     patientName: "",
     patientAge: "",
@@ -50,7 +65,7 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
   });
 
   const { isSignedIn } = useUser();
-  const [selectedDoctor, setSelectedDoctor] = useState<ApiDoctor | null>(null);
+  const [selectedDoctor, setSelectedDoctor] = useState<ApiDoctor | null>(preselectedDoctor ?? null);
   const [selectedSlot, setSelectedSlot] = useState<ApiAvailabilitySlot | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   // booked slot sets: keys are `${slotId}::${date}`
@@ -58,42 +73,10 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
   const [yourSet, setYourSet] = useState<Set<string>>(new Set());
 
   // ✅ Clean reset helper (used by close + modal unmount)
-  const resetAll = () => {
-    setStep("details");
-    setFormData({
-      patientName: "",
-      patientAge: "",
-      patientPhone: "",
-      buyerEmail: "",
-    });
-    setSelectedDoctor(null);
-    setSelectedSlot(null);
-    setIsLoading(false);
-  };
-
-  // Reset state when modal closes
-  useEffect(() => {
-    if (!isOpen) resetAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
-
-  // ✅ If doctor changes, slot must reset
-  useEffect(() => {
-    setSelectedSlot(null);
-  }, [selectedDoctor?.id]);
-
-  // ✅ Preselect doctor if provided
-  useEffect(() => {
-    if (isOpen && preselectedDoctor) {
-      setSelectedDoctor(preselectedDoctor);
-      setStep("availability");
-    }
-  }, [isOpen, preselectedDoctor]);
-
   // Fetch booked slots for selected doctor — keep all dates so we can check
   // against each slot's resolved next-occurrence date, not just today.
   useEffect(() => {
-    if (!isOpen || !selectedDoctor) return;
+    if (!selectedDoctor) return;
     fetch(`/api/availability/booked?doctorId=${selectedDoctor.id}`)
       .then((r) => r.json())
       .then((data: { booked?: { slotId: string; date: string; isYours: boolean }[] }) => {
@@ -108,10 +91,9 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
         setYourSet(yours);
       })
       .catch(() => {/* fail silently */});
-  }, [isOpen, selectedDoctor]);
+  }, [selectedDoctor]);
 
   const closeModal = () => {
-    resetAll();
     onCloseAction();
   };
 
@@ -157,9 +139,6 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
       !!formData.buyerEmail) ||
     (step === "doctor" && !!selectedDoctor) ||
     (step === "availability" && !!selectedSlot);
-
-  // Early return AFTER all hooks
-  if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -324,7 +303,10 @@ export function HospitalBookingModal({ hospital, isOpen, onCloseAction, preselec
               {hospital.doctors.map((doctor) => (
                 <button
                   key={doctor.id}
-                  onClick={() => setSelectedDoctor(doctor)}
+                  onClick={() => {
+                    setSelectedDoctor(doctor);
+                    setSelectedSlot(null);
+                  }}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                     selectedDoctor?.id === doctor.id
                       ? "border-[#c8a96e] bg-[#c8a96e]/10"
