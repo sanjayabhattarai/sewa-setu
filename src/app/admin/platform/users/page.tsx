@@ -37,10 +37,13 @@ const FILTERS = [
   { value: "banned",  label: "Banned" },
 ];
 
+const PLATFORM_ROLE_OPTIONS: UserRole[] = ["USER", "PLATFORM_SUPPORT", "PLATFORM_ADMIN"];
+
 function UsersContent() {
   const searchParams = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
   const [supportHospitals, setSupportHospitals] = useState<SupportHospital[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -62,6 +65,7 @@ function UsersContent() {
       const data = await res.json();
       setUsers(data.users); setTotal(data.total); setHasMore(data.hasMore);
       setSupportHospitals(data.supportAssignableHospitals ?? []);
+      setCurrentUserId(data.currentUserId ?? null);
     } catch { setError("Failed to load users."); }
     finally { setLoading(false); }
   }, [search, filter, page]);
@@ -105,6 +109,24 @@ function UsersContent() {
       await fetchUsers(search, filter, page);
     } catch { setError("Action failed."); }
     finally { setActionLoading(null); }
+  };
+
+  const handlePlatformRoleChange = async (userId: string, role: UserRole) => {
+    if (!confirm(`Change this user's platform role to ${PLATFORM_ROLE_LABELS[role]}?`)) return;
+    setActionLoading(userId + "role");
+    try {
+      const res = await fetch("/api/admin/platform/users", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "UPDATE_PLATFORM_ROLE", userId, role }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed");
+      await fetchUsers(search, filter, page);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update platform role.");
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const handleAssignSupport = async (userId: string, hospitalId: string) => {
@@ -239,10 +261,17 @@ function UsersContent() {
                     <td className="px-4 py-3.5 align-top break-words">
                       {user.role !== "USER" ? (
                         <div className="space-y-2">
-                          <span className="inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            style={{ background: "rgba(200,169,110,.15)", color: "#a88b50" }}>
-                            {PLATFORM_ROLE_LABELS[user.role] ?? user.role}
-                          </span>
+                          <select
+                            value={user.role}
+                            disabled={user.id === currentUserId || actionLoading === user.id + "role"}
+                            onChange={(e) => handlePlatformRoleChange(user.id, e.target.value as UserRole)}
+                            className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none disabled:opacity-50"
+                            style={{ background: "rgba(200,169,110,.15)", border: "1px solid rgba(200,169,110,.2)", color: "#a88b50" }}
+                          >
+                            {PLATFORM_ROLE_OPTIONS.map((role) => (
+                              <option key={role} value={role}>{PLATFORM_ROLE_LABELS[role]}</option>
+                            ))}
+                          </select>
                           {user.role === "PLATFORM_SUPPORT" && (
                             <div className="space-y-1.5">
                               {user.supportAssignments.length === 0 ? (
@@ -282,7 +311,17 @@ function UsersContent() {
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs font-semibold text-[#6b7a96]">Standard User</span>
+                        <select
+                          value={user.role}
+                          disabled={user.id === currentUserId || actionLoading === user.id + "role"}
+                          onChange={(e) => handlePlatformRoleChange(user.id, e.target.value as UserRole)}
+                          className="h-7 max-w-full rounded-lg px-2 text-[11px] font-semibold outline-none disabled:opacity-50"
+                          style={{ background: "#f7f4ef", border: "1px solid rgba(15,30,56,.1)", color: "#6b7a96" }}
+                        >
+                          {PLATFORM_ROLE_OPTIONS.map((role) => (
+                            <option key={role} value={role}>{PLATFORM_ROLE_LABELS[role]}</option>
+                          ))}
+                        </select>
                       )}
                     </td>
 
@@ -335,7 +374,7 @@ function UsersContent() {
 
                     <td className="px-4 py-3.5 text-right align-top break-words">
                       <button onClick={() => handleBan(user.id, !!user.bannedAt)}
-                        disabled={actionLoading === user.id + "ban" || isPlatformAdmin(user.role)}
+                        disabled={actionLoading === user.id + "ban" || user.id === currentUserId || isPlatformAdmin(user.role)}
                         className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-bold disabled:opacity-30 transition-all"
                         style={{
                           background: user.bannedAt ? "rgba(16,185,129,.08)" : "rgba(239,68,68,.07)",

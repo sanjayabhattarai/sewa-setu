@@ -87,6 +87,7 @@ export async function GET(req: Request) {
       select: { id: true, name: true },
       orderBy: { name: "asc" },
     }),
+    currentUserId: actor.id,
   });
 }
 
@@ -105,13 +106,14 @@ export async function PATCH(req: Request) {
     membershipId?: string;
     hospitalId?: string;
     assignmentId?: string;
+    role?: string;
     rejectedReason?: string;
   };
   try { body = await req.json(); } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { action, userId, membershipId, hospitalId, assignmentId, rejectedReason } = body;
+  const { action, userId, membershipId, hospitalId, assignmentId, role, rejectedReason } = body;
 
   if (action === "APPROVE_MEMBERSHIP" || action === "REJECT_MEMBERSHIP") {
     if (!membershipId) return NextResponse.json({ error: "membershipId required" }, { status: 400 });
@@ -146,6 +148,12 @@ export async function PATCH(req: Request) {
     if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
     const user = await db.user.findUnique({ where: { id: userId } });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (user.id === actor.id) {
+      return NextResponse.json({ error: "You cannot ban your own account" }, { status: 400 });
+    }
+    if (user.role === "PLATFORM_ADMIN") {
+      return NextResponse.json({ error: "Platform admins must be demoted before they can be banned" }, { status: 400 });
+    }
 
     await db.user.update({
       where: { id: userId },
@@ -159,6 +167,55 @@ export async function PATCH(req: Request) {
       entityId: userId,
       before: { bannedAt: user.bannedAt },
       after: { bannedAt: action === "BAN_USER" ? new Date() : null },
+    });
+
+    return NextResponse.json({ success: true });
+  }
+
+  if (action === "UPDATE_PLATFORM_ROLE") {
+    if (!userId || !role) {
+      return NextResponse.json({ error: "userId and role required" }, { status: 400 });
+    }
+    if (!["USER", "PLATFORM_SUPPORT", "PLATFORM_ADMIN"].includes(role)) {
+      return NextResponse.json({ error: "Invalid platform role" }, { status: 400 });
+    }
+
+    const user = await db.user.findUnique({ where: { id: userId } });
+    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (user.id === actor.id) {
+      return NextResponse.json({ error: "You cannot change your own platform role" }, { status: 400 });
+    }
+
+    if (user.role === "PLATFORM_ADMIN" && role !== "PLATFORM_ADMIN") {
+      const adminCount = await db.user.count({ where: { role: "PLATFORM_ADMIN", bannedAt: null } });
+      if (adminCount <= 1) {
+        return NextResponse.json({ error: "At least one active platform admin must remain" }, { status: 400 });
+      }
+    }
+
+    const updated = await db.$transaction(async (tx) => {
+      const result = await tx.user.update({
+        where: { id: userId },
+        data: { role: role as "USER" | "PLATFORM_SUPPORT" | "PLATFORM_ADMIN" },
+      });
+
+      if (role !== "PLATFORM_SUPPORT") {
+        await tx.supportAssignment.updateMany({
+          where: { supportUserId: userId, isActive: true },
+          data: { isActive: false },
+        });
+      }
+
+      return result;
+    });
+
+    await writeAuditLog({
+      actorUserId: actor.id,
+      action: "PLATFORM_ROLE_CHANGED",
+      entity: "User",
+      entityId: userId,
+      before: { role: user.role },
+      after: { role: updated.role },
     });
 
     return NextResponse.json({ success: true });
