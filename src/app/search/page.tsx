@@ -57,7 +57,11 @@ export default function SearchPage() {
 
   // Reset to page 1 when any filter changes
   useEffect(() => {
-    setPage(1);
+    const timeoutId = window.setTimeout(() => {
+      setPage(1);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [debouncedQuery, selectedCity, selectedType, emergencyOnly, minPrice, maxPrice, sortBy]);
 
   // ✅ Fetch when filters or page changes
@@ -104,7 +108,7 @@ export default function SearchPage() {
     };
 
     load();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [page, debouncedQuery, selectedCity, selectedType, emergencyOnly, minPrice, maxPrice, sortBy]);
 
   const clearAllFilters = () => {

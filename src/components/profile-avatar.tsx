@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ProfileEditModal } from "@/components/profile-edit-modal";
 
 interface ProfileAvatarProps {
@@ -27,9 +28,13 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
         <div className="relative group cursor-pointer flex-shrink-0">
           {user.imageUrl ? (
             <div className="relative w-32 h-32">
-              <img
+              <Image
+                loader={({ src }) => src}
+                unoptimized
                 src={user.imageUrl}
                 alt={user.fullName || "User"}
+                width={128}
+                height={128}
                 className="w-full h-full rounded-full object-cover"
                 style={{ boxShadow: "0 0 0 3px rgba(200,169,110,.5)" }}
                 crossOrigin="anonymous"

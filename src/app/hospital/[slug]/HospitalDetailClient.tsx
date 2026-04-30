@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import type { ApiHospitalDetails } from "@/types/hospital-details";
 import { HospitalTabs } from "./HospitalTabs";
-import { Sparkles } from "lucide-react";
 
 type UiPackage = {
   id: string;
@@ -22,35 +21,23 @@ type Props = {
 };
 
 export function HospitalDetailClient({ hospital, packages }: Props) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | null>(null);
-  const [showAIBadge, setShowAIBadge] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  const selectedDepartmentId = searchParams.get("department");
+  const showAIBadge = searchParams.get("from") === "ai";
 
   // Handle deep linking from AI chatbot
   useEffect(() => {
-    const deptId = searchParams.get("department");
-    const fromAI = searchParams.get("from") === "ai";
-    const convId = searchParams.get("conversationId");
-    
-    if (deptId) {
-      setSelectedDepartmentId(deptId);
-      setShowAIBadge(fromAI);
-      
-      if (convId) {
-        setConversationId(convId);
+    if (!selectedDepartmentId) return;
+
+    const timeoutId = window.setTimeout(() => {
+      const deptSection = document.getElementById("departments-section");
+      if (deptSection) {
+        deptSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-      
-      // Scroll to departments section after a short delay
-      setTimeout(() => {
-        const deptSection = document.getElementById("departments-section");
-        if (deptSection) {
-          deptSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 500);
-    }
-  }, [searchParams]);
+    }, 500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [selectedDepartmentId]);
 
   return (
     <>
@@ -315,7 +302,7 @@ export function HospitalDetailClient({ hospital, packages }: Props) {
             {/* AI Recommendation Badge */}
             {showAIBadge && (
               <div className="hdc-ai-badge">
-                <Sparkles size={16} />
+                <span aria-hidden="true">✦</span>
                 <span>Recommended by Sewa-Setu AI</span>
               </div>
             )}

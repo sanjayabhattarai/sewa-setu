@@ -104,6 +104,10 @@ export async function PATCH(req: Request) {
       where: { id: membershipId },
       data: {
         status: action === "APPROVE_MEMBERSHIP" ? "APPROVED" : "REJECTED",
+        approvedAt: action === "APPROVE_MEMBERSHIP" ? new Date() : null,
+        approvedById: action === "APPROVE_MEMBERSHIP" ? actor.id : null,
+        rejectedAt: action === "REJECT_MEMBERSHIP" ? new Date() : null,
+        rejectedById: action === "REJECT_MEMBERSHIP" ? actor.id : null,
         rejectedReason: action === "REJECT_MEMBERSHIP" ? (rejectedReason?.trim() ?? null) : null,
       },
     });

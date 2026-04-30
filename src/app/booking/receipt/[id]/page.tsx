@@ -76,19 +76,26 @@ export default function ReceiptPage() {
   const [status, setStatus]     = useState<"loading" | "success" | "error">("loading");
   const [booking, setBooking]   = useState<BookingData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [origin, setOrigin]     = useState("");
-
-  useEffect(() => { setOrigin(window.location.origin); }, []);
+  const origin = typeof window === "undefined" ? "" : window.location.origin;
 
   useEffect(() => {
-    if (!bookingId) { setStatus("error"); setErrorMsg("No booking ID."); return; }
-    fetch(`/api/booking/receipt/${bookingId}`)
-      .then(async (res) => {
-        const data = await res.json();
-        if (res.ok) { setStatus("success"); setBooking(data); }
-        else { setStatus("error"); setErrorMsg(data.error ?? "Unable to load receipt."); }
-      })
-      .catch(() => { setStatus("error"); setErrorMsg("Network error. Please try again."); });
+    const timeoutId = window.setTimeout(() => {
+      if (!bookingId) {
+        setStatus("error");
+        setErrorMsg("No booking ID.");
+        return;
+      }
+
+      fetch(`/api/booking/receipt/${bookingId}`)
+        .then(async (res) => {
+          const data = await res.json();
+          if (res.ok) { setStatus("success"); setBooking(data); }
+          else { setStatus("error"); setErrorMsg(data.error ?? "Unable to load receipt."); }
+        })
+        .catch(() => { setStatus("error"); setErrorMsg("Network error. Please try again."); });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [bookingId]);
 
   const qrUrl = booking ? `${origin}/booking/verify/${booking.fullId}` : "";

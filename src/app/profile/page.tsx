@@ -54,11 +54,12 @@ export default async function ProfilePage() {
       ])
     : [0, [], 0, []];
 
+  const currentTimestamp = new Date().getTime();
   const upcomingCount = (upcomingSource as { scheduledAt: Date; slotTime: string | null }[]).filter(
-    (b) => getAppointmentDateTime(b.scheduledAt, b.slotTime).getTime() >= Date.now()
+    (b) => getAppointmentDateTime(b.scheduledAt, b.slotTime).getTime() >= currentTimestamp
   ).length;
 
-  const serializedBookings: SerializedBooking[] = (rawBookings as any[]).map((b) => ({
+  const serializedBookings: SerializedBooking[] = rawBookings.map((b) => ({
     id: b.id,
     status: b.status,
     scheduledAt: b.scheduledAt.toISOString(),

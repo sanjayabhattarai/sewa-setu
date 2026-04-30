@@ -2,7 +2,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, Sparkles, Heart } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import type { UiPackage } from "@/types/package";
 import { BookingModal } from "@/components/booking-modal";
 import { formatMoneyCents } from "@/lib/money";

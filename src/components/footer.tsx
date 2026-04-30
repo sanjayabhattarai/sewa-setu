@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
-import { a } from "framer-motion/client";
 
 export function Footer() {
   return (

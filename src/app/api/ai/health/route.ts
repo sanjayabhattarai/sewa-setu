@@ -26,11 +26,12 @@ export async function GET() {
       apiKey: apiKey.substring(0, 10) + "...",
       response: text,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
     console.error("Health check error:", error);
     return NextResponse.json({
       status: "error",
-      message: error.message,
+      message,
       hint: "Check your API key and rate limits",
     }, { status: 500 });
   }

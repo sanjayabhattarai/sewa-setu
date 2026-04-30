@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireHospitalAccess } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import HospitalAdminShell from "./HospitalAdminShell";
+import { isPlatformAdmin } from "@/lib/admin-roles";
 
 export default async function HospitalAdminLayout({
   children,
@@ -36,7 +37,7 @@ export default async function HospitalAdminLayout({
   // Staff with one hospital have no back link
   let backLink: { href: string; label: string } | null = null;
 
-  if (ctx.user.role === "PLATFORM_ADMIN" || ctx.user.role === "ADMIN") {
+  if (isPlatformAdmin(ctx.user.role)) {
     backLink = { href: "/admin/platform/dashboard", label: "Platform Admin" };
   } else {
     const membershipCount = await db.hospitalMembership.count({

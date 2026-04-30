@@ -45,7 +45,13 @@ export default function PlatformDashboardPage() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchStats(); }, [fetchStats]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchStats();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchStats]);
 
   return (
     <div className="space-y-6 w-full">

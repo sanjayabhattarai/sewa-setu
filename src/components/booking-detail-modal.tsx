@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { X, CalendarDays, Clock, MapPin, Phone, User, Package, CreditCard, Stethoscope, RefreshCw, Lock, PhoneCall, Mail, CheckCircle2, FileText } from "lucide-react";
@@ -539,26 +539,36 @@ function BookingDetailPopup({
 }
 
 export function BookingList({ bookings: initialBookings }: { bookings: SerializedBooking[] }) {
-  const [bookings, setBookings] = useState<SerializedBooking[]>(initialBookings);
-  const [selected, setSelected] = useState<SerializedBooking | null>(null);
+  const [bookingOverrides, setBookingOverrides] = useState<
+    Record<string, Pick<SerializedBooking, "scheduledAt" | "slotTime" | "rescheduleCount">>
+  >({});
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Sync when parent provides a fresh list (e.g. after Load More)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setBookings(initialBookings); }, [initialBookings]);
+  const bookings = useMemo(
+    () =>
+      initialBookings.map((booking) => ({
+        ...booking,
+        ...(bookingOverrides[booking.id] ?? {}),
+      })),
+    [initialBookings, bookingOverrides]
+  );
+
+  const selected = useMemo(
+    () => bookings.find((booking) => booking.id === selectedId) ?? null,
+    [bookings, selectedId]
+  );
 
   const handleReschedule = (id: string, newScheduledAt: string, newSlotTime: string) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.id === id
-          ? { ...b, scheduledAt: newScheduledAt, slotTime: newSlotTime, rescheduleCount: (b.rescheduleCount ?? 0) + 1 }
-          : b
-      )
-    );
-    setSelected((prev) =>
-      prev?.id === id
-        ? { ...prev, scheduledAt: newScheduledAt, slotTime: newSlotTime, rescheduleCount: (prev.rescheduleCount ?? 0) + 1 }
-        : prev
-    );
+    const currentBooking = bookings.find((booking) => booking.id === id);
+
+    setBookingOverrides((prev) => ({
+      ...prev,
+      [id]: {
+        scheduledAt: newScheduledAt,
+        slotTime: newSlotTime,
+        rescheduleCount: (currentBooking?.rescheduleCount ?? 0) + 1,
+      },
+    }));
   };
 
 
@@ -577,7 +587,6 @@ export function BookingList({ bookings: initialBookings }: { bookings: Serialize
     );
   }
 
-  const DAYS_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
   return (
@@ -597,7 +606,7 @@ export function BookingList({ bookings: initialBookings }: { bookings: Serialize
             <button
               key={b.id}
               type="button"
-              onClick={() => setSelected(b)}
+              onClick={() => setSelectedId(b.id)}
               className="w-full flex items-center gap-4 px-6 py-4 hover:bg-[#faf8f4] transition-colors text-left group"
             >
               <div className="h-10 w-10 rounded-xl bg-[#0f1e38]/5 flex items-center justify-center flex-shrink-0 group-hover:bg-[#c8a96e]/15 transition-colors">
@@ -625,7 +634,7 @@ export function BookingList({ bookings: initialBookings }: { bookings: Serialize
       {selected && (
         <BookingDetailPopup
           booking={selected}
-          onClose={() => setSelected(null)}
+          onClose={() => setSelectedId(null)}
           onReschedule={handleReschedule}
         />
       )}

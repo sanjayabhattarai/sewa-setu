@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       text: "Hello! I'm the Sewa-Setu Medical Assistant. How can I help you find the right health checkup today?",
       type: "chat",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request format" }, { status: 400 });
   }
 }
@@ -174,11 +174,12 @@ export async function PUT(req: Request) {
       },
     });
 
-  } catch (error: any) {
-    console.error("[MOCK AI] Error:", error.message);
-    const status = error.message === "Hospital not found" ? 404 : 500;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Booking failed";
+    console.error("[MOCK AI] Error:", message);
+    const status = message === "Hospital not found" ? 404 : 500;
     return NextResponse.json(
-      { error: error.message || "Booking failed" },
+      { error: message || "Booking failed" },
       { status }
     );
   }

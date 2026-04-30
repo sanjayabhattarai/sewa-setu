@@ -20,17 +20,22 @@ const T = {
 // High-end cinematic easing (Apple-like fluid motion)
 const luxEase = [0.16, 1, 0.3, 1] as const;
 
+function pseudoRandom(seed: number) {
+  const x = Math.sin(seed * 12.9898) * 43758.5453123;
+  return x - Math.floor(x);
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    SCENE: Floating Embers (Organic Life / Healing)
 ───────────────────────────────────────────────────────────────────────────── */
 function FloatingEmbers() {
   const embers = useMemo(() => Array.from({ length: 24 }).map((_, i) => ({
     id: i,
-    x: 20 + Math.random() * 60, // Concentrate in middle 60% of screen
-    size: Math.random() * 3 + 1,
-    delay: Math.random() * 3,
-    duration: 4 + Math.random() * 6,
-    gold: Math.random() > 0.3,
+    x: 20 + pseudoRandom(i + 1) * 60, // Concentrate in middle 60% of screen
+    size: pseudoRandom(i + 101) * 3 + 1,
+    delay: pseudoRandom(i + 201) * 3,
+    duration: 4 + pseudoRandom(i + 301) * 6,
+    gold: pseudoRandom(i + 401) > 0.3,
   })), []);
 
   return (

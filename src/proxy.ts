@@ -22,8 +22,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/booking/verify(.*)",
 ]);
 
-// Admin routes always require authentication — role checks happen inside each
-// page/API via requirePlatformAdmin() or requireHospitalAccess()
+// Admin routes always require authentication; role checks happen inside each
+// page/API via requirePlatformAdmin() or requireHospitalAccess().
 const isAdminRoute = createRouteMatcher([
   "/admin(.*)",
   "/api/admin(.*)",
@@ -31,7 +31,7 @@ const isAdminRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
   if (isAdminRoute(req)) {
-    // Must be signed in — role/hospital checks happen in the route itself
+    // Must be signed in; role/hospital checks happen in the route itself.
     await auth.protect();
     return;
   }

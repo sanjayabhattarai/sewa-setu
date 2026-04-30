@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, CalendarCheck, Stethoscope, Clock,
   Package, Star, Users, BarChart2, Settings,
-  Menu, X, Building2, ChevronRight, LogOut,
+  Menu, Building2, ChevronRight, LogOut,
 } from "lucide-react";
 import type { HospitalRole } from "@prisma/client";
 import { hasPermission } from "@/lib/admin-permissions";
+import { HOSPITAL_ROLE_LABELS } from "@/lib/admin-roles";
 
 type NavItem = {
   label: string;
@@ -18,6 +19,130 @@ type NavItem = {
   badge?: number;
   permission?: Parameters<typeof hasPermission>[1];
 };
+
+function SidebarContent({
+  mobile = false,
+  backLink,
+  hospital,
+  navItems,
+  pathname,
+  role,
+  setSidebarOpen,
+  user,
+}: {
+  mobile?: boolean;
+  backLink?: { href: string; label: string } | null;
+  hospital: { name: string; slug: string; type: string; verified: boolean };
+  navItems: NavItem[];
+  pathname: string;
+  role: HospitalRole;
+  setSidebarOpen: (open: boolean) => void;
+  user: { fullName: string; email: string };
+}) {
+  return (
+    <div
+      className={`flex flex-col h-full ${mobile ? "" : "hidden lg:flex"}`}
+      style={{ width: 240, background: "#0f1e38", flexShrink: 0 }}
+    >
+      {backLink && (
+        <div className="px-4 pt-3 pb-1">
+          <Link
+            href={backLink.href}
+            className="flex items-center gap-1.5 text-[11px] font-semibold transition-colors"
+            style={{ color: "rgba(255,255,255,.35)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c8a96e"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,.35)"; }}
+          >
+            <ChevronRight size={11} className="rotate-180 flex-shrink-0" />
+            {backLink.label}
+          </Link>
+        </div>
+      )}
+
+      <div className="px-5 py-4 border-b" style={{ borderColor: "rgba(255,255,255,.08)" }}>
+        <div className="flex items-center gap-3">
+          <div
+            className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: "rgba(200,169,110,.15)", border: "1px solid rgba(200,169,110,.25)" }}
+          >
+            <Building2 size={16} className="text-[#c8a96e]" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-white truncate">{hospital.name}</p>
+            <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "rgba(255,255,255,.35)" }}>
+              {hospital.type}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+        {navItems.map((item) => {
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setSidebarOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group"
+              style={{
+                background: active ? "rgba(200,169,110,.15)" : "transparent",
+                borderLeft: active ? "3px solid #c8a96e" : "3px solid transparent",
+              }}
+            >
+              <span
+                style={{ color: active ? "#c8a96e" : "rgba(255,255,255,.45)" }}
+                className="group-hover:text-[#c8a96e] transition-colors flex-shrink-0"
+              >
+                {item.icon}
+              </span>
+              <span
+                className="text-sm font-medium flex-1"
+                style={{ color: active ? "#c8a96e" : "rgba(255,255,255,.65)" }}
+              >
+                {item.label}
+              </span>
+              {item.badge ? (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                  style={{ background: "#c8a96e", color: "#0f1e38" }}
+                >
+                  {item.badge}
+                </span>
+              ) : null}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="px-4 py-4 border-t" style={{ borderColor: "rgba(255,255,255,.08)" }}>
+        <div className="flex items-center gap-3 mb-3">
+          <div
+            className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+            style={{ background: "rgba(200,169,110,.2)", color: "#c8a96e" }}
+          >
+            {user.fullName.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-white truncate">{user.fullName}</p>
+            <p className="text-[10px] capitalize" style={{ color: "rgba(255,255,255,.35)" }}>
+              {HOSPITAL_ROLE_LABELS[role] ?? role}
+            </p>
+          </div>
+        </div>
+        <a
+          href="/api/auth/sign-out"
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+          style={{ color: "rgba(255,255,255,.35)", background: "transparent" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent" }}
+        >
+          <LogOut size={13} /> Sign Out
+        </a>
+      </div>
+    </div>
+  );
+}
 
 export default function HospitalAdminShell({
   hospital,
@@ -45,119 +170,38 @@ export default function HospitalAdminShell({
     { label: "Availability", href: `${base}/availability`,  icon: <Clock size={17} />,            permission: "MANAGE_AVAILABILITY" },
     { label: "Packages",     href: `${base}/packages`,      icon: <Package size={17} />,          permission: "MANAGE_PACKAGES" },
     { label: "Reviews",      href: `${base}/reviews`,       icon: <Star size={17} />,             permission: "MODERATE_REVIEWS" },
-    { label: "Team",         href: `${base}/team`,          icon: <Users size={17} />,            permission: "MANAGE_TEAM" },
+    { label: "Team",         href: `${base}/team`,          icon: <Users size={17} />,            permission: "VIEW_TEAM" },
     { label: "Reports",      href: `${base}/reports`,       icon: <BarChart2 size={17} />,        permission: "VIEW_REPORTS" },
     { label: "Settings",     href: `${base}/settings`,      icon: <Settings size={17} />,         permission: "MANAGE_SETTINGS" },
   ] as NavItem[]).filter((item) => !item.permission || hasPermission(role, item.permission));
 
-  const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
-    <div
-      className={`flex flex-col h-full ${mobile ? "" : "hidden lg:flex"}`}
-      style={{ width: 240, background: "#0f1e38", flexShrink: 0 }}
-    >
-      {/* Back link */}
-      {backLink && (
-        <div className="px-4 pt-3 pb-1">
-          <Link
-            href={backLink.href}
-            className="flex items-center gap-1.5 text-[11px] font-semibold transition-colors"
-            style={{ color: "rgba(255,255,255,.35)" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c8a96e"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,.35)"; }}
-          >
-            <ChevronRight size={11} className="rotate-180 flex-shrink-0" />
-            {backLink.label}
-          </Link>
-        </div>
-      )}
-
-      {/* Hospital identity */}
-      <div className="px-5 py-4 border-b" style={{ borderColor: "rgba(255,255,255,.08)" }}>
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: "rgba(200,169,110,.15)", border: "1px solid rgba(200,169,110,.25)" }}>
-            <Building2 size={16} className="text-[#c8a96e]" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold text-white truncate">{hospital.name}</p>
-            <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "rgba(255,255,255,.35)" }}>
-              {hospital.type}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-        {navItems.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group"
-              style={{
-                background: active ? "rgba(200,169,110,.15)" : "transparent",
-                borderLeft: active ? "3px solid #c8a96e" : "3px solid transparent",
-              }}
-            >
-              <span style={{ color: active ? "#c8a96e" : "rgba(255,255,255,.45)" }}
-                className="group-hover:text-[#c8a96e] transition-colors flex-shrink-0">
-                {item.icon}
-              </span>
-              <span className="text-sm font-medium flex-1"
-                style={{ color: active ? "#c8a96e" : "rgba(255,255,255,.65)" }}>
-                {item.label}
-              </span>
-              {item.badge ? (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                  style={{ background: "#c8a96e", color: "#0f1e38" }}>
-                  {item.badge}
-                </span>
-              ) : null}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* User + logout */}
-      <div className="px-4 py-4 border-t" style={{ borderColor: "rgba(255,255,255,.08)" }}>
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
-            style={{ background: "rgba(200,169,110,.2)", color: "#c8a96e" }}>
-            {user.fullName.charAt(0).toUpperCase()}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-white truncate">{user.fullName}</p>
-            <p className="text-[10px] capitalize" style={{ color: "rgba(255,255,255,.35)" }}>
-              {role.replace("HOSPITAL_", "").replace("_", " ").toLowerCase()}
-            </p>
-          </div>
-        </div>
-        <a
-          href="/api/auth/sign-out"
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold transition-all"
-          style={{ color: "rgba(255,255,255,.35)", background: "transparent" }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent" }}
-        >
-          <LogOut size={13} /> Sign Out
-        </a>
-      </div>
-    </div>
-  );
-
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "#f7f4ef" }}>
       {/* Desktop sidebar */}
-      <Sidebar />
+      <SidebarContent
+        backLink={backLink}
+        hospital={hospital}
+        navItems={navItems}
+        pathname={pathname}
+        role={role}
+        setSidebarOpen={setSidebarOpen}
+        user={user}
+      />
 
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="relative z-10 flex flex-col" style={{ width: 240 }}>
-            <Sidebar mobile />
+            <SidebarContent
+              mobile
+              backLink={backLink}
+              hospital={hospital}
+              navItems={navItems}
+              pathname={pathname}
+              role={role}
+              setSidebarOpen={setSidebarOpen}
+              user={user}
+            />
           </div>
         </div>
       )}

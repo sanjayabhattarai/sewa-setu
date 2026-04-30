@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { HospitalType, Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
   const pageSize = Math.min(24, Math.max(6, parseInt(searchParams.get("pageSize") || "12", 10)));
 
-  const whereConditions: any[] = [];
+  const whereConditions: Prisma.HospitalWhereInput[] = [];
 
   if (q) {
     whereConditions.push({
@@ -35,7 +36,7 @@ export async function GET(req: Request) {
   if (country) whereConditions.push({ location: { country: { equals: country, mode: "insensitive" } } });
 
   if (type && ["HOSPITAL", "CLINIC", "LAB"].includes(type.toUpperCase())) {
-    whereConditions.push({ type: type.toUpperCase() as any });
+    whereConditions.push({ type: type.toUpperCase() as HospitalType });
   }
 
   if (emergency === "true") {
@@ -54,11 +55,11 @@ export async function GET(req: Request) {
   }
 
   // Price filters apply to PACKAGES now
-  const packageFilters: any[] = [{ isActive: true }];
+  const packageFilters: Prisma.HospitalPackageWhereInput[] = [{ isActive: true }];
   if (minPrice) packageFilters.push({ price: { gte: parseInt(minPrice, 10) } });
   if (maxPrice) packageFilters.push({ price: { lte: parseInt(maxPrice, 10) } });
 
-  let orderBy: any = { createdAt: "desc" };
+  let orderBy: Prisma.HospitalOrderByWithRelationInput = { createdAt: "desc" };
   if (sortBy === "name") orderBy = { name: "asc" };
 
   const where = whereConditions.length > 0 ? { AND: whereConditions } : undefined;

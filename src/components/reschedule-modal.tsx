@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight, CalendarDays, Clock } from "lucide-react";
 import type { SerializedBooking } from "./booking-detail-modal";
@@ -50,11 +50,11 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
   const bookingMode = booking.mode?.toUpperCase();
   const bookingHospitalId = booking.hospitalId;
 
-  function slotMatchesBookingContext(slot: AvailabilitySlot): boolean {
+  const slotMatchesBookingContext = useCallback((slot: AvailabilitySlot): boolean => {
     // Keep same-hospital slots when slot records are hospital-scoped. Global slots (null hospitalId) remain allowed.
     if (!bookingHospitalId) return true;
     return slot.hospitalId === null || slot.hospitalId === bookingHospitalId;
-  }
+  }, [bookingHospitalId]);
 
   // Always fetch fresh doctorId from the server — never rely on possibly-stale list data
   const [doctorId, setDoctorId] = useState<string | null>(booking.doctorId ?? null);
@@ -82,6 +82,7 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
   const [docSlots, setDocSlots] = useState<AvailabilitySlot[]>([]);
   const [bookedSet, setBookedSet] = useState<Set<string>>(new Set());
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const [nowTimestamp] = useState(() => Date.now());
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -102,13 +103,16 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
   // Fetch doctor availability slots once we have the doctorId
   useEffect(() => {
     if (!isDoctor || !doctorId) return;
-    setSlotsLoading(true);
-    fetch(`/api/availability/slots?doctorId=${doctorId}`)
-      .then((r) => r.json())
-      .then((data: { slots?: AvailabilitySlot[] }) => setDocSlots(data.slots ?? []))
-      .catch(() => setError("Failed to load available slots. Please try again."))
-      .finally(() => setSlotsLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    const timeoutId = window.setTimeout(() => {
+      setSlotsLoading(true);
+      fetch(`/api/availability/slots?doctorId=${doctorId}`)
+        .then((r) => r.json())
+        .then((data: { slots?: AvailabilitySlot[] }) => setDocSlots(data.slots ?? []))
+        .catch(() => setError("Failed to load available slots. Please try again."))
+        .finally(() => setSlotsLoading(false));
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [isDoctor, doctorId]);
 
   // Fetch booked slots for selected date (doctor bookings)
@@ -124,14 +128,8 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
         setBookedSet(set);
       })
       .catch(() => {});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDoctor, doctorId, selectedDate, booking.scheduledAt]);
 
-  // Reset time when date changes
-  useEffect(() => {
-    setSelectedTime("");
-    setSelectedSlotId(null);
-  }, [selectedDate]);
+  }, [isDoctor, doctorId, selectedDate, booking.scheduledAt]);
 
   const weekDates = useMemo(() => {
     const days: Date[] = [];
@@ -158,7 +156,7 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
     return docSlots
       .filter((s) => s.dayOfWeek === dow)
       .filter(slotMatchesBookingContext);
-  }, [selectedDate, isDoctor, docSlots, bookedSet, bookingHospitalId]);
+  }, [selectedDate, isDoctor, docSlots, slotMatchesBookingContext]);
 
   // For doctor bookings: does the selected date even have slots?
   const dateHasDocSlots = useMemo(() => {
@@ -167,7 +165,7 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
       const dow = new Date(dateKey + "T00:00:00").getDay();
       return docSlots.some((s) => s.dayOfWeek === dow && slotMatchesBookingContext(s));
     };
-  }, [isDoctor, docSlots, bookingHospitalId]);
+  }, [isDoctor, docSlots, slotMatchesBookingContext]);
 
   const canConfirm = !!selectedDate && (isDoctor ? !!selectedSlotId : !!selectedTime);
 
@@ -330,7 +328,12 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
                       key={key}
                       type="button"
                       disabled={disabled}
-                      onClick={() => !disabled && setSelectedDate(key)}
+                      onClick={() => {
+                        if (disabled) return;
+                        setSelectedDate(key);
+                        setSelectedTime("");
+                        setSelectedSlotId(null);
+                      }}
                       title={noDocSlots ? "No slots available this day" : undefined}
                       style={{
                         display: "flex", flexDirection: "column", alignItems: "center",
@@ -419,7 +422,7 @@ export function RescheduleModal({ booking, onClose, onSuccess }: Props) {
                         dt.setHours(h, m ?? 0, 0, 0);
                         return dt;
                       })();
-                      const isTooSoon = slotDateTime.getTime() - Date.now() <= 30 * 60 * 1000;
+                      const isTooSoon = slotDateTime.getTime() - nowTimestamp <= 30 * 60 * 1000;
                       const isSel = selectedSlotId === slot.id;
                       const isOnline = slot.mode === "ONLINE";
                       const disabled = isCurrent || isBooked || isTooSoon;

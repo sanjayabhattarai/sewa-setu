@@ -29,7 +29,7 @@ export function RecentBooking() {
   const [booking, setBooking] = useState<SerializedBooking | null>(null);
 
   useEffect(() => {
-    if (!isSignedIn) { setBooking(null); return; }
+    if (!isSignedIn) return;
 
     fetch("/api/bookings?filter=upcoming&page=1&pageSize=1", { cache: "no-store" })
       .then((r) => r.json())
@@ -37,7 +37,7 @@ export function RecentBooking() {
       .catch(() => setBooking(null));
   }, [isSignedIn]);
 
-  if (!booking) return null;
+  if (!isSignedIn || !booking) return null;
 
   const subtitle = booking.package?.title ?? booking.doctor?.fullName ?? "Appointment";
 

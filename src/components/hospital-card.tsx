@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { MapPin, Star, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -29,9 +30,13 @@ export function HospitalCard({ hospital, index }: HospitalCardProps) {
     >
       {/* ── Image ── */}
       <div className="relative h-52 overflow-hidden">
-        <img
+        <Image
+          loader={({ src }) => src}
+          unoptimized
           src={hospital.image ?? "https://picsum.photos/seed/hospital-fallback/800/600"}
           alt={hospital.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
         />
 

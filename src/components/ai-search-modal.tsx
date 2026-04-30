@@ -1,48 +1,92 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { X, Send, Stethoscope, Loader2, MapPin, Sparkles, AlertTriangle } from "lucide-react";
+
+type DepartmentOption = {
+  id: string;
+  name: string;
+  slug: string;
+  doctorCount: number;
+};
+
+type HospitalOption = {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+  location: string;
+  minPrice: number;
+  services: string[];
+  specialties?: string[];
+  departments?: DepartmentOption[];
+  matchedDepartment?: string;
+};
+
+type MatchedDepartment = {
+  department: string;
+  confidence: number;
+  matchedKeywords: string[];
+};
+
+type MessageMetadata = {
+  action?: string;
+  hospital?: HospitalOption;
+  department?: DepartmentOption;
+};
+
+type BookingData = {
+  patientName: string;
+  patientAge: string;
+  patientPhone: string;
+  buyerEmail: string;
+};
+
+type StoredConversation = {
+  messages?: Message[];
+  bookingStep?: BookingStep;
+  selectedHospital?: HospitalOption | null;
+  selectedDepartment?: DepartmentOption | null;
+  problemDescription?: string;
+  bookingData?: BookingData;
+  lastUpdated?: string;
+};
 
 type Message = {
   role: "user" | "bot";
   content: string;
   type?: "chat" | "booking_intent" | "symptoms_analyzed" | "confirmation" | "error";
-  hospitals?: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    type: string;
-    location: string;
-    minPrice: number;
-    services: string[];
-    specialties?: string[];
-    departments?: Array<{
-      id: string;
-      name: string;
-      slug: string;
-      doctorCount: number;
-    }>;
-    matchedDepartment?: string;
-  }>;
-  matchedDepartments?: Array<{
-    department: string;
-    confidence: number;
-    matchedKeywords: string[];
-  }>;
+  hospitals?: HospitalOption[];
+  matchedDepartments?: MatchedDepartment[];
   isEmergency?: boolean;
-  metadata?: {
-    action?: string;
-    hospital?: any;
-    department?: any;
-  };
+  metadata?: MessageMetadata;
 };
 
 type BookingStep = "chat" | "symptoms" | "hospital_selection" | "confirmation";
 
 // Storage key for conversation
 const STORAGE_KEY = "sewaSetu_ai_search_history";
+const EMPTY_BOOKING_DATA: BookingData = {
+  patientName: "",
+  patientAge: "",
+  patientPhone: "",
+  buyerEmail: "",
+};
+const INITIAL_GREETING: Message = {
+  role: "bot",
+  content: "Namaste! I&apos;m your Sewa-Setu health assistant. Tell me your symptoms or health concerns, and I&apos;ll recommend the right hospital and specialist for you.",
+  type: "chat",
+};
+
+function createConversationId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `conv_${crypto.randomUUID()}`;
+  }
+
+  return `conv_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+}
 
 type Props = {
   isOpen: boolean;
@@ -53,39 +97,23 @@ type Props = {
 export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: Props) {
   const router = useRouter();
   const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => (initialConversationId ? [] : [INITIAL_GREETING]));
   const [isLoading, setIsLoading] = useState(false);
   const [bookingStep, setBookingStep] = useState<BookingStep>("chat");
-  const [selectedHospital, setSelectedHospital] = useState<any>(null);
-  const [selectedDepartment, setSelectedDepartment] = useState<any>(null);
+  const [selectedHospital, setSelectedHospital] = useState<HospitalOption | null>(null);
+  const [selectedDepartment, setSelectedDepartment] = useState<DepartmentOption | null>(null);
   const [problemDescription, setProblemDescription] = useState("");
   const [currentConversationId, setCurrentConversationId] = useState<string>(initialConversationId || "");
-  const [isMounted, setIsMounted] = useState(false);
 
-  const [bookingData, setBookingData] = useState({
-    patientName: "",
-    patientAge: "",
-    patientPhone: "",
-    buyerEmail: "",
-  });
+  const [bookingData, setBookingData] = useState<BookingData>(EMPTY_BOOKING_DATA);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Ensure we only render on client
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Load conversation if initialConversationId is provided
-  useEffect(() => {
-    if (initialConversationId) {
-      loadConversation(initialConversationId);
-    }
-  }, [initialConversationId]);
-
-  // Generate a new conversation ID
-  const generateConversationId = () => {
-    return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const ensureConversationId = () => {
+    if (currentConversationId) return currentConversationId;
+    const newId = createConversationId();
+    setCurrentConversationId(newId);
+    return newId;
   };
 
   // Load saved conversation
@@ -94,19 +122,14 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
       console.log("[AISearchModal] Loading conversation:", convId);
       const saved = localStorage.getItem(`${STORAGE_KEY}_${convId}`);
       if (saved) {
-        const conversation = JSON.parse(saved);
+        const conversation = JSON.parse(saved) as StoredConversation;
         console.log("[AISearchModal] Loaded conversation data:", conversation);
         setMessages(conversation.messages || []);
         setBookingStep(conversation.bookingStep || "chat");
         setSelectedHospital(conversation.selectedHospital || null);
         setSelectedDepartment(conversation.selectedDepartment || null);
         setProblemDescription(conversation.problemDescription || "");
-        setBookingData(conversation.bookingData || {
-          patientName: "",
-          patientAge: "",
-          patientPhone: "",
-          buyerEmail: "",
-        });
+        setBookingData(conversation.bookingData || EMPTY_BOOKING_DATA);
         setCurrentConversationId(convId);
       } else {
         console.log("[AISearchModal] No saved conversation found for ID:", convId);
@@ -117,12 +140,22 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     }
   };
 
-  // Save conversation state
-  const saveConversation = () => {
+  // Load conversation if initialConversationId is provided
+  useEffect(() => {
+    if (!initialConversationId) return;
+    const timeoutId = window.setTimeout(() => {
+      loadConversation(initialConversationId);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [initialConversationId]);
+
+  // Auto-save when state changes
+  useEffect(() => {
     if (!currentConversationId || messages.length === 0) return;
 
     try {
-      const conversation = {
+      const conversation: StoredConversation = {
         messages,
         bookingStep,
         selectedHospital,
@@ -135,14 +168,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     } catch (error) {
       console.error("[AISearchModal] Failed to save conversation:", error);
     }
-  };
-
-  // Auto-save when state changes
-  useEffect(() => {
-    if (currentConversationId && messages.length > 0) {
-      saveConversation();
-    }
-  }, [messages, bookingStep, selectedHospital, selectedDepartment, problemDescription, bookingData]);
+  }, [messages, bookingStep, selectedHospital, selectedDepartment, problemDescription, bookingData, currentConversationId]);
 
   // Scroll to bottom
   useEffect(() => {
@@ -151,10 +177,11 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     }
   }, [messages, isLoading, bookingStep]);
 
-  // Add initial greeting when modal opens
+  // Initialize a fresh conversation when the modal opens without a saved history
   useEffect(() => {
-    if (isOpen && messages.length === 0 && !currentConversationId) {
-      const newId = generateConversationId();
+    if (!isOpen || messages.length > 0 || currentConversationId) return;
+    const timeoutId = window.setTimeout(() => {
+      const newId = createConversationId();
       setCurrentConversationId(newId);
       setMessages([
         {
@@ -163,15 +190,16 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
           type: "chat",
         },
       ]);
-    } else if (isOpen && messages.length > 0 && currentConversationId) {
-      console.log("[AISearchModal] Restored conversation with", messages.length, "messages");
-    }
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [isOpen, messages.length, currentConversationId]);
 
   const askAI = async () => {
     if (!prompt.trim()) return;
 
     const userMsg = prompt;
+    const activeConversationId = ensureConversationId();
     setPrompt("");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setIsLoading(true);
@@ -183,7 +211,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
         body: JSON.stringify({
           prompt: userMsg,
           action: "chat",
-          conversationId: currentConversationId || generateConversationId(),
+          conversationId: activeConversationId,
         }),
       });
 
@@ -202,7 +230,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
       } else {
         setMessages((prev) => [...prev, { role: "bot", content: data.text, type: "chat" }]);
       }
-    } catch (e) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: "Connection error. Please try again.", type: "error" },
@@ -216,6 +244,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     if (!problemDescription.trim()) return;
 
     const userMsg = problemDescription;
+    const activeConversationId = ensureConversationId();
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setIsLoading(true);
 
@@ -226,7 +255,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
         body: JSON.stringify({
           prompt: userMsg,
           action: "analyze_symptoms",
-          conversationId: currentConversationId,
+          conversationId: activeConversationId,
         }),
       });
 
@@ -259,7 +288,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
           ]);
         }
       }
-    } catch (e) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: "Failed to analyze symptoms. Please try again.", type: "error" },
@@ -269,13 +298,13 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     }
   };
 
-  const selectHospital = (hospital: any) => {
+  const selectHospital = (hospital: HospitalOption) => {
     console.log("[AISearchModal] Selecting hospital:", hospital.name);
     
     if (hospital.departments && hospital.departments.length > 0) {
       setSelectedHospital(hospital);
 
-      const deptList = hospital.departments.map((d: any) => 
+      const deptList = hospital.departments.map((d: DepartmentOption) =>
         `• ${d.name} (${d.doctorCount} doctors)`
       ).join('\n');
 
@@ -288,7 +317,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
         },
       ]);
 
-      hospital.departments.forEach((dept: any) => {
+      hospital.departments.forEach((dept: DepartmentOption) => {
         setTimeout(() => {
           setMessages((prev) => [
             ...prev,
@@ -306,14 +335,15 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     }
   };
 
-  const selectDepartment = (hospital: any, department: any) => {
+  const selectDepartment = (hospital: HospitalOption, department: DepartmentOption) => {
     setSelectedDepartment(department);
     navigateToHospital(hospital, department);
   };
 
-  const navigateToHospital = (hospital: any, department: any) => {
+  const navigateToHospital = (hospital: HospitalOption, department: DepartmentOption | null) => {
     let url = `/hospital/${hospital.slug}`;
     const params = new URLSearchParams();
+    const activeConversationId = ensureConversationId();
 
     if (department) {
       params.set("department", department.id);
@@ -327,15 +357,15 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     
     // Add flag and conversation ID to indicate this navigation came from AI
     params.set("from", "ai");
-    params.set("conversationId", currentConversationId);
+    params.set("conversationId", activeConversationId);
 
     if (params.toString()) {
       url += `?${params.toString()}`;
     }
 
     // Save one last time before navigation
-    if (currentConversationId && messages.length > 0) {
-      const conversation = {
+    if (messages.length > 0) {
+      const conversation: StoredConversation = {
         messages,
         bookingStep,
         selectedHospital,
@@ -344,7 +374,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
         bookingData,
         lastUpdated: new Date().toISOString(),
       };
-      localStorage.setItem(`${STORAGE_KEY}_${currentConversationId}`, JSON.stringify(conversation));
+      localStorage.setItem(`${STORAGE_KEY}_${activeConversationId}`, JSON.stringify(conversation));
     }
 
     onCloseAction();
@@ -353,13 +383,14 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
 
   // Handle custom message actions
   const handleMessageClick = (msg: Message) => {
-    if (msg.metadata?.action === "select_department") {
+    if (msg.metadata?.action === "select_department" && msg.metadata.hospital && msg.metadata.department) {
       selectDepartment(msg.metadata.hospital, msg.metadata.department);
     }
   };
 
   // Quick action to search for doctors/hospitals
   const startDoctorSearch = () => {
+    ensureConversationId();
     setBookingStep("symptoms");
     setMessages((prev) => [
       ...prev,
@@ -373,19 +404,14 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
 
   // Clear conversation and start new
   const handleNewChat = () => {
-    const newId = generateConversationId();
+    const newId = createConversationId();
     setCurrentConversationId(newId);
-    setMessages([]);
+    setMessages([INITIAL_GREETING]);
     setBookingStep("chat");
     setSelectedHospital(null);
     setSelectedDepartment(null);
     setProblemDescription("");
-    setBookingData({
-      patientName: "",
-      patientAge: "",
-      patientPhone: "",
-      buyerEmail: "",
-    });
+    setBookingData(EMPTY_BOOKING_DATA);
     
     // Add initial greeting
     setMessages([
@@ -397,7 +423,7 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
     ]);
   };
 
-  if (!isMounted || !isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
   const modalContent = (
     <div
@@ -700,9 +726,9 @@ export function AISearchModal({ isOpen, onCloseAction, initialConversationId }: 
                 )}
 
                 {/* Department button */}
-                {msg.metadata?.action === "select_department" && (
+                {msg.metadata?.action === "select_department" && msg.metadata.hospital && msg.metadata.department && (
                   <button
-                    onClick={() => selectDepartment(msg.metadata?.hospital, msg.metadata?.department)}
+                    onClick={() => selectDepartment(msg.metadata!.hospital!, msg.metadata!.department!)}
                     style={{
                       alignSelf: "flex-start",
                       background: "linear-gradient(135deg, #e8d5b0 0%, #c8a96e 50%, #a88b50 100%)",

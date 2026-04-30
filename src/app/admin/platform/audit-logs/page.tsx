@@ -12,6 +12,7 @@ import {
   Building2,
   ArrowRight,
 } from "lucide-react";
+import { isPlatformStaff } from "@/lib/admin-roles";
 
 type Actor = { id: string; name: string; email: string; role: string };
 type Hospital = { id: string; name: string; slug: string };
@@ -220,8 +221,12 @@ export default function PlatformAuditLogsPage() {
   );
 
   useEffect(() => {
-    fetchLogs(search, entityFilter, hospitalFilter, page);
-  }, [search, entityFilter, hospitalFilter, page]);
+    const timeoutId = window.setTimeout(() => {
+      void fetchLogs(search, entityFilter, hospitalFilter, page);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchLogs, search, entityFilter, hospitalFilter, page]);
 
   const handleSearch = (val: string) => {
     setSearchInput(val);
@@ -337,8 +342,7 @@ export default function PlatformAuditLogsPage() {
               const style = getStyle(log.action);
               const isExpanded = expandedId === log.id;
               const hasDiff = Boolean(log.before || log.after);
-              const isAdmin =
-                log.actor.role === "PLATFORM_ADMIN" || log.actor.role === "ADMIN";
+              const isAdmin = isPlatformStaff(log.actor.role);
 
               return (
                 <div
