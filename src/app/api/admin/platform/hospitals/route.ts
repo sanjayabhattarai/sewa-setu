@@ -53,7 +53,10 @@ export async function GET(req: Request) {
       slug: h.slug,
       type: h.type,
       verified: h.verified,
+      verifiedAt: h.verifiedAt?.toISOString() ?? null,
       isActive: h.isActive,
+      suspendedAt: h.suspendedAt?.toISOString() ?? null,
+      suspensionReason: h.suspensionReason,
       location: h.location ? `${h.location.city}, ${h.location.district}` : null,
       bookingCount: h._count.bookings,
       doctorCount: h._count.doctors,
@@ -73,7 +76,7 @@ export async function GET(req: Request) {
   });
 }
 
-// PATCH — verify or toggle active
+// PATCH - verify, suspend, or reactivate hospital.
 export async function PATCH(req: Request) {
   let actor;
   try { actor = await requirePlatformAdmin({ apiMode: true }); }
@@ -82,31 +85,87 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: msg }, { status: 401 });
   }
 
-  let body: { hospitalId?: string; verified?: boolean; isActive?: boolean };
+  let body: { hospitalId?: string; verified?: boolean; isActive?: boolean; suspensionReason?: string };
   try { body = await req.json(); } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { hospitalId, verified, isActive } = body;
+  const { hospitalId, verified, isActive, suspensionReason } = body;
   if (!hospitalId) return NextResponse.json({ error: "hospitalId required" }, { status: 400 });
+  if (verified === undefined && isActive === undefined) {
+    return NextResponse.json({ error: "verified or isActive required" }, { status: 400 });
+  }
 
   const existing = await db.hospital.findUnique({ where: { id: hospitalId } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const updateData: Record<string, unknown> = {};
-  if (verified !== undefined) updateData.verified = verified;
-  if (isActive !== undefined) updateData.isActive = isActive;
+  const now = new Date();
+
+  if (verified !== undefined) {
+    updateData.verified = verified;
+    updateData.verifiedAt = verified ? now : null;
+    updateData.verifiedById = verified ? actor.id : null;
+  }
+
+  if (isActive !== undefined) {
+    updateData.isActive = isActive;
+    if (isActive) {
+      updateData.suspendedAt = null;
+      updateData.suspendedById = null;
+      updateData.suspensionReason = null;
+    } else {
+      const reason = suspensionReason?.trim();
+      if (!reason) {
+        return NextResponse.json({ error: "Suspension reason required" }, { status: 400 });
+      }
+      updateData.suspendedAt = now;
+      updateData.suspendedById = actor.id;
+      updateData.suspensionReason = reason;
+    }
+  }
 
   const updated = await db.hospital.update({ where: { id: hospitalId }, data: updateData as never });
 
+  const action = isActive !== undefined
+    ? (isActive ? "HOSPITAL_REACTIVATED" : "HOSPITAL_SUSPENDED")
+    : (verified ? "HOSPITAL_VERIFIED" : "HOSPITAL_UNVERIFIED");
+
   await writeAuditLog({
     actorUserId: actor.id,
-    action: verified !== undefined ? (verified ? "HOSPITAL_VERIFIED" : "HOSPITAL_UNVERIFIED") : (isActive ? "HOSPITAL_ACTIVATED" : "HOSPITAL_DEACTIVATED"),
+    hospitalId,
+    action,
     entity: "Hospital",
     entityId: hospitalId,
-    before: { verified: existing.verified, isActive: existing.isActive },
-    after: { verified: updated.verified, isActive: updated.isActive },
+    before: {
+      verified: existing.verified,
+      verifiedAt: existing.verifiedAt,
+      verifiedById: existing.verifiedById,
+      isActive: existing.isActive,
+      suspendedAt: existing.suspendedAt,
+      suspendedById: existing.suspendedById,
+      suspensionReason: existing.suspensionReason,
+    },
+    after: {
+      verified: updated.verified,
+      verifiedAt: updated.verifiedAt,
+      verifiedById: updated.verifiedById,
+      isActive: updated.isActive,
+      suspendedAt: updated.suspendedAt,
+      suspendedById: updated.suspendedById,
+      suspensionReason: updated.suspensionReason,
+    },
   });
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({
+    success: true,
+    hospital: {
+      id: updated.id,
+      verified: updated.verified,
+      verifiedAt: updated.verifiedAt?.toISOString() ?? null,
+      isActive: updated.isActive,
+      suspendedAt: updated.suspendedAt?.toISOString() ?? null,
+      suspensionReason: updated.suspensionReason,
+    },
+  });
 }
