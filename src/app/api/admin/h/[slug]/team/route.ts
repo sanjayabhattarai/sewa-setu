@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { HospitalRole } from "@prisma/client";
 import { requireHospitalAccess, writeAuditLog } from "@/lib/admin-auth";
+import { hasPermission } from "@/lib/admin-permissions";
 import { db } from "@/lib/db";
 import {
   TEAM_ASSIGNABLE_ROLES,
@@ -111,6 +112,14 @@ export async function PATCH(
   });
   if (!member) return NextResponse.json({ error: "Member not found" }, { status: 404 });
 
+  if (role && !hasPermission(ctx.membership.role, "MANAGE_TEAM_ROLES")) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
+  if (status && !hasPermission(ctx.membership.role, "APPROVE_TEAM_MEMBERS")) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
   if (!canManageHospitalMember(ctx.membership.role, member.role)) {
     return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
   }
@@ -213,6 +222,10 @@ export async function DELETE(
     where: { id: memberId, hospitalId: ctx.membership.hospitalId },
   });
   if (!member) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+
+  if (!hasPermission(ctx.membership.role, "REMOVE_TEAM_MEMBERS")) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
 
   if (member.userId === ctx.user.id) {
     return NextResponse.json({ error: "You cannot remove yourself" }, { status: 400 });

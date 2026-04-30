@@ -56,6 +56,10 @@ export async function POST(
     return NextResponse.json({ error: "Title is required" }, { status: 400 });
   }
 
+  if (price !== undefined && (typeof price !== "number" || price < 0)) {
+    return NextResponse.json({ error: "Price must be a positive number" }, { status: 400 });
+  }
+
   const pkg = await db.hospitalPackage.create({
     data: {
       hospitalId: ctx.membership.hospitalId,
@@ -107,10 +111,19 @@ export async function PATCH(
   if (!existing) return NextResponse.json({ error: "Package not found" }, { status: 404 });
 
   const updateData: Record<string, unknown> = {};
-  if (rest.title !== undefined) updateData.title = rest.title.trim();
+  if (rest.title !== undefined) {
+    const title = rest.title.trim();
+    if (!title) return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    updateData.title = title;
+  }
   if (rest.description !== undefined) updateData.description = rest.description?.trim() ?? null;
-  if (rest.price !== undefined) updateData.price = rest.price;
-  if (rest.currency !== undefined) updateData.currency = rest.currency.trim();
+  if (rest.price !== undefined) {
+    if (rest.price !== null && (typeof rest.price !== "number" || rest.price < 0)) {
+      return NextResponse.json({ error: "Price must be a positive number" }, { status: 400 });
+    }
+    updateData.price = rest.price;
+  }
+  if (rest.currency !== undefined) updateData.currency = rest.currency.trim() || "EUR";
   if (rest.isActive !== undefined) updateData.isActive = rest.isActive;
 
   const updated = await db.hospitalPackage.update({

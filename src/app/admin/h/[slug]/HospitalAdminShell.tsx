@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SignOutButton } from "@clerk/nextjs";
 import {
   LayoutDashboard, CalendarCheck, Stethoscope, Clock,
   Package, Star, Users, BarChart2, Settings,
@@ -130,15 +131,16 @@ function SidebarContent({
             </p>
           </div>
         </div>
-        <a
-          href="/api/auth/sign-out"
+        <SignOutButton redirectUrl="/">
+          <button
           className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold transition-all"
           style={{ color: "rgba(255,255,255,.35)", background: "transparent" }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,.35)"; e.currentTarget.style.background = "transparent" }}
         >
-          <LogOut size={13} /> Sign Out
-        </a>
+            <LogOut size={13} /> Sign Out
+          </button>
+        </SignOutButton>
       </div>
     </div>
   );
