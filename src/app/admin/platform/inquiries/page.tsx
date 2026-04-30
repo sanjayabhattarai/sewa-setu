@@ -8,7 +8,6 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
-  Building2,
   Phone,
   Mail,
   MapPin,
@@ -81,7 +80,7 @@ export default function PlatformInquiriesPage() {
       setInquiries(data.inquiries); setTotal(data.total); setHasMore(data.hasMore);
     } catch { setError("Failed to load inquiries."); }
     finally { setLoading(false); }
-  }, [search, filter, page]); // eslint-disable-line
+  }, [search, filter, page]);
 
   useEffect(() => { fetchInquiries(search, filter, page); }, [search, filter, page]); // eslint-disable-line
 

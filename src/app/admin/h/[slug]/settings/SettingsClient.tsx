@@ -65,7 +65,13 @@ export default function SettingsClient({ slug }: { slug: string }) {
     }
   }, [slug]);
 
-  useEffect(() => { fetchSettings(); }, [fetchSettings]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchSettings();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchSettings]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

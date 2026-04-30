@@ -59,7 +59,13 @@ export default function PlatformRevenuePage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchData]);
 
   const maxRevenue = data ? Math.max(...data.monthly.map((m) => m.revenue), 1) : 1;
   const totalHospitalRevenue = data ? data.hospitals.reduce((s, h) => s + h.revenue, 0) || 1 : 1;

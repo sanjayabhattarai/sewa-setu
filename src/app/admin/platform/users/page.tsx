@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import type { HospitalRole, UserRole } from "@prisma/client";
 import { Users, Search, RefreshCw, AlertCircle, ChevronLeft, ChevronRight, CheckCircle2, XCircle, Ban } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import {
+  HOSPITAL_ROLE_LABELS,
+  PLATFORM_ROLE_LABELS,
+  isPlatformAdmin,
+  isPlatformStaff,
+} from "@/lib/admin-roles";
 
-type Membership = { id: string; role: string; status: string; hospitalName: string; hospitalSlug: string };
+type Membership = { id: string; role: HospitalRole; status: string; hospitalName: string; hospitalSlug: string };
 type User = {
   id: string; fullName: string; email: string; phone: string | null;
-  role: string; bannedAt: string | null; createdAt: string;
+  role: UserRole; bannedAt: string | null; createdAt: string;
   bookingCount: number; memberships: Membership[];
-};
-
-const ROLE_LABELS: Record<string, string> = {
-  HOSPITAL_OWNER: "Owner", HOSPITAL_MANAGER: "Manager",
-  RECEPTION: "Receptionist", CONTENT_EDITOR: "Editor",
 };
 
 const STATUS_CONFIG: Record<string, { bg: string; color: string }> = {
@@ -58,9 +60,15 @@ function UsersContent() {
       setUsers(data.users); setTotal(data.total); setHasMore(data.hasMore);
     } catch { setError("Failed to load users."); }
     finally { setLoading(false); }
-  }, [search, filter, page]); // eslint-disable-line
+  }, [search, filter, page]);
 
-  useEffect(() => { fetchUsers(search, filter, page); }, [search, filter, page]); // eslint-disable-line
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchUsers(search, filter, page);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchUsers, search, filter, page]);
 
   const handleSearch = (val: string) => {
     setSearchInput(val);
@@ -174,7 +182,7 @@ function UsersContent() {
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold text-white"
                           style={{
-                            background: user.role === "PLATFORM_ADMIN" || user.role === "ADMIN"
+                            background: isPlatformStaff(user.role)
                               ? "#c8a96e"
                               : "#6366f1",
                           }}>
@@ -197,9 +205,11 @@ function UsersContent() {
                     </td>
 
                     <td className="px-4 py-3.5 align-top break-words">
-                      {(user.role === "PLATFORM_ADMIN" || user.role === "ADMIN") ? (
+                      {user.role !== "USER" ? (
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: "rgba(200,169,110,.15)", color: "#a88b50" }}>Super Admin</span>
+                          style={{ background: "rgba(200,169,110,.15)", color: "#a88b50" }}>
+                          {PLATFORM_ROLE_LABELS[user.role] ?? user.role}
+                        </span>
                       ) : (
                         <span className="text-xs font-semibold text-[#6b7a96]">Standard User</span>
                       )}
@@ -222,7 +232,7 @@ function UsersContent() {
                                 <span className="text-xs font-bold text-[#0f1e38]">{m.hospitalName}</span>
                                 <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                                   style={{ background: "rgba(15,30,56,.06)", color: "#6b7a96" }}>
-                                  {ROLE_LABELS[m.role] ?? m.role}
+                                  {HOSPITAL_ROLE_LABELS[m.role] ?? m.role}
                                 </span>
                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                                   style={{ background: st.bg, color: st.color }}>
@@ -254,7 +264,7 @@ function UsersContent() {
 
                     <td className="px-4 py-3.5 text-right align-top break-words">
                       <button onClick={() => handleBan(user.id, !!user.bannedAt)}
-                        disabled={actionLoading === user.id + "ban" || user.role === "PLATFORM_ADMIN" || user.role === "ADMIN"}
+                        disabled={actionLoading === user.id + "ban" || isPlatformAdmin(user.role)}
                         className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-bold disabled:opacity-30 transition-all"
                         style={{
                           background: user.bannedAt ? "rgba(16,185,129,.08)" : "rgba(239,68,68,.07)",

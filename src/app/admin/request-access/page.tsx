@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import RequestAccessClient from "./RequestAccessClient";
+import { isPlatformAdmin } from "@/lib/admin-roles";
 
 export default async function RequestAccessPage({
   searchParams,
@@ -29,8 +30,7 @@ export default async function RequestAccessPage({
 
   if (!user) redirect("/sign-in");
 
-  // Platform admins don't need to request access
-  if (user.role === "PLATFORM_ADMIN" || user.role === "ADMIN") {
+  if (isPlatformAdmin(user.role)) {
     redirect("/admin/platform/dashboard");
   }
 

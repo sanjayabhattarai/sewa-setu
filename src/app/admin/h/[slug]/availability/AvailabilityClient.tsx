@@ -43,7 +43,13 @@ export default function AvailabilityClient({ slug }: { slug: string }) {
     }
   }, [slug]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchData]);
 
   const handleToggle = async (slot: Slot) => {
     setToggling(slot.id);

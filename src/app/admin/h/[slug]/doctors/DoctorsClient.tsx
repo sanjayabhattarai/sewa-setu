@@ -48,7 +48,13 @@ export default function DoctorsClient({ slug }: { slug: string }) {
     }
   }, [slug]);
 
-  useEffect(() => { fetchDoctors(); }, [fetchDoctors]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchDoctors();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchDoctors]);
 
   const filtered = search
     ? doctors.filter(

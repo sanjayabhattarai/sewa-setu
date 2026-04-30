@@ -52,7 +52,7 @@ export default function ReportsClient({ slug }: { slug: string }) {
     } finally {
       setLoading(false);
     }
-  }, [slug, range]); // eslint-disable-line
+  }, [slug, range]);
 
   useEffect(() => { fetchReports(range); }, [range]); // eslint-disable-line
 

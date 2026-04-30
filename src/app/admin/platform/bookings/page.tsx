@@ -162,8 +162,12 @@ export default function PlatformBookingsPage() {
   );
 
   useEffect(() => {
-    fetchBookings(search, statusFilter, hospitalFilter, fromDate, toDate, page);
-  }, [search, statusFilter, hospitalFilter, fromDate, toDate, page]);
+    const timeoutId = window.setTimeout(() => {
+      void fetchBookings();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchBookings]);
 
   const handleSearch = (val: string) => {
     setSearchInput(val);

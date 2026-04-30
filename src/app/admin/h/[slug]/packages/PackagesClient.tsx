@@ -47,7 +47,13 @@ export default function PackagesClient({ slug }: { slug: string }) {
     }
   }, [slug]);
 
-  useEffect(() => { fetchPackages(); }, [fetchPackages]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchPackages();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchPackages]);
 
   const openCreate = () => {
     setEditTarget(null);

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import type { HospitalRole } from "@prisma/client";
 import { hasPermission, type Permission } from "@/lib/admin-permissions";
+import { isPlatformAdmin } from "@/lib/admin-roles";
 export { hasPermission, type Permission } from "@/lib/admin-permissions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ export async function requirePlatformAdmin(options?: { apiMode?: boolean }): Pro
     redirect("/");
   }
 
-  if (user.role !== "PLATFORM_ADMIN" && user.role !== "ADMIN") {
+  if (!isPlatformAdmin(user.role)) {
     if (options?.apiMode) throw new Error("FORBIDDEN");
     redirect("/");
   }
@@ -86,8 +87,9 @@ export async function requireHospitalAccess(
     redirect("/sign-in");
   }
 
-  // Platform admins pass through with full access
-  if (user.role === "PLATFORM_ADMIN" || user.role === "ADMIN") {
+  // Platform admins currently pass through to hospital workspaces.
+  // Long term, this should be replaced with a controlled break-glass flow.
+  if (isPlatformAdmin(user.role)) {
     const hospital = await db.hospital.findUnique({
       where: { slug: hospitalSlug },
       select: { id: true },
@@ -101,7 +103,7 @@ export async function requireHospitalAccess(
       membership: {
         id: "platform",
         hospitalId: hospital.id,
-        role: "HOSPITAL_OWNER", // platform admins get owner-level permissions
+        role: "OWNER",
       },
     };
   }
@@ -162,7 +164,7 @@ export async function resolveAdminRedirect(): Promise<string> {
   if (!user || user.bannedAt) return "/sign-in";
 
   // Platform admin goes to platform dashboard
-  if (user.role === "PLATFORM_ADMIN" || user.role === "ADMIN") {
+  if (isPlatformAdmin(user.role)) {
     return "/admin/platform/dashboard";
   }
 

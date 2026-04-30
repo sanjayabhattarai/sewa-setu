@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import type { HospitalRole } from "@prisma/client";
+import { ACCESS_REQUEST_ROLES } from "@/lib/admin-roles";
 
-const VALID_ROLES: HospitalRole[] = ["HOSPITAL_OWNER", "HOSPITAL_MANAGER", "RECEPTION", "CONTENT_EDITOR"];
+const VALID_ROLES: HospitalRole[] = [...ACCESS_REQUEST_ROLES];
 
 export async function POST(req: Request) {
   const { userId: clerkId } = await auth();
@@ -57,7 +58,15 @@ export async function POST(req: Request) {
     // REJECTED — allow re-request by updating the record
     const updated = await db.hospitalMembership.update({
       where: { id: existing.id },
-      data: { role: role as HospitalRole, status: "PENDING", rejectedReason: null },
+      data: {
+        role: role as HospitalRole,
+        status: "PENDING",
+        approvedAt: null,
+        approvedById: null,
+        rejectedAt: null,
+        rejectedById: null,
+        rejectedReason: null,
+      },
     });
     return NextResponse.json({ membership: updated }, { status: 200 });
   }

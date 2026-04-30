@@ -36,7 +36,7 @@ export default function PlatformHospitalsPage() {
       setHospitals(data.hospitals); setTotal(data.total); setHasMore(data.hasMore);
     } catch { setError("Failed to load hospitals."); }
     finally { setLoading(false); }
-  }, [search, page]); // eslint-disable-line
+  }, [search, page]);
 
   useEffect(() => { fetchHospitals(search, page); }, [search, page]); // eslint-disable-line
 

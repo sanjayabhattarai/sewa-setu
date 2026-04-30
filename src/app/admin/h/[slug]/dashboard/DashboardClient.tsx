@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import {
-  CalendarDays, Clock, CheckCircle2, XCircle,
+  CalendarDays, Clock, CheckCircle2,
   Phone, User, Stethoscope, Package, RefreshCw,
   AlertCircle, ChevronRight, TrendingUp,
 } from "lucide-react";
@@ -75,7 +75,13 @@ export default function DashboardClient({ slug }: { slug: string }) {
     }
   }, [slug]);
 
-  useEffect(() => { fetchStats(); }, [fetchStats]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchStats();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchStats]);
 
   const handleAction = async (bookingId: string, action: string, reason?: string) => {
     setActionLoading(bookingId + action);
@@ -113,7 +119,7 @@ export default function DashboardClient({ slug }: { slug: string }) {
     </div>
   );
 
-  const { today, month, pendingConfirmations, totalBookings, todayAppointments } = stats;
+  const { today, month, pendingConfirmations, todayAppointments } = stats;
 
   // Sort: REQUESTED first, then CONFIRMED, then rest
   const sortedAppointments = [...todayAppointments].sort((a, b) => {
@@ -127,7 +133,7 @@ export default function DashboardClient({ slug }: { slug: string }) {
       {/* Date header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-[#0f1e38]">Today's Operations</h1>
+          <h1 className="text-xl font-extrabold text-[#0f1e38]">Today&apos;s Operations</h1>
           <p className="text-sm text-gray-400 mt-0.5">{todayLabel()}</p>
         </div>
         <button

@@ -60,7 +60,7 @@ export default function ReviewsClient({ slug }: { slug: string }) {
     } finally {
       setLoading(false);
     }
-  }, [slug, page, showHidden]); // eslint-disable-line
+  }, [slug, page, showHidden]);
 
   useEffect(() => { fetchReviews(page, showHidden); }, [page, showHidden]); // eslint-disable-line
 

@@ -15,15 +15,16 @@ datasource db {
 
 enum UserRole {
   USER
-  ADMIN        // legacy platform admin (kept for backward compat)
+  PLATFORM_SUPPORT
   PLATFORM_ADMIN
 }
 
 enum HospitalRole {
-  HOSPITAL_OWNER
-  HOSPITAL_MANAGER
-  RECEPTION
-  CONTENT_EDITOR
+  OWNER
+  MANAGER
+  RECEPTIONIST
+  DOCTOR
+  STAFF
 }
 
 enum MembershipStatus {
@@ -80,7 +81,9 @@ model User {
   patients    Patient[]
   bookings    Booking[]
   reviews     Review[]
+  doctorProfile Doctor?
   memberships HospitalMembership[]
+  supportAssignments SupportAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -193,7 +196,12 @@ model Hospital {
   emergencyAvailable Boolean @default(false)
   servicesSummary    String?
   verified           Boolean @default(false)
+  verifiedAt         DateTime?
+  verifiedById       String?
   isActive           Boolean @default(true) // soft-disable without cascade delete
+  suspendedAt        DateTime?
+  suspendedById      String?
+  suspensionReason   String?
 
   location Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
@@ -206,6 +214,8 @@ model Hospital {
   reviews           Review[]
   availabilitySlots AvailabilitySlot[]
   memberships       HospitalMembership[]
+  supportAssignments SupportAssignment[]
+  partnerInquiry    PartnerInquiry?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -229,6 +239,10 @@ model HospitalMembership {
   status     MembershipStatus @default(PENDING)
 
   invitedBy      String?  // userId of inviter (null = self-requested)
+  approvedAt     DateTime?
+  approvedById   String?
+  rejectedAt     DateTime?
+  rejectedById   String?
   rejectedReason String?  // platform admin reason on rejection
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -274,6 +288,7 @@ model AuditLog {
 
 model Doctor {
   id              String  @id @default(cuid())
+  userId          String? @unique
   fullName        String
   gender          String?
   experienceYears Int?
@@ -289,6 +304,7 @@ model Doctor {
   currency      String?
   verified      Boolean @default(false)
 
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   hospitals    DoctorHospital[]
   specialties  DoctorSpecialty[]
   departments  DepartmentDoctor[]
@@ -615,6 +631,7 @@ model Booking {
 
 model PartnerInquiry {
   id           String               @id @default(cuid())
+  hospitalId   String?              @unique
   hospitalName String
   type         HospitalType
   contactName  String
@@ -626,10 +643,32 @@ model PartnerInquiry {
   reviewNotes  String?
   reviewedAt   DateTime?
 
+  hospital Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([hospitalId])
   @@index([status])
   @@index([email])
   @@index([createdAt])
+}
+
+model SupportAssignment {
+  id            String  @id @default(cuid())
+  supportUserId String
+  hospitalId    String
+  assignedById  String?
+  notes         String?
+  isActive      Boolean @default(true)
+
+  supportUser User     @relation(fields: [supportUserId], references: [id], onDelete: Cascade)
+  hospital    Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([supportUserId, hospitalId])
+  @@index([supportUserId, isActive])
+  @@index([hospitalId, isActive])
 }
