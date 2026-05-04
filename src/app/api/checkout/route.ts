@@ -4,6 +4,17 @@ import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+function getCheckoutBaseUrl(req: Request) {
+  const requestOrigin = new URL(req.url).origin;
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim();
+
+  if (configuredBaseUrl && !configuredBaseUrl.includes("sewa-setu-eight.vercel.app")) {
+    return configuredBaseUrl.replace(/\/$/, "");
+  }
+
+  return requestOrigin;
+}
+
 export async function POST(req: Request) {
   try {
     // ── AUTH CHECK ───────────────────────────────────────────────────
@@ -133,7 +144,7 @@ export async function POST(req: Request) {
 
     // ── CREATE STRIPE SESSION ────────────────────────────────────────
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
+    const baseUrl = getCheckoutBaseUrl(req);
 
     const session = await stripe.checkout.sessions.create({
       customer_email: sanitizedEmail,
